@@ -1,0 +1,1 @@
+rm test-vault/ -Rf && cp backup/test-vault/ . -R && ~/soft/obsidian/Obsidian-0.12.15.AppImage

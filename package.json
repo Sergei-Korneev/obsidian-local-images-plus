@@ -1,0 +1,40 @@
+{
+  "name": "obsidian-local-images",
+  "version": "0.14.0",
+  "description": "This is a plugin for Obsidian (https://obsidian.md) that downloads images from external links and save in local vault.",
+  "main": "build/main.js",
+  "scripts": {
+    "dev": "rollup --config rollup.config.js -w",
+    "build": "rollup --config rollup.config.js --environment BUILD:production",
+    "version": "json -I -f manifest.json -e \"this.version='$npm_package_version'\" && json -I -f versions.json -e \"this['$npm_package_version']='$(cat manifest.json | json minAppVersion)'\" && git add ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-typescript": "^8.5.0",
+    "@types/node": "^14.14.37",
+    "@types/safe-regex": "^1.1.2",
+    "json": "^11.0.0",
+    "obsidian": "^0.12.0",
+    "prettier": "^2.4.1",
+    "rollup": "^2.32.1",
+    "rollup-plugin-json": "^4.0.0",
+    "ts-node": "^10.0.0",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "file-type": "^16.5.3",
+    "filenamify": "github:aleksey-rezvov/filenamify",
+    "got": "^11.8.2",
+    "install": "^0.13.0",
+    "is-svg": "^4.3.1",
+    "npm": "^7.24.0",
+    "rollup-plugin-execute": "^1.1.1",
+    "safe-regex": "^2.1.1",
+    "ts-xxhash": "^1.0.6"
+  }
+}
