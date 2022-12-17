@@ -13,3 +13,8 @@ main.js
 
 # obsidian
 data.json
+
+# build
+./obsidian-local-images-continued
+./test.sh
+

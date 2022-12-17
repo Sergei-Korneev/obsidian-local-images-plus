@@ -6,11 +6,11 @@ on:
             - "*"
 
 env:
-    PLUGIN_NAME: obsidian-local-images
+    PLUGIN_NAME: obsidian-local-images-continued
 
 jobs:
     release:
-        runs-on: ubuntu-latest
+        runs-on: linux
         steps:
             - uses: actions/checkout@v2
             - name: Use Node.js
