@@ -28,9 +28,9 @@ export default {
   external: ["obsidian"],
   plugins: [
     execute([
-      `mkdir -p ${currentDir}/obsidian-local-images-continued`,
-      `cp -u ${currentDir}/manifest.json ${currentDir}/obsidian-local-images-continued/manifest.json`,
-      `cp -u ${currentDir}/styles.css ${currentDir}/obsidian-local-images-continued/styles.css`,
+      `# mkdir -p ${currentDir}/obsidian-local-images-continued`,
+      `# cp -u ${currentDir}/manifest.json ${currentDir}/obsidian-local-images-continued/manifest.json`,
+      `# cp -u ${currentDir}/styles.css ${currentDir}/obsidian-local-images-continued/styles.css`,
     ]),
     typescript(),
     nodeResolve({ browser: true }),

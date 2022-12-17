@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: linux 
+    runs-on: ubuntu-latest 
 
     strategy:
       matrix:
