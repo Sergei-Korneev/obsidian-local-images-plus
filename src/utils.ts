@@ -3,7 +3,6 @@ import got from "got";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
-//import path from 'path';
 //import filenamify from './filenamify.js';
 
 
