@@ -45,7 +45,7 @@ export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: bool
 
           if (fileName) {
               if (useWikilinks) {
-                 return `${anchor}\n![[${fileName}]]`;
+                 return `![[${fileName}]]`;
               }
               else{
                  return `![${anchor}](${fileName})`;

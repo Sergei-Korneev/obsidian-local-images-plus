@@ -5,6 +5,8 @@ import {
   PluginSettingTab,
   Setting,
   TFile,
+  Editor,
+  MarkdownView
 } from "obsidian";
 import safeRegex from "safe-regex";
 
@@ -111,18 +113,29 @@ export default class LocalImagesPlugin extends Plugin {
       callback: this.processAllPages,
     });
 
-    this.registerCodeMirror((cm: CodeMirror.Editor) => {
-      // on("beforeChange") can not execute async function in event handler, so we use queue to pass modified pages to timeouted handler
-      cm.on("change", async (instance: CodeMirror.Editor, changeObj: any) => {
-        if (
-          changeObj.origin == "paste" &&
-          ANY_URL_PATTERN.test(changeObj.text)
-        ) {
-          this.enqueueActivePage();
-        }
-      });
-    });
+    this.app.workspace.on(
+      "editor-paste",
+      (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
 
+        this.enqueueActivePage();
+        console.log("test ANY_URL_PATTERN");
+      }
+    );
+
+//    //this.registerCodeMirror((cm: CodeMirror.Editor) => {
+//      // on("beforeChange") can not execute async function in event handler, so we use queue to pass modified pages to timeouted handler
+//      cm.on("change", async (instance: CodeMirror.Editor, changeObj: any) => {
+//        if (
+//          changeObj.origin == "paste" &&
+//          ANY_URL_PATTERN.test(changeObj.text)
+//        ) {
+//
+//        console.log("test ANY_URL_PATTERN");
+//          this.enqueueActivePage();
+//        }
+//      });
+//    });
+//
     this.setupQueueInterval();
 
     this.addSettingTab(new SettingTab(this.app, this));
@@ -138,15 +151,19 @@ export default class LocalImagesPlugin extends Plugin {
       this.settings.realTimeUpdate &&
       this.settings.realTimeUpdateInterval > 0
     ) {
+      console.log("setInterval");
       this.intervalId = window.setInterval(
         this.processModifiedQueue,
-        this.settings.realTimeUpdateInterval
+        this.settings.realTimeUpdateInterval*1000
       );
       this.registerInterval(this.intervalId);
     }
   }
+  
+
 
   processModifiedQueue = async () => {
+    console.log("Timer triggered");
     const iteration = this.modifiedQueue.iterationQueue();
     for (const page of iteration) {
       this.proccessPage(page);
@@ -201,6 +218,10 @@ export default class LocalImagesPlugin extends Plugin {
   }
 }
 
+//
+// Settings tab
+//
+
 class SettingTab extends PluginSettingTab {
   plugin: LocalImagesPlugin;
 
@@ -231,7 +252,7 @@ class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("On paste processing interval")
-      .setDesc("Interval in milliseconds for processing update.")
+      .setDesc("Interval in seconds for processing update.")
       .setTooltip(
         "I could not process content on the fly when it is pasted. So real processing implements periodically with the given here timeout."
       )
@@ -243,10 +264,14 @@ class SettingTab extends PluginSettingTab {
             if (
               isNaN(numberValue) ||
               !Number.isInteger(numberValue) ||
-              numberValue < 0
+              numberValue <= 0 ||
+              numberValue > 3600
             ) {
+
+
               this.plugin.displayError(
-                "Realtime processing interval should be a positive integer number!"
+
+                "Realtime processing interval should be a positive integer number between 1 and 3600!"
               );
               return;
             }
@@ -259,7 +284,7 @@ class SettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("Attempts to process")
       .setDesc(
-        "Number of attempts to process content on paste. For me 3 attempts is enouth with 1 second update interval."
+        "Number of attempts to process content on paste."
       )
       .setTooltip(
         "I could not find the way to access newly pasted content immediatily, after pasting, Plugin's API returns old text for a while. The workaround is to process page several times until content is changed."

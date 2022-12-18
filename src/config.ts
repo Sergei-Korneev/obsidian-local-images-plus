@@ -18,6 +18,7 @@ export const NOTICE_TIMEOUT = 10 * 1000;
 export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
+
 export interface ISettings {
   realTimeUpdate: boolean;
   realTimeUpdateInterval: number;
@@ -31,7 +32,7 @@ export interface ISettings {
 
 export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdate: false,
-  realTimeUpdateInterval: 1000,
+  realTimeUpdateInterval: 1,
   realTimeAttemptsToProcess: 3,
   cleanContent: true,
   showNotifications: false,
