@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "file-type": "^16.5.3",
-    "filenamify": "github:aleksey-rezvov/filenamify",
+    "filenamify": "github:Sergei-Korneev/filenamify",
     "got": "^11.8.2",
     "install": "^0.13.0",
     "is-svg": "^4.3.1",
