@@ -27,7 +27,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "file-type": "^18.0.0",
+    "file-type": "^16.5.3",
     "filenamify": "github:Sergei-Korneev/filenamify",
     "got": "^11.8.2",
     "install": "^0.13.0",
@@ -35,6 +35,7 @@
     "npm": "^8.19.2",
     "rollup-plugin-execute": "^1.1.1",
     "safe-regex": "^2.1.1",
+    "fsevents": "^2.3.2",
     "ts-xxhash": "^1.0.6"
   },
   
