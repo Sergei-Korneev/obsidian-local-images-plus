@@ -12,6 +12,19 @@ jobs:
     release:
         runs-on: ubuntu-latest 
         steps:
+        - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+*******************************************************************************
+
+        - name: Reconfigure git to use HTTP authentication
+         run:
+           git config --global url."https://github.com/".insteadOf  ssh://git@github.com/
+    
+
+*******************************************************************************
             - uses: actions/checkout@v2
             - name: Use Node.js
               uses: actions/setup-node@v1
