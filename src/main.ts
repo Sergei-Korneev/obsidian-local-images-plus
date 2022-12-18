@@ -78,8 +78,7 @@ export default class LocalImagesPlugin extends Plugin {
     for (const [index, file] of files.entries()) {
       if (file.path.match(includeRegex)) {
         if (notice) {
-          // setMessage() is undeclared but factically existing, so ignore the TS error
-          // @ts-expect-error
+          //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
           notice.setMessage(
             `Local Images: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
           );
@@ -88,7 +87,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
     }
     if (notice) {
-      // @ts-expect-error
+      // dum @ts-expect-error
       notice.setMessage(`Local Images: ${pagesCount} pages were processed.`);
 
       setTimeout(() => {
