@@ -36,5 +36,10 @@
     "rollup-plugin-execute": "^1.1.1",
     "safe-regex": "^2.1.1",
     "ts-xxhash": "^1.0.6"
+  },
+  
+  "optionalDependencies": { 
+    "fsevents": "*"
   }
+
 }
