@@ -39,6 +39,7 @@
   },
   
   "optionalDependencies": { 
+    "file-type":"*",
     "fsevents": "*"
   }
 
