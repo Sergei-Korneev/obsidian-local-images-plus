@@ -33,12 +33,14 @@ jobs:
             - name: Build
               id: build
               run:                
-                  npm ci
-                  npm run build 
+
                   mkdir ./obsidian_local_images_plus_latest
-                  cp main.js manifest.json styles.css ./obsidian_local_images_plus_latest
+                  npm ci
+                  npm run build
+                  ls 
                   zip -r obsidian_local_images_plus_latest.zip ./obsidian_local_images_plus_latest
-                  ls
+                  ls ./obsidian_local_images_plus_latest
+
                   echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
             - name: Create Release
               id: create_release
