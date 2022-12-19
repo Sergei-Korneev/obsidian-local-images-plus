@@ -1,7 +1,9 @@
 # Obsidian Local Images Plus
 
 
-Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/). 
+Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/) desktop (mobile version in the plans). 
+The plugin finds all links to external images in your notes, downloads and saves images locally and finally adjusts the link in your note to point to the local image files.
+
 
 ## Installation
 
@@ -14,7 +16,6 @@ Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/).
 
 
 
-The plugin finds all links to external images in your notes, downloads and saves images locally and finally adjusts the link in your note to point to the local image files.
 
 ![](README/obsidian-local-images-sep2021.gif)
 
