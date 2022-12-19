@@ -28,7 +28,7 @@ Just copy any web content from a page and paste it into your note.
 
 Use it with commands mode or in timer mode:
 
-![](README/Pasted image 20221219134358.png)
+![img]('README/Pasted image 20221219134358.png')
 
 
 
