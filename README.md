@@ -65,6 +65,8 @@ Also you can turn on in plugin's settings processing the active page when extern
 
 
 `
-npm run d```ev```
+npm run d```
+
+ev```
 npm run bui
 ``
