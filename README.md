@@ -7,6 +7,7 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 
 
+
 **This plugin is in development process, so your ideas and donations are very appreciated.**
 
 ## Installation
