@@ -30,6 +30,7 @@ export interface ISettings {
   useWikilinks: boolean;
 }
 
+
 export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdate: false,
   realTimeUpdateInterval: 1,
