@@ -11,10 +11,10 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 ## Installation
 
-- Download latest version from github or the github page of the project.
+- Download the latest version from github or the github page of the project.
 - Extract the archive into your obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
-- Open "Community plugins" dialog and change plugin setting at will.
+- Open "Community plugins" dialog and change plugin settings at will.
 - Enjoy
 
 
@@ -36,7 +36,7 @@ Also you can turn on in plugin's settings processing the active page when extern
  
 
 
-Some upcoming plugin features will be added in this readme on the course of releasing new versions.
+**Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
 
 
 
