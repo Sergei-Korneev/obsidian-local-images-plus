@@ -26,11 +26,11 @@ It is useful when you copy paste parts from web-pages, and want to keep images i
 
 Use it with commands or in timer mode:
 
-**Download images locally** -- your active page will be processed.
+```Download images locally``` - your active page will be processed.
 
 or
 
-**Download images locally for all your notes** -- will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
+```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
 Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
  
