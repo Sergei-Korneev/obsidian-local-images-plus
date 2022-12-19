@@ -1,0 +1,4 @@
+0.14.3
+- Fix: Several bugs on new Obsidian versions.
+- Add: Option "Use wikilinks format for replaced links"
+
