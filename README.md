@@ -6,7 +6,7 @@ Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/) desktop v
 
 The plugin finds all links to external images in your notes, downloads and saves images locally and finally adjusts the link in your note to point to the local image files.
 
-![](docs/obsidian-local-images-sep2021.gif)
+![](README/obsidian-local-images-sep2021.gif)
 
 For example, we initially have a markup in the note like this:
 
@@ -18,7 +18,7 @@ Local Images plugin will download image 300.jpg, save in **media** subdirectory 
 
 It is useful when you copy paste parts from web-pages, and want to keep images in your vault. Because external links can be moved or expired in future.
 
-![](docs/obsidian-local-images-html-sep2021.gif)
+![](README/obsidian-local-images-html-sep2021.gif)
 
 Use it with commands:
 
