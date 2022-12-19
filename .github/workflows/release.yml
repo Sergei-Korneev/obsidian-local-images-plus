@@ -70,7 +70,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./main.js
+                  asset_path: ./obsidian_local_images_plus_latest/main.js
                   asset_name: main.js
                   asset_content_type: text/javascript
             - name: Upload manifest.json
@@ -80,6 +80,6 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./manifest.json
+                  asset_path: ./obsidian_local_images_plus_latest/manifest.json
                   asset_name: manifest.json
                   asset_content_type: application/json
