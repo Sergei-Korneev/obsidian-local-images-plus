@@ -39,8 +39,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.build.outputs.tag_name }}
-          release_name: Release ${{  steps.build.outputs.tag_name  }}
+          tag_name: ${{ env.tag_name }}
+          release_name: Release ${{  env.tag_name  }}
           draft: false
           prerelease: false
 
@@ -54,7 +54,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./obsidian_local_images_plus_latest.zip
-          asset_name: obsidian_local_images_plus_latest-${{ steps.build.outputs.tag_name }}.zip
+          asset_name: obsidian_local_images_plus_latest-${{ env.tag_name }}.zip
           asset_content_type: application/zip
  
 
