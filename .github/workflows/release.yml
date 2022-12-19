@@ -35,10 +35,9 @@ jobs:
               run:                
                   npm ci
                   npm run build 
-                  mkdir obsidian_local_images_plus_latest
-                  cp main.js manifest.json styles.css obsidian_local_images_plus_latest
-
-                  zip -r obsidian_local_images_plus_latest.zip obsidian_local_images_plus_latest
+                  mkdir ./obsidian_local_images_plus_latest
+                  cp main.js manifest.json styles.css ./obsidian_local_images_plus_latest
+                  zip -r obsidian_local_images_plus_latest.zip ./obsidian_local_images_plus_latest
                   ls
                   echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
             - name: Create Release
