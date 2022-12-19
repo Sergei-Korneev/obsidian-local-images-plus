@@ -30,9 +30,9 @@ jobs:
       - run: ls ./obsidian_local_images_plus_latest
       - run: ls
         shell: bash
-      - run: echo "tag_name="$( grep -i '\"version\"' manifest.json | sed -e 's,:, ,g' -e 's,\",,g'  -e 's,\,,,g' -e 's,.* ,,g' )""  >> $GITHUB_OUTPUT
+      - run: echo "tag_name=$( grep -i '\"version\"' manifest.json | sed -e 's,:, ,g' -e 's,\",,g'  -e 's,\,,,g' -e 's,.* ,,g' )"  >> $GITHUB_ENV 
         shell: bash
-      - run: echo ${{ steps.build.outputs.tag_name }}
+      - run: echo ${{ env.tag_name }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
