@@ -26,9 +26,8 @@ jobs:
       - run: git config --global url."git://".insteadOf https://
       - run: npm ci
       - run: npm run build --if-present
+      - run: cp ./styles.css ./obsidian_local_images_plus_latest/styles.css 
       - run: zip -r obsidian_local_images_plus_latest.zip ./obsidian_local_images_plus_latest
-      - run: ls ./obsidian_local_images_plus_latest
-      - run: ls
         shell: bash
       - run: echo "tag_name=$( grep -i '\"version\"' manifest.json | sed -e 's,:, ,g' -e 's,\",,g'  -e 's,\,,,g' -e 's,.* ,,g' )"  >> $GITHUB_ENV 
         shell: bash
@@ -43,7 +42,6 @@ jobs:
           release_name: Release ${{  env.tag_name  }}
           draft: false
           prerelease: false
-
          #      - run: echo "tag_name=$(git tag --sort version:refname | tail -n 1)" >> $GITHUB_OUTPUT
         #      - run: echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
       - name: Upload Release Asset
