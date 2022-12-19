@@ -40,7 +40,7 @@ or
 
 Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
  
-
+**NOTE: This plugin can change all your notes at once, so you should consider doing backups of your fies periodically.**
 
 ## Future development
 
