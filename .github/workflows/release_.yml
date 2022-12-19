@@ -41,7 +41,8 @@ jobs:
           draft: false
           prerelease: false
         id: tag_name_txt
-      - run:  echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
+      - run: echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
+
       - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
