@@ -55,6 +55,18 @@ jobs:
           asset_name: obsidian_local_images_plus_latest-${{ env.tag_name }}.zip
           asset_content_type: application/zip
  
+      - name: Upload Release Asset
+        id: upload-release-asset2 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./styles.css
+          asset_name: style.css 
+          asset_content_type: text/javascript
+ 
+
 
 
 
