@@ -64,9 +64,6 @@ Also you can turn on in plugin's settings processing the active page when extern
 ## Build from source
 
 
-`
-npm run d```
-
-ev```
-npm run bui
-``
+npm run d
+ev
+npm run bui`
