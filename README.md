@@ -28,7 +28,7 @@ Just copy any web content from a page and paste it into your note.
 
 Use it with commands mode or in timer mode:
 
-![img]('README/Pasted image 20221219134358.png')
+![img]('https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/README/Pasted%20image%2020221219134358.png')
 
 
 
