@@ -1,4 +1,4 @@
-# Obsidian Local Images
+# Obsidian Local Images Plus
 
 **This plugin is still young, backups are a good idea.**
 
