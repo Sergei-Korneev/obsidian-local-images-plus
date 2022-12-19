@@ -17,7 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Build
+        id: build
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
@@ -30,7 +31,7 @@ jobs:
       - run: ls ./obsidian_local_images_plus_latest
       - run: ls
       - run: echo "tag_name=$( grep -i '\"version\"' manifest.json | sed -e 's,:, ,g' -e 's,\",,g')" >> $GITHUB_OUTPUT
-
+      - run: echo "${{ steps.build.outputs.tag_name }}" 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
