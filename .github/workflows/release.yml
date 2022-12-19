@@ -21,8 +21,8 @@ jobs:
 
         - name: Reconfigure git to use HTTP authentication
          run:
-           git config --global url."https://github.com/".insteadOf  ssh://git@github.com/
-    
+                  git config --global url."git@github.com:".insteadOf https://github.com/
+                  git config --global url."git://".insteadOf https://
 
 *******************************************************************************
             - uses: actions/checkout@v2
@@ -32,7 +32,9 @@ jobs:
                   node-version: "14.x"
             - name: Build
               id: build
-              run: |
+              run:                
+                  git config --global url."git@github.com:".insteadOf https://github.com/
+                  git config --global url."git://".insteadOf https://
                   npm ci
                   npm run build 
                   mkdir ${{ env.PLUGIN_NAME }}
