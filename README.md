@@ -47,7 +47,7 @@ Also you can turn on in plugin's settings processing the active page when extern
 **Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
 ## Donations
 
-!["Share your idea about this software or buy me a coffee (or hot chocolate)"]('https://www.buymeacoffee.com/sergeikorneev')
+[Share your idea about this software or buy me a coffee (or hot chocolate)]('https://www.buymeacoffee.com/sergeikorneev')
 
 
 
