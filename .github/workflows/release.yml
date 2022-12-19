@@ -33,13 +33,12 @@ jobs:
             - name: Build
               id: build
               run:                
-                  git config --global url."git@github.com:".insteadOf https://github.com/
-                  git config --global url."git://".insteadOf https://
                   npm ci
                   npm run build 
-                  mkdir ${{ env.PLUGIN_NAME }}
-                  cp main.js manifest.json ${{ env.PLUGIN_NAME }}
-                  zip -r ${{ env.PLUGIN_NAME }}.zip ${{ env.PLUGIN_NAME }}
+                  mkdir obsidian_local_images_plus_latest
+                  cp main.js manifest.json styles.css obsidian_local_images_plus_latest
+
+                  zip -r obsidian_local_images_plus_latest.zip obsidian_local_images_plus_latest
                   ls
                   echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
             - name: Create Release
@@ -60,8 +59,8 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./${{ env.PLUGIN_NAME }}.zip
-                  asset_name: ${{ env.PLUGIN_NAME }}-${{ steps.build.outputs.tag_name }}.zip
+                  asset_path: ./obsidian_local_images_plus_latest.zip
+                  asset_name: obsidian_local_images_plus_latest-${{ steps.build.outputs.tag_name }}.zip
                   asset_content_type: application/zip
             - name: Upload main.js
               id: upload-main
