@@ -45,7 +45,9 @@ Also you can turn on in plugin's settings processing the active page when extern
 ## Future development
 
 **Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
+## Donations
 
+![Buy me a coffee (or hot chocolate)](https://www.buymeacoffee.com/sergeikorneev)
 
 
 
