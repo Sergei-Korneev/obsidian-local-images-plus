@@ -11,7 +11,7 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 ## Installation
 
-- Download the latest version from github or the [github page]('https://sergei-korneev.github.io/obsidian-local-images-plus/') of the project.
+- Download the latest version from github or the [github page](https://sergei-korneev.github.io/obsidian-local-images-plus) of the project.
 - Extract the archive into your obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
 - Open "Community plugins" dialog and change plugin settings at will.
