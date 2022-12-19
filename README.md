@@ -1,8 +1,18 @@
 # Obsidian Local Images Plus
 
-**This plugin is still young, backups are a good idea.**
 
-Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/) desktop version. 
+Obsidian Local Images is a plugin for [Obsidian](https://obsidian.md/). 
+
+## Installation
+
+- Download latest version from github or the github page of the project.
+- Extracct the archive into your obsidian vault (e.g. Myvault/.obsidian/plugins)
+- Restart Obsidian.
+- Open "Community plugins" dialog and change plugin setting at will.
+- Enjoy
+
+
+
 
 The plugin finds all links to external images in your notes, downloads and saves images locally and finally adjusts the link in your note to point to the local image files.
 
@@ -32,16 +42,21 @@ Also you can turn on in plugin's settings processing the active page when extern
 
 The plugin was not tested with mobile version, probably it can work with it too.
 
+
+
+**This plugin is in development process, so your ideas and donations are appreciated.**
+
+
 ## Credit
 
-This plugin was developed from [niekcandaele's](https://github.com/niekcandaele/obsidian-local-images) code base. Key principles for downloading, saving were given there, and some texts too. Even the plugin's name is original.
+[niekcandaele's](https://github.com/niekcandaele/obsidian-local-images)
+[aleksey-rezvov](https://github.com/aleksey-rezvov/obsidian-local-images)
+
 
 ## Development
 
 ```
-# Start the bundler in watch mode
+# To build from source
 npm run dev
-
-# It's useful to set a symlink so you don't have to copy files over constantly
-ln -s /home/user/code/obsidian-local-images /home/user/notes/dev/.obsidian/plugins/local-images
+npm run build
 ```
