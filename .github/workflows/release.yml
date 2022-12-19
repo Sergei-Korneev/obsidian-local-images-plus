@@ -33,8 +33,7 @@ jobs:
             - name: Build
               id: build
               run:                
-
-                  mkdir ./obsidian_local_images_plus_latest
+                  npm install
                   npm ci
                   npm run build
                   ls 
