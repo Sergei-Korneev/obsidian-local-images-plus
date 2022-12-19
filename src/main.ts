@@ -235,7 +235,13 @@ class SettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Local images" });
+    containerEl.createEl("h2", { text: "Local Images Plus" });
+
+    const donheader = containerEl.createEl("div");
+    donheader.createEl("a", { text: "Support the author"  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
+
+    donheader.createEl("div");
+
 
     new Setting(containerEl)
       .setName("On paste processing")
