@@ -23,7 +23,6 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 Just copy any web content from a page and paste it into your note.
 
-![img](README/Pasted%20image%2020221219134615.png?raw=true)
 
 
 Use it with commands mode or in timer mode:
@@ -43,10 +42,7 @@ Also you can turn on in plugin's settings processing the active page when extern
  
 
 
-![img](README/Pasted%20image%2020221219134718.png?raw=true)
-
-![img](README/Pasted%20image%2020221219134802.png?raw=true)
-
+## Future development
 
 **Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
 
