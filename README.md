@@ -61,10 +61,10 @@ Also you can turn on in plugin's settings processing the active page when extern
 [aleksey-rezvov](https://github.com/aleksey-rezvov/obsidian-local-images)
 
 
-## To build from source
+## Build from source
 
 
-```
-npm run dev
-npm run build
+`
+npm run d```ev```
+npm run bui
 ``
