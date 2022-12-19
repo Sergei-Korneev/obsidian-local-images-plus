@@ -7,7 +7,7 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 
 
-==**This plugin is in development process, so your ideas and donations are very appreciated.**==
+**This plugin is in development process, so your ideas and donations are very appreciated.**
 
 ## Installation
 
@@ -23,11 +23,6 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 Just copy any web content from a page and paste it into your note.
 
-It is useful when you copy paste parts from web-pages, and want to keep images in your vault. Because external links can be moved or expired in future.
-
-Some upcoming plugin features will be added in this readme on the course of releasing new versions.
-
-
 
 Use it with commands mode or in timer mode:
 
@@ -41,8 +36,12 @@ Also you can turn on in plugin's settings processing the active page when extern
  
 
 
+Some upcoming plugin features will be added in this readme on the course of releasing new versions.
 
-## Credit
+
+
+
+## Credits
 
 [niekcandaele's](https://github.com/niekcandaele/obsidian-local-images)
 
