@@ -6,7 +6,7 @@ on:
             - "*"
 
 env:
-    PLUGIN_NAME: obsidian-local-images-continued
+    PLUGIN_NAME: obsidian-local-images-plus
 
 jobs:
     release:
