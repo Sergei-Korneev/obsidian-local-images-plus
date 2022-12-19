@@ -11,7 +11,7 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 ## Installation
 
-- Download the latest version from github or the github page of the project.
+- Download the latest version from github or the [github page]('https://sergei-korneev.github.io/obsidian-local-images-plus/') of the project.
 - Extract the archive into your obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
 - Open "Community plugins" dialog and change plugin settings at will.
@@ -32,6 +32,7 @@ Use it with commands mode or in timer mode:
 
 
 
+
 ```Download images locally``` - your active page will be processed.
 
 or
@@ -40,7 +41,7 @@ or
 
 Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
  
-**NOTE: This plugin can change all your notes at once, so you should consider doing backups of your fies periodically.**
+**NOTE: This plugin can change all your notes at once, so you should consider doing backups of your fies periodically.**
 
 ## Future development
 
@@ -48,6 +49,8 @@ Also you can turn on in plugin's settings processing the active page when extern
 ## Donations
 
 [Share your  wishes and ideas about this software or buy me a coffee (or hot chocolate)](https://www.buymeacoffee.com/sergeikorneev)
+
+
 
 
 
@@ -64,4 +67,4 @@ Also you can turn on in plugin's settings processing the active page when extern
 # To build from source
 npm run dev
 npm run build
-```
+``
