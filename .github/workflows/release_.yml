@@ -30,5 +30,15 @@ jobs:
       - run: ls ./obsidian_local_images_plus_latest
       - run:  echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
 
+            - name: Upload zip file
+              id: upload-zip
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./obsidian_local_images_plus_latest.zip
+                  asset_name: obsidian_local_images_plus_latest-${{ steps.build.outputs.tag_name }}.zip
+                  asset_content_type: application/zip
 
 
