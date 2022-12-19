@@ -30,6 +30,7 @@ jobs:
       - run: ls ./obsidian_local_images_plus_latest
       - run: ls
 
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
