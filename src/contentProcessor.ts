@@ -20,18 +20,22 @@ import { linkHashes } from "./linksHash";
 
 export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: boolean) {
   async function processImageTag(match: string, anchor: string, link: string) {
-    console.log("processImageTag: "  + match +"  "+ anchor +"  "+ link);
+    ////console.log("processImageTag: "  + match +"  "+ anchor +"  "+ link);
     if (!isUrl(link)) {
       return match;
     }
 
     try {
 
+      let fpath;
       let fileData; 
+      const opsys = process.platform;
       const protocol=link.slice(0,7);
       if (protocol == "file://")  
         {
-           fileData = await readFromDisk(link.replace("file://",""));
+          if (opsys == "win32")  {fpath=link.replace("file:///","");}
+          if (opsys == "linux" || opsys == "darwin" )  {fpath=link.replace("file://","");}
+          fileData = await readFromDisk(fpath);
         }
         else{
            fileData = await downloadImage(link);
@@ -103,7 +107,7 @@ async function chooseFileName(
       fileExt = await fileExtByContent(contentData);
   }
   
-  // console.log(fileExt);
+  // ////console.log(fileExt);
   //  if (!fileExt) {
   //    return { fileName: "", needWrite: false };
   //}

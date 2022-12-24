@@ -1,0 +1,11 @@
+{
+  "id": "obsidian-local-images-plus",
+  "name": "Local images plus",
+  "version": "0.14.4",
+  "minAppVersion": "1.0.3",
+  "description": "Local Images plus plugin finds all links to external images in your notes, then downloads and saves images locally, and finally adjusts the image links in your notes to point to the saved image files.",
+  "author": "catalysm, aleksey-rezvov, Sergei Korneev",
+  "authorUrl": "https://github.com/Sergei-Korneev/obsidian-local-images-plus",
+  "fundingUrl": "https://www.buymeacoffee.com/sergeikorneev",
+  "isDesktopOnly": true
+}

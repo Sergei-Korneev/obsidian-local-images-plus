@@ -37,7 +37,7 @@ export function isUrl(link: string) {
 
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
-    console.log("Coping: " + file );
+    console.log("Copying: " + file );
     const data = await fs.readFile(file, null);
     return Buffer.from(data);
 }

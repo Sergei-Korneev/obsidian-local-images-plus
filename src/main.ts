@@ -127,7 +127,7 @@ export default class LocalImagesPlugin extends Plugin {
       (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
 
         this.enqueueActivePage();
-        console.log("test ANY_URL_PATTERN");
+        //console.log("test ANY_URL_PATTERN");
       }
     );
 
@@ -139,7 +139,7 @@ export default class LocalImagesPlugin extends Plugin {
 //          ANY_URL_PATTERN.test(changeObj.text)
 //        ) {
 //
-//        console.log("test ANY_URL_PATTERN");
+//        //console.log("test ANY_URL_PATTERN");
 //          this.enqueueActivePage();
 //        }
 //      });
@@ -160,7 +160,7 @@ export default class LocalImagesPlugin extends Plugin {
       this.settings.realTimeUpdate &&
       this.settings.realTimeUpdateInterval > 0
     ) {
-      console.log("setInterval");
+      //console.log("setInterval");
       this.intervalId = window.setInterval(
         this.processModifiedQueue,
         this.settings.realTimeUpdateInterval*1000
@@ -172,7 +172,7 @@ export default class LocalImagesPlugin extends Plugin {
 
 
   processModifiedQueue = async () => {
-    console.log("Timer triggered");
+    //console.log("Timer triggered");
     const iteration = this.modifiedQueue.iterationQueue();
     for (const page of iteration) {
       this.proccessPage(page);
