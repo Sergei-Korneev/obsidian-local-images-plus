@@ -22,14 +22,23 @@ The plugin finds all links to external images in your notes, downloads and saves
 
 ## Usage
 
-Just copy any web content from a page and paste it into your note.
+Just copy any web content, Word/Open Office content and paste it into your note.
+
+You can also insert any file e.g:
+
+```![mypdf](http://mysite/mypdf.pdf)```
+
+```![mylocalfile](file:///mylinuxdisk/mysong.mp3)```
+
+Files will be copied or downloaded to your attachements folder.
+
+**NOTE: I would not recommend to use this plugin for coping really fat files, since buffered reading from disk not implemented to this date (25 dec 2022)**
 
 
 
 Use it with commands mode or in timer mode:
 
 ![img](docs/Pasted%20image%2020221219134358.png?raw=true)
-
 
 
 
@@ -41,12 +50,14 @@ or
 ```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
 Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
- 
+
 **NOTE: This plugin can change all your notes at once, so you should consider doing backups of your fies periodically.**
+
 
 ## Future development
 
-**Some upcoming plugin features will be added in this readme on the course of releasing new version**
+**Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
+
 ## Donations
 
 Share your  wishes and ideas about this software or buy me a coffee (or hot chocolate)
