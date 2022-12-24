@@ -5,7 +5,7 @@ export const MAX_FILENAME_INDEX = 1000;
 export const FILENAME_ATTEMPTS = 5;
 
 export const EXTERNAL_MEDIA_LINK_PATTERN =
-  /\!\[(?<anchor>.*?)\]\((?<link>.+?)\)/g;
+/\!\[(?<anchor>[^\[\]]*?)\]\((?<link>[^()]*?)\)/g;
 
 export const DIRTY_IMAGE_TAG = /\[\!\[\[(?<anchor>.*?)\]\]\((?<link>.+?)\)\]/g;
 
@@ -35,8 +35,8 @@ export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdateInterval: 1,
   realTimeAttemptsToProcess: 3,
   cleanContent: true,
-  showNotifications: false,
+  showNotifications: true,
   include: ".*\\.md",
   mediaRootDirectory: "_resources",
-  useWikilinks: false,
+  useWikilinks: true,
 };

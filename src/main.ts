@@ -27,8 +27,15 @@ export default class LocalImagesPlugin extends Plugin {
   modifiedQueue = new UniqueQueue<TFile>();
   intervalId: number = null;
 
-  private async proccessPage(file: TFile, silent = false) {
+  private async proccessPage(file: TFile, silent = false): Promise<any>  {
     // const content = await this.app.vault.read(file);
+    if ( file  == null ) {
+
+      if (!silent && this.settings.showNotifications) {
+        new Notice(`Empty note!`);
+        return null;
+      }
+    }
     const content = await this.app.vault.cachedRead(file);
 
     await this.ensureFolderExists(this.settings.mediaRootDirectory);
@@ -47,7 +54,7 @@ export default class LocalImagesPlugin extends Plugin {
       await this.app.vault.modify(file, fixedContent);
 
       if (!silent && this.settings.showNotifications) {
-        new Notice(`Images for "${file.path}" were processed.`);
+        new Notice(`Attachements for "${file.path}" were processed.`);
       }
     } else {
       if (!silent && this.settings.showNotifications) {
@@ -61,11 +68,13 @@ export default class LocalImagesPlugin extends Plugin {
   // using arrow syntax for callbacks to correctly pass this context
   processActivePage = async () => {
     const activeFile = this.app.workspace.getActiveFile();
-    await this.proccessPage(activeFile);
+       await this.proccessPage(activeFile);
   };
 
   processAllPages = async () => {
     const files = this.app.vault.getMarkdownFiles();
+
+    
     const includeRegex = new RegExp(this.settings.include, "i");
 
     const pagesCount = files.length;
@@ -238,14 +247,14 @@ class SettingTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Local Images Plus" });
 
     const donheader = containerEl.createEl("div");
-    donheader.createEl("a", { text: "Support the author"  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
+    donheader.createEl("a", { text: "Support the author  ;)"  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
 
-    donheader.createEl("div");
 
 
     new Setting(containerEl)
       .setName("On paste processing")
       .setDesc("Process active page if external link was pasted.")
+
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.realTimeUpdate)

@@ -3,26 +3,30 @@ import got from "got";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
-//import filenamify from './filenamify.js';
-
-
 import { DIRTY_IMAGE_TAG, FORBIDDEN_SYMBOLS_FILENAME_PATTERN } from "./config";
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
 
 */
+const fs = require('fs').promises;
+
 export async function replaceAsync(str: any, regex: any, asyncFn: any) {
+  console.log("replaceAsync: str: " + str + ' regex: ' + regex);
   const promises: Promise<any>[] = [];
   str.replace(regex, (match: string, ...args: any) => {
+    console.log("Match: " + match);
     const promise = asyncFn(match, ...args);
     promises.push(promise);
   });
   const data = await Promise.all(promises);
+
+//    console.log("Replaced:  " + str.replace(regex, () => data.shift()) );
   return str.replace(regex, () => data.shift());
 }
 
 export function isUrl(link: string) {
+  console.log("IsUrl: " + link);
   try {
     return Boolean(new URL(link));
   } catch (_) {
@@ -30,12 +34,25 @@ export function isUrl(link: string) {
   }
 }
 
+
+
+export async function readFromDisk(file: string): Promise<ArrayBuffer> {
+    console.log("Coping: " + file );
+    const data = await fs.readFile(file, null);
+    return Buffer.from(data);
+}
+
 export async function downloadImage(url: string): Promise<ArrayBuffer> {
+console.log("Downloading: " + url );
   const res = await got(url, { responseType: "buffer" });
   return res.body;
 }
 
 export async function fileExtByContent(content: ArrayBuffer) {
+
+console.log("fileExtByContent: " + content );
+
+
   const fileExt = (await fromBuffer(content))?.ext;
 
   // if XML, probably it is SVG
@@ -48,6 +65,8 @@ export async function fileExtByContent(content: ArrayBuffer) {
 }
 
 function recreateImageTag(match: string, anchor: string, link: string) {
+
+console.log("recreateImageTag: " +  match + anchor + link);
   return `![${anchor}](${link})`;
 }
 

@@ -66,8 +66,6 @@ Share your  wishes and ideas about this software or buy me a coffee (or hot choc
 
 
 
-
-
 ## Credits
 
 [niekcandaele's](https://github.com/niekcandaele/obsidian-local-images)

@@ -6,6 +6,7 @@ import { App, DataAdapter } from "obsidian";
 import {
   isUrl,
   downloadImage,
+  readFromDisk,
   fileExtByContent,
   cleanFileName,
   pathJoin,
@@ -19,12 +20,22 @@ import { linkHashes } from "./linksHash";
 
 export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: boolean) {
   async function processImageTag(match: string, anchor: string, link: string) {
+    console.log("processImageTag: "  + match +"  "+ anchor +"  "+ link);
     if (!isUrl(link)) {
       return match;
     }
 
     try {
-      const fileData = await downloadImage(link);
+
+      let fileData; 
+      const protocol=link.slice(0,7);
+      if (protocol == "file://")  
+        {
+           fileData = await readFromDisk(link.replace("file://",""));
+        }
+        else{
+           fileData = await downloadImage(link);
+        }
 
       // when several images refer to the same file they can be partly
       // failed to download because file already exists, so try to resuggest filename several times
@@ -78,27 +89,34 @@ async function chooseFileName(
   link: string,
   contentData: ArrayBuffer
 ): Promise<{ fileName: string; needWrite: boolean }> {
-  const fileExt = await fileExtByContent(contentData);
+
+
+
+  const parsedUrl = new URL(link);
+
+
+  // If node's package file-type fucked up try to get extension from url (is not this obvious?)
+  let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
+
+
   if (!fileExt) {
-    return { fileName: "", needWrite: false };
+      fileExt = await fileExtByContent(contentData);
   }
-  // if there is no anchor try get file name from url
+  
+  // console.log(fileExt);
+  //  if (!fileExt) {
+  //    return { fileName: "", needWrite: false };
+  //}
+
+
+  baseName = path.basename(parsedUrl.pathname)
+
   if (!baseName) {
-    const parsedUrl = new URL(link);
-
-    baseName = path.basename(parsedUrl.pathname);
-  }
-  // if there is no part for file name from url use name template
-  if (!baseName) {
-    baseName = FILENAME_TEMPLATE;
+        baseName = Math.random().toString(9).slice(2,);
   }
 
-  // if filename already ends with correct extension, remove it to work with base name
-  if (baseName.endsWith(`.${fileExt}`)) {
-    baseName = baseName.slice(0, -1 * (fileExt.length + 1));
-  }
+   baseName=cleanFileName(baseName.replace(`.${fileExt}`,""))
 
-  baseName = cleanFileName(baseName);
 
   let fileName = "";
   let needWrite = true;
