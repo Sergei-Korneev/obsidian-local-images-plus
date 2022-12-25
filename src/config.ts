@@ -5,7 +5,8 @@ export const MAX_FILENAME_INDEX = 1000;
 export const FILENAME_ATTEMPTS = 5;
 
 export const EXTERNAL_MEDIA_LINK_PATTERN =
-/\!\[(?<anchor>[^\[\]]*?)\]\((?<link>[^()]*?)\)/g;
+// /\!{1}\[{1}\[{0}(?<anchor>.*)\]{1}\]{0}\({1}\({0}(?<link>.*)\){1}\){0}/g;
+/\!\[(?<anchor>[^\]\(]{0,})\]\((?<link>[^\)]{0,})\)/g;
 
 export const DIRTY_IMAGE_TAG = /\[\!\[\[(?<anchor>.*?)\]\]\((?<link>.+?)\)\]/g;
 
