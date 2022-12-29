@@ -14,8 +14,13 @@ import{SUPPORTED_OS} from "./config";
 //import AsyncLock from "async-lock";
  // var lock = new AsyncLock();
 
-export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: boolean) {
-  async function processImageTag(match: string, anchor: string, link: string) {
+export function imageTagProcessor(app: App,
+                                  mediaDir: string,
+                                  useWikilinks: boolean,
+                                  addNameofFile: boolean) {
+  async function processImageTag(match: string,
+                                 anchor: string,
+                                 link: string) {
     if (!isUrl(link)) {
       return match;
     }

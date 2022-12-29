@@ -25,7 +25,7 @@ export interface ISettings {
   realTimeUpdate: boolean;
   realTimeUpdateInterval: number;
   realTimeAttemptsToProcess: number;
-  //cleanContent: boolean;
+  addNameOfFile: boolean;
   showNotifications: boolean;
   include: string;
   mediaRootDirectory: string;
@@ -36,7 +36,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdate: false,
   realTimeUpdateInterval: 1,
   realTimeAttemptsToProcess: 3,
-  //cleanContent: true,
+  addNameOfFile: true,
   showNotifications: true,
   include: ".*\\.md",
   mediaRootDirectory: "_resources",

@@ -50,7 +50,10 @@ export default class LocalImagesPlugin extends Plugin {
       content,
       //cleanedContent,
       EXTERNAL_MEDIA_LINK_PATTERN,
-      imageTagProcessor(this.app, this.settings.mediaRootDirectory, this.settings.useWikilinks)
+      imageTagProcessor(this.app,
+                        this.settings.mediaRootDirectory,
+                        this.settings.useWikilinks,
+                        this.settings.addNameOfFile)
     );
 
     if (content != fixedContent) {
