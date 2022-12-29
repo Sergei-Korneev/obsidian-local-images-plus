@@ -11,7 +11,10 @@ import {
 import safeRegex from "safe-regex";
 
 import { imageTagProcessor } from "./contentProcessor";
-import { replaceAsync, cleanContent } from "./utils";
+import { 
+  replaceAsync, 
+  //cleanContent 
+} from "./utils";
 import {
   ISettings,
   DEFAULT_SETTINGS,
@@ -40,11 +43,12 @@ export default class LocalImagesPlugin extends Plugin {
 
     await this.ensureFolderExists(this.settings.mediaRootDirectory);
 
-    const cleanedContent = this.settings.cleanContent
-      ? cleanContent(content)
-      : content;
+   // const cleanedContent = this.settings.cleanContent
+   //   ? cleanContent(content)
+   //   : content;
     const fixedContent = await replaceAsync(
-      cleanedContent,
+      content,
+      //cleanedContent,
       EXTERNAL_MEDIA_LINK_PATTERN,
       imageTagProcessor(this.app, this.settings.mediaRootDirectory, this.settings.useWikilinks)
     );
@@ -247,8 +251,8 @@ class SettingTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Local Images Plus" });
 
     const donheader = containerEl.createEl("div");
-    donheader.createEl("a", { text: "Support the author  ;)"  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
-
+    donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
+    donheader.createEl("a", { text: " GitHub"  , href:"https://github.com/Sergei-Korneev/obsidian-local-images-plus", cls: "donheader_txt" });
 
 
     new Setting(containerEl)
@@ -325,18 +329,18 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
-      .setName("Clean content")
-      .setDesc("Clean malformed image tags before processing.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.cleanContent)
-          .onChange(async (value) => {
-            this.plugin.settings.cleanContent = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
+//    new Setting(containerEl)
+//      .setName("Clean content")
+//      .setDesc("Clean malformed image tags before processing.")
+//      .addToggle((toggle) =>
+//        toggle
+//          .setValue(this.plugin.settings.cleanContent)
+//          .onChange(async (value) => {
+//            this.plugin.settings.cleanContent = value;
+//            await this.plugin.saveSettings();
+//          })
+//      );
+//
     new Setting(containerEl)
       .setName("Show notifications")
       .setDesc("Show notifications when pages were processed.")

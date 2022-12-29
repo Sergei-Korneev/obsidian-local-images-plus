@@ -1,17 +1,18 @@
-export const FILENAME_TEMPLATE = "media";
-
-export const MAX_FILENAME_INDEX = 1000;
-
-export const FILENAME_ATTEMPTS = 5;
-
 export const EXTERNAL_MEDIA_LINK_PATTERN =
-// /\!{1}\[{1}\[{0}(?<anchor>.*)\]{1}\]{0}\({1}\({0}(?<link>.*)\){1}\){0}/g;
-/\!\[(?<anchor>[^\]\(]{0,})\]\((?<link>[^\)]{0,})\)/g;
+// /\!\[(?<anchor>.+)\]\((?<link>.+)\)/g;
+ /\!\[(?<anchor>[^\]\(]{0,})\]\((?<link>[^\)]{0,})\)/g;
 
-export const DIRTY_IMAGE_TAG = /\[\!\[\[(?<anchor>.*?)\]\]\((?<link>.+?)\)\]/g;
+ // /\!\[(?<anchor>.+?)\]\((?<url>(htt(p|s)|file).+?(\.mp4|\.jpeg|\.jpg))/g;
+
+//recursive  regex
+ //(?<anchor>.{0,1}\!\[.+\()(?<link>(htt(p|s)|file).+[^\)])\)
+
+export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
+
+//export const DIRTY_IMAGE_TAG = /\[\!\[\[(?<anchor>.*?)\]\]\((?<link>.+?)\)\]/g;
 
 export const ANY_URL_PATTERN =
-  /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
+/[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
 // Looks like timeouts in Obsidian API are set in milliseconds
 export const NOTICE_TIMEOUT = 10 * 1000;
@@ -24,7 +25,7 @@ export interface ISettings {
   realTimeUpdate: boolean;
   realTimeUpdateInterval: number;
   realTimeAttemptsToProcess: number;
-  cleanContent: boolean;
+  //cleanContent: boolean;
   showNotifications: boolean;
   include: string;
   mediaRootDirectory: string;
@@ -35,7 +36,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdate: false,
   realTimeUpdateInterval: 1,
   realTimeAttemptsToProcess: 3,
-  cleanContent: true,
+  //cleanContent: true,
   showNotifications: true,
   include: ".*\\.md",
   mediaRootDirectory: "_resources",

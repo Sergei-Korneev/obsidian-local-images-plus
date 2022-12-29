@@ -1,3 +1,10 @@
+
+0.14.5
+- Fix: Attachement folder with whitespaces cannot used
+- Fix: Multithreading issue (race condition)
+- Add: 
+
+
 0.14.4
 - Fix: Empty note exception when launching command.
 - Fix: 'file-type' package cannot identify extension from buffer so plugin cannot download some files.

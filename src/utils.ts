@@ -3,7 +3,10 @@ import got from "got";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
-import { DIRTY_IMAGE_TAG, FORBIDDEN_SYMBOLS_FILENAME_PATTERN } from "./config";
+import { 
+  DIRTY_IMAGE_TAG,
+  FORBIDDEN_SYMBOLS_FILENAME_PATTERN 
+} from "./config";
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
@@ -37,21 +40,29 @@ export function isUrl(link: string) {
 
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
-    console.log("Copying: " + file );
+    console.log("readFromDisk: " + file );
     const data = await fs.readFile(file, null);
     return Buffer.from(data);
 }
 
 export async function downloadImage(url: string): Promise<ArrayBuffer> {
+
 console.log("Downloading: " + url );
-  const res = await got(url, { responseType: "buffer" });
+  const res = await  got(url,
+                         {responseType: 'buffer',
+                          method: 'GET',
+                          retry: 3,
+                          timeout: 45000,
+                          maxRedirects: 5,
+                          headers: {
+                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/106.0',
+                            'Accept-Language': 'en-US,en;q=0.5',
+                          },
+                          });  
   return res.body;
 }
 
 export async function fileExtByContent(content: ArrayBuffer) {
-
-console.log("fileExtByContent: " + content );
-
 
   const fileExt = (await fromBuffer(content))?.ext;
 
@@ -64,17 +75,17 @@ console.log("fileExtByContent: " + content );
   return fileExt;
 }
 
-function recreateImageTag(match: string, anchor: string, link: string) {
-
-console.log("recreateImageTag: " +  match + anchor + link);
-  return `![${anchor}](${link})`;
-}
-
-export function cleanContent(content: string) {
-  const cleanedContent = content.replace(DIRTY_IMAGE_TAG, recreateImageTag);
-  return cleanedContent;
-}
-
+//function recreateImageTag(match: string, anchor: string, link: string) {
+//
+//console.log("recreateImageTag: " +  match + anchor + link);
+//  return `![${anchor}](${link})`;
+//}
+//
+//export function cleanContent(content: string) {
+//  const cleanedContent = content.replace(DIRTY_IMAGE_TAG, recreateImageTag);
+//  return cleanedContent;
+//}
+//
 export function cleanFileName(name: string) {
   const cleanedName = filenamify(name).replace(
     FORBIDDEN_SYMBOLS_FILENAME_PATTERN,

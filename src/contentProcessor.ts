@@ -1,8 +1,7 @@
 import { URL } from "url";
 import path from "path";
-
 import { App, DataAdapter } from "obsidian";
-
+import md5 from 'crypto-js/md5';
 import {
   isUrl,
   downloadImage,
@@ -11,20 +10,15 @@ import {
   cleanFileName,
   pathJoin,
 } from "./utils";
-import {
-  FILENAME_TEMPLATE,
-  MAX_FILENAME_INDEX,
-  FILENAME_ATTEMPTS,
-} from "./config";
-import { linkHashes } from "./linksHash";
+import{SUPPORTED_OS} from "./config";
+//import AsyncLock from "async-lock";
+ // var lock = new AsyncLock();
 
 export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: boolean) {
   async function processImageTag(match: string, anchor: string, link: string) {
-    ////console.log("processImageTag: "  + match +"  "+ anchor +"  "+ link);
     if (!isUrl(link)) {
       return match;
     }
-
     try {
 
       let fpath;
@@ -33,23 +27,20 @@ export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: bool
       const protocol=link.slice(0,7);
       if (protocol == "file://")  
         {
-          if (opsys == "win32")  {fpath=link.replace("file:///","");}
-          if (opsys == "linux" || opsys == "darwin" )  {fpath=link.replace("file://","");}
-          fileData = await readFromDisk(fpath);
+          if (SUPPORTED_OS.win.includes(opsys)) {fpath=link.replace("file:///",""); }
+          else if (SUPPORTED_OS.unix.includes(opsys)) { fpath=link.replace("file://",""); }
+          else { fpath=link.replace("file://",""); }
+             fileData = await readFromDisk(fpath);
         }
         else{
            fileData = await downloadImage(link);
         }
 
-      // when several images refer to the same file they can be partly
-      // failed to download because file already exists, so try to resuggest filename several times
-      let attempt = 0;
-      while (attempt < FILENAME_ATTEMPTS) {
         try {
+     
           const { fileName, needWrite } = await chooseFileName(
             app.vault.adapter,
             mediaDir,
-            anchor,
             link,
             fileData
           );
@@ -59,23 +50,29 @@ export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: bool
           }
 
           if (fileName) {
-              if (useWikilinks) {
-                 return `![[${fileName}]]`;
+          let shortName=""    
+          if (protocol == "file://"){
+
+               shortName = "**"+path.basename(decodeURI(link))+"**\r\n";
+          }  
+
+            if (useWikilinks) {
+
+                 return `${shortName}![[${fileName}]]`;
               }
               else{
-                 return `![${anchor}](${fileName})`;
+                 return `${shortName}![${anchor}](${fileName})`;
               }
           } else {
             return match;
           }
         } catch (error) {
           if (error.message === "File already exists.") {
-            attempt++;
           } else {
             throw error;
           }
         }
-      }
+      
       return match;
     } catch (error) {
       console.warn("Image processing failed: ", error);
@@ -89,67 +86,57 @@ export function imageTagProcessor(app: App, mediaDir: string, useWikilinks: bool
 async function chooseFileName(
   adapter: DataAdapter,
   dir: string,
-  baseName: string,
   link: string,
   contentData: ArrayBuffer
 ): Promise<{ fileName: string; needWrite: boolean }> {
-
-
-
   const parsedUrl = new URL(link);
-
 
   // If node's package file-type fucked up try to get extension from url (is not this obvious?)
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
+  console.log("file: "+link+" content: "+contentData);
 
+  if (fileExt.length > 4 )
+{
+
+fileExt=fileExt.match(/((http|file|https).+?(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
+  }
 
   if (!fileExt) {
       fileExt = await fileExtByContent(contentData);
   }
   
-  // ////console.log(fileExt);
-  //  if (!fileExt) {
-  //    return { fileName: "", needWrite: false };
-  //}
-
-
-  baseName = path.basename(parsedUrl.pathname)
-
-  if (!baseName) {
-        baseName = Math.random().toString(9).slice(2,);
+  if (!fileExt) {
+    fileExt = "unknown";
+    //return { fileName: "", needWrite: false };
   }
 
-   baseName=cleanFileName(baseName.replace(`.${fileExt}`,""))
-
-
-  let fileName = "";
+console.log("Ext: "+fileExt);
+  var enc = new TextDecoder("utf-8");
+  const baseName =  md5(enc.decode(contentData.slice(0, 10000))).toString() ;
   let needWrite = true;
-  let index = 0;
-  while (!fileName && index < MAX_FILENAME_INDEX) {
-    const suggestedName = index
-      ? pathJoin(dir, `${baseName}-${index}.${fileExt}`)
-      : pathJoin(dir, `${baseName}.${fileExt}`);
-
+  let fileName = "";
+  const suggestedName = pathJoin(dir, cleanFileName(`${baseName}`+"_MD5"+`.${fileExt}`));
     if (await adapter.exists(suggestedName, false)) {
-      linkHashes.ensureHashGenerated(link, contentData);
-
       const fileData = await adapter.readBinary(suggestedName);
+            const existing_file_md5 = md5(enc.decode(fileData.slice(0,10000))).toString() ;
+            if (existing_file_md5 === baseName){
+              fileName = suggestedName;
+              needWrite = false;
+            }
+            else{
+              fileName =  pathJoin(dir, cleanFileName( Math.random().toString(9).slice(2,) +`.${fileExt}`));
+            }
 
-      if (linkHashes.isSame(link, fileData)) {
-        fileName = suggestedName;
-        needWrite = false;
-      }
     } else {
       fileName = suggestedName;
     }
 
-    index++;
-  }
+console.log(fileName);
   if (!fileName) {
     throw new Error("Failed to generate file name for media file.");
   }
 
-  linkHashes.ensureHashGenerated(link, contentData);
+  //linkHashes.ensureHashGenerated(link, contentData);
 
   return { fileName, needWrite };
 }
