@@ -332,18 +332,18 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-//    new Setting(containerEl)
-//      .setName("Clean content")
-//      .setDesc("Clean malformed image tags before processing.")
-//      .addToggle((toggle) =>
-//        toggle
-//          .setValue(this.plugin.settings.cleanContent)
-//          .onChange(async (value) => {
-//            this.plugin.settings.cleanContent = value;
-//            await this.plugin.saveSettings();
-//          })
-//      );
-//
+    new Setting(containerEl)
+      .setName("Add original filename before tag.")
+      .setDesc("Add **original filename** before replaced tag.(only for file:// protocol)")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.addNameOfFile)
+          .onChange(async (value) => {
+            this.plugin.settings.addNameOfFile = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
     new Setting(containerEl)
       .setName("Show notifications")
       .setDesc("Show notifications when pages were processed.")

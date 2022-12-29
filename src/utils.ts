@@ -4,7 +4,7 @@ import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
 import { 
-  DIRTY_IMAGE_TAG,
+ // DIRTY_IMAGE_TAG,
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN 
 } from "./config";
 /*

@@ -55,11 +55,10 @@ export function imageTagProcessor(app: App,
           }
 
           if (fileName) {
-          let shortName=""    
-          if (protocol == "file://"){
-
+           let  shortName = ""
+          if (addNameofFile  && protocol == "file://") {
                shortName = "**"+path.basename(decodeURI(link))+"**\r\n";
-          }  
+          }
 
             if (useWikilinks) {
 
