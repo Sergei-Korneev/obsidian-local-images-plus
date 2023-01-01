@@ -2,18 +2,19 @@
 
 
 
-Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) desktop ( the mobile version is in the plans). 
+Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) desktop (the mobile version is still in the plans). 
 
-The plugin finds all links to external images in your notes, downloads and saves images locally and finally adjusts the link in your note to point to the local image files.
-
+The plugin searches for all external media links in your notes, downloads and saves images locally and adjusts the links in your notes to point to the local files.
 
 **This plugin is in development process, so your ideas and donations are very appreciated.**
+
+Version 0.14.5 is on the way!
 
 ## Installation
 
 - Download the latest version from github or [github page](https://sergei-korneev.github.io/obsidian-local-images-plus) of the project.
 - Remove obsidian-local-images plugin to avoid any conflicts.
-- Extract the archive into your obsidian vault (e.g. Myvault/.obsidian/plugins)
+- Extract the archive into your Obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
 - Open "Community plugins" dialog and change plugin settings at will.
 - Enjoy
@@ -51,7 +52,7 @@ or
 
 Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
 
-**NOTE: This plugin can change all your notes at once, so you should consider doing backups of your fies periodically.**
+**NOTE: This plugin can change all your notes at once, so you should consider doing backups of your files periodically.**
 
 
 ## Future development
