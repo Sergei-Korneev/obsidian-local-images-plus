@@ -273,7 +273,7 @@ class SettingTab extends PluginSettingTab {
       .setName("On paste processing interval")
       .setDesc("Interval in seconds for processing update.")
       .setTooltip(
-        "I could not process content on the fly when it is pasted. So real processing implements periodically with the given here timeout."
+        ""
       )
       .addText((text) =>
         text
