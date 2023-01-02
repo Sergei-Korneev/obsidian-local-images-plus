@@ -6,19 +6,26 @@ import {
   Setting,
   TFile,
   Editor,
-  MarkdownView
+  htmlToMarkdown,
+  MarkdownView,
 } from "obsidian";
+//import * as CodeMirror from "codemirror";
 import safeRegex from "safe-regex";
 
-import { imageTagProcessor } from "./contentProcessor";
+import { 
+  imageTagProcessor,
+} from "./contentProcessor";
+
 import { 
   replaceAsync, 
-  //cleanContent 
+  readFromDisk,
+  logError
 } from "./utils";
+
 import {
   ISettings,
   DEFAULT_SETTINGS,
-  EXTERNAL_MEDIA_LINK_PATTERN,
+  MD_MEDIA_LINK,
   ANY_URL_PATTERN,
   NOTICE_TIMEOUT,
   TIMEOUT_LIKE_INFINITY,
@@ -30,28 +37,27 @@ export default class LocalImagesPlugin extends Plugin {
   modifiedQueue = new UniqueQueue<TFile>();
   intervalId: number = null;
 
-  private async proccessPage(file: TFile, silent = false): Promise<any>  {
-    // const content = await this.app.vault.read(file);
+  private async processPage(file: TFile): Promise<any>  {
+    logError(file,true);
     if ( file  == null ) {
-
-      if (!silent && this.settings.showNotifications) {
+      if (this.settings.showNotifications) {
         new Notice(`Empty note!`);
         return null;
       }
     }
+
     const content = await this.app.vault.cachedRead(file);
 
-    await this.ensureFolderExists(this.settings.mediaRootDirectory);
-
-   // const cleanedContent = this.settings.cleanContent
-   //   ? cleanContent(content)
-   //   : content;
+    let root = this.settings.mediaRootDirectory;
+    if (this.settings.saveAttNextToNote){
+           root = file.path + "_res";
+    }
+    await this.ensureFolderExists(root);
     const fixedContent = await replaceAsync(
       content,
-      //cleanedContent,
-      EXTERNAL_MEDIA_LINK_PATTERN,
+      MD_MEDIA_LINK,
       imageTagProcessor(this.app,
-                        this.settings.mediaRootDirectory,
+                        root,
                         this.settings.useWikilinks,
                         this.settings.addNameOfFile)
     );
@@ -60,22 +66,23 @@ export default class LocalImagesPlugin extends Plugin {
       this.modifiedQueue.remove(file);
       await this.app.vault.modify(file, fixedContent);
 
-      if (!silent && this.settings.showNotifications) {
+      if (this.settings.showNotifications) {
         new Notice(`Attachements for "${file.path}" were processed.`);
       }
-    } else {
-      if (!silent && this.settings.showNotifications) {
-        new Notice(
-          `Page "${file.path}" has been processed, but nothing was changed.`
-        );
-      }
     }
+//    else {
+//      if (this.settings.showNotifications) {
+//        new Notice(
+//          `Page "${file.path}" has been processed, but nothing was changed.`
+//        );
+//      }
+//    }
   }
 
   // using arrow syntax for callbacks to correctly pass this context
   processActivePage = async () => {
     const activeFile = this.app.workspace.getActiveFile();
-       await this.proccessPage(activeFile);
+       await this.processPage(activeFile);
   };
 
   processAllPages = async () => {
@@ -88,7 +95,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     const notice = this.settings.showNotifications
       ? new Notice(
-          `Local Images \nStart processing. Total ${pagesCount} pages. `,
+          `Local Images Plus \nStart processing. Total ${pagesCount} pages. `,
           TIMEOUT_LIKE_INFINITY
         )
       : null;
@@ -98,10 +105,10 @@ export default class LocalImagesPlugin extends Plugin {
         if (notice) {
           //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
           notice.setMessage(
-            `Local Images: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
+            `Local Images Plus: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
           );
         }
-        await this.proccessPage(file, true);
+        await this.processPage(file);
       }
     }
     if (notice) {
@@ -113,7 +120,6 @@ export default class LocalImagesPlugin extends Plugin {
       }, NOTICE_TIMEOUT);
     }
   };
-
   async onload() {
     await this.loadSettings();
 
@@ -128,30 +134,23 @@ export default class LocalImagesPlugin extends Plugin {
       name: "Download images locally for all your notes",
       callback: this.processAllPages,
     });
-
     this.app.workspace.on(
       "editor-paste",
-      (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
-
-        this.enqueueActivePage();
-        //console.log("test ANY_URL_PATTERN");
+        ( evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
+          if (this.settings.realTimeUpdate)  {
+              const conthtml = htmlToMarkdown(evt.clipboardData.getData("text/html"));
+              const contmd = htmlToMarkdown(evt.clipboardData.getData("text"));
+                if (MD_MEDIA_LINK.test(conthtml) ||
+                    MD_MEDIA_LINK.test(contmd) ){
+                    if (this.settings.showNotifications) {
+                      new Notice("Media links were found, processing...");
+                    }
+                       this.enqueueActivePage();
+           }
       }
+        }
     );
 
-//    //this.registerCodeMirror((cm: CodeMirror.Editor) => {
-//      // on("beforeChange") can not execute async function in event handler, so we use queue to pass modified pages to timeouted handler
-//      cm.on("change", async (instance: CodeMirror.Editor, changeObj: any) => {
-//        if (
-//          changeObj.origin == "paste" &&
-//          ANY_URL_PATTERN.test(changeObj.text)
-//        ) {
-//
-//        //console.log("test ANY_URL_PATTERN");
-//          this.enqueueActivePage();
-//        }
-//      });
-//    });
-//
     this.setupQueueInterval();
 
     this.addSettingTab(new SettingTab(this.app, this));
@@ -167,7 +166,6 @@ export default class LocalImagesPlugin extends Plugin {
       this.settings.realTimeUpdate &&
       this.settings.realTimeUpdateInterval > 0
     ) {
-      //console.log("setInterval");
       this.intervalId = window.setInterval(
         this.processModifiedQueue,
         this.settings.realTimeUpdateInterval*1000
@@ -179,10 +177,9 @@ export default class LocalImagesPlugin extends Plugin {
 
 
   processModifiedQueue = async () => {
-    //console.log("Timer triggered");
     const iteration = this.modifiedQueue.iterationQueue();
     for (const page of iteration) {
-      this.proccessPage(page);
+      this.processPage(page);
     }
   };
 
@@ -190,7 +187,7 @@ export default class LocalImagesPlugin extends Plugin {
     const activeFile = this.app.workspace.getActiveFile();
     this.modifiedQueue.push(
       activeFile,
-      this.settings.realTimeAttemptsToProcess
+      4//this.settings.realTimeAttemptsToProcess
     );
   }
   // It is good idea to create the plugin more verbose
@@ -205,7 +202,7 @@ export default class LocalImagesPlugin extends Plugin {
       new Notice(error.toString());
     }
 
-    console.error(`LocalImages: error: ${error}`);
+    logError(`LocalImages: error: ${error}`, false);
   }
 
   onunload() {}
@@ -302,39 +299,39 @@ class SettingTab extends PluginSettingTab {
             this.plugin.setupQueueInterval();
           })
       );
-
-    new Setting(containerEl)
-      .setName("Attempts to process")
-      .setDesc(
-        "Number of attempts to process content on paste."
-      )
-      .setTooltip(
-        "I could not find the way to access newly pasted content immediatily, after pasting, Plugin's API returns old text for a while. The workaround is to process page several times until content is changed."
-      )
-      .addText((text) =>
-        text
-          .setValue(String(this.plugin.settings.realTimeAttemptsToProcess))
-          .onChange(async (value: string) => {
-            const numberValue = Number(value);
-            if (
-              isNaN(numberValue) ||
-              !Number.isInteger(numberValue) ||
-              numberValue < 1 ||
-              numberValue > 100
-            ) {
-              this.plugin.displayError(
-                "Realtime processing interval should be a positive integer number greater than 1 and lower than 100!"
-              );
-              return;
-            }
-            this.plugin.settings.realTimeAttemptsToProcess = numberValue;
-            await this.plugin.saveSettings();
-          })
-      );
+//
+//    new Setting(containerEl)
+//      .setName("Attempts to process")
+//      .setDesc(
+//        "Number of attempts to process content on paste."
+//      )
+//      .setTooltip(
+//        "."
+//      )
+//      .addText((text) =>
+//        text
+//          .setValue(String(this.plugin.settings.realTimeAttemptsToProcess))
+//          .onChange(async (value: string) => {
+//            const numberValue = Number(value);
+//            if (
+//              isNaN(numberValue) ||
+//              !Number.isInteger(numberValue) ||
+//              numberValue < 1 ||
+//              numberValue > 100
+//            ) {
+//              this.plugin.displayError(
+//                "Realtime processing interval should be a positive integer number greater than 1 and lower than 100!"
+//              );
+//              return;
+//            }
+//            this.plugin.settings.realTimeAttemptsToProcess = numberValue;
+//            await this.plugin.saveSettings();
+//          })
+//      );
 
     new Setting(containerEl)
       .setName("Add original filename before tag.")
-      .setDesc("Add **original filename** before replaced tag.(only for file:// protocol)")
+      .setDesc("Add **original filename** before replaced tag (only for file:// protocol).")
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.addNameOfFile)
@@ -344,6 +341,17 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
+    new Setting(containerEl)
+      .setName("Save attachments next to note.")
+      .setDesc("Put all new attachements in ${notepath}.md_res directory.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.saveAttNextToNote)
+          .onChange(async (value) => {
+            this.plugin.settings.saveAttNextToNote = value;
+            await this.plugin.saveSettings();
+          })
+      );
     new Setting(containerEl)
       .setName("Show notifications")
       .setDesc("Show notifications when pages were processed.")

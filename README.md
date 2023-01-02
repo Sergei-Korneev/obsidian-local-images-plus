@@ -8,7 +8,6 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 **This plugin is in development process, so your ideas and donations are very appreciated.**
 
-Version 0.14.5 is on the way!
 
 ## Installation
 

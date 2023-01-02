@@ -4,9 +4,15 @@ import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
 import { 
- // DIRTY_IMAGE_TAG,
-  FORBIDDEN_SYMBOLS_FILENAME_PATTERN 
+  FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
+  VERBOSE,
+  MD_MEDIA_LINK, 
+  MD_MEDIA_EMBED,
+  MD_ANCHOR,
+  MD_LINK,
+  USER_AGENT
 } from "./config";
+
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
@@ -14,22 +20,55 @@ It will be better to do it type-correct.
 */
 const fs = require('fs').promises;
 
+export function logError(str: any, isObj: boolean =  false){
+    if (VERBOSE){
+      if (isObj){
+        console.table(str);
+      }
+      else{
+        console.log(str);
+      }
+    }
+};
+
+
 export async function replaceAsync(str: any, regex: any, asyncFn: any) {
-  console.log("replaceAsync: str: " + str + ' regex: ' + regex);
+  logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
   const promises: Promise<any>[] = [];
   str.replace(regex, (match: string, ...args: any) => {
-    console.log("Match: " + match);
-    const promise = asyncFn(match, ...args);
+    
+    logError("Match: " + match, false);
+
+                  let link;
+                  let anchor;
+                  let link2;
+                  let rr;
+
+    try{
+                   link = match.match(MD_MEDIA_LINK)[0].match(MD_MEDIA_EMBED)[0].match(MD_LINK)[0].replace(/(\)$|^\()/g, '');
+                   anchor = match.match(MD_MEDIA_LINK)[0].match(MD_MEDIA_EMBED)[0].match(MD_ANCHOR)[0].replace(/(\]$|^\!\[)/g, '');
+                   rr={anc:anchor,lnk:link,repl:`![${anchor}](${link})`};
+
+                  if (link){
+//                  link2 = link[1].replace(/(\)$|^\()/g, '');
+                  }
+        }
+        catch(e){
+              logError("Error in regex: "+e,false);
+        }
+
+    logError(rr, true);
+    const promise = asyncFn(rr.repl, rr.anc, rr.lnk);
+
+    logError(promise,true);
     promises.push(promise);
   });
   const data = await Promise.all(promises);
-
-//    console.log("Replaced:  " + str.replace(regex, () => data.shift()) );
   return str.replace(regex, () => data.shift());
 }
 
 export function isUrl(link: string) {
-  console.log("IsUrl: " + link);
+  logError("IsUrl: " + link, false);
   try {
     return Boolean(new URL(link));
   } catch (_) {
@@ -37,29 +76,44 @@ export function isUrl(link: string) {
   }
 }
 
-
-
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
-    console.log("readFromDisk: " + file );
+    logError("readFromDisk: " + file, false);
+try {
+    //   const data = await this.app.vault.adapter.readBinary(file);
     const data = await fs.readFile(file, null);
     return Buffer.from(data);
+}
+catch(e)
+{
+
+  logError("Cannot read the file: "+ e,false);
+    return null;
+}
 }
 
 export async function downloadImage(url: string): Promise<ArrayBuffer> {
 
-console.log("Downloading: " + url );
+logError("Downloading: " + url, false);
+try {
   const res = await  got(url,
                          {responseType: 'buffer',
                           method: 'GET',
-                          retry: 3,
-                          timeout: 45000,
+                          retry: 2,
+                          timeout: 10000,
                           maxRedirects: 5,
                           headers: {
-                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/106.0',
-                            'Accept-Language': 'en-US,en;q=0.5',
+                            'User-Agent': USER_AGENT,
+                           // 'Accept-Language': 'en-US,en;q=0.5',
                           },
                           });  
   return res.body;
+}
+catch(e)
+{
+
+  logError("Cannot download the file: "+ e,false);
+    return null;
+}
 }
 
 export async function fileExtByContent(content: ArrayBuffer) {
@@ -75,17 +129,6 @@ export async function fileExtByContent(content: ArrayBuffer) {
   return fileExt;
 }
 
-//function recreateImageTag(match: string, anchor: string, link: string) {
-//
-//console.log("recreateImageTag: " +  match + anchor + link);
-//  return `![${anchor}](${link})`;
-//}
-//
-//export function cleanContent(content: string) {
-//  const cleanedContent = content.replace(DIRTY_IMAGE_TAG, recreateImageTag);
-//  return cleanedContent;
-//}
-//
 export function cleanFileName(name: string) {
   const cleanedName = filenamify(name).replace(
     FORBIDDEN_SYMBOLS_FILENAME_PATTERN,

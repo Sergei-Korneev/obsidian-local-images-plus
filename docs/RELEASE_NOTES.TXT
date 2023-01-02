@@ -1,17 +1,17 @@
 
 0.14.5
-- Fix: Attachement folder with whitespaces cannot used
-- Fix: Multithreading issue (race condition)
-- Add: 
-
+- Fix: Some file:// links with '()' and '[]' in path cannot be processed.
+- Fix: Better regex parcing.
+- Fix: Duplicates when mass processing.
+- Fix: Filenames are now generated according to MD5 by their 10k signatures. 
+- Add: Option to add original filename before replaced tag (only for file:// protocol).
+- Add: Option to store all attachements in folder next to a markdown note.
 
 0.14.4
 - Fix: Empty note exception when launching command.
 - Fix: 'file-type' package cannot identify extension from buffer so plugin cannot download some files.
 - Fix: Regexp issues.
 - Add: file:// protocol support to import word/open office images/local files and possibility to download any file from web.
-
-
 
 0.14.3
 - Fix: Several bugs on new Obsidian versions.
