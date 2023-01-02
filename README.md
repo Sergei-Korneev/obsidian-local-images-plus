@@ -9,6 +9,8 @@ The plugin searches for all external media links in your notes, downloads and sa
 **This plugin is in development process, so your ideas and donations are very appreciated.**
 
 
+
+
 ## Installation
 
 - Download the latest version from github or [github page](https://sergei-korneev.github.io/obsidian-local-images-plus) of the project.
