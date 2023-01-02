@@ -79,7 +79,7 @@ export function imageTagProcessor(app: App,
              let   fileNameURI= encodeURI(fileName);
             if (useWikilinks) {
 
-                 return `${shortName}![[${fileNameURI}]]`;
+                 return `${shortName}![[${fileName}]]`;
               }
               else{
                  return `${shortName}![${anchor}](${fileNameURI})`;
