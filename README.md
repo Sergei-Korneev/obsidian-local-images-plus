@@ -20,6 +20,11 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 
 
+Update:
+
+The plugin is in Obsidian store now!
+
+
 ## Usage
 
 Just copy any web content, Word/Open Office content and paste it into your note.
