@@ -41,7 +41,7 @@ Files will be copied or downloaded to your attachements folder.
 
 
 
-Use it with commands mode or in timer mode (toggle "on paste processing" option in settings):
+Use it in the command mode or in timer mode (toggle "on paste processing" option in settings):
 
 ![img](docs/Pasted%20image%2020221219134358.png?raw=true)
 
