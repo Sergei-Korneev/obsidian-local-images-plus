@@ -6,7 +6,6 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) desk
 
 The plugin searches for all external media links in your notes, downloads and saves them locally and adjusts the links in your notes to point to the local files.
 
-**This plugin is in development process, so your ideas and donations are very appreciated.**
 
 
 ## Installation
@@ -60,6 +59,8 @@ This means you can place them everywhere, replace in a tag absolute path with fi
  
 
 ## Future development
+
+**This plugin is in development process, so your ideas and donations are very appreciated.**
 
 **Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
 
