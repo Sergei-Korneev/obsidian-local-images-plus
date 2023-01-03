@@ -41,7 +41,7 @@ Files will be copied or downloaded to your attachements folder.
 
 
 
-Use it with commands mode or in timer mode:
+Use it with commands mode or in timer mode (toggle "on paste processing" option in settings):
 
 ![img](docs/Pasted%20image%2020221219134358.png?raw=true)
 
@@ -52,12 +52,17 @@ Use it with commands mode or in timer mode:
 
 or
 
-```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
+```Download images locally for all your notes``` - will be processed all the pages in your vault,
 
-Also you can turn on in plugin's settings processing the active page when external links pasted into the page.
+that corresponds to **Include** parameter in the plugin's settings.
+
 
 **NOTE: This plugin can change all your notes at once, so you should consider doing backups of your files periodically.**
 
+Since 0.14.5 attachments' names are generated according to MD5, therefore they are pretty unique within the vault.        
+
+This means you can place them everywhere, replace in a tag absolute path with file name in your note and Obsidian will still show them.
+ 
 
 ## Future development
 
