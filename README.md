@@ -46,9 +46,7 @@ Use it in the command mode or in timer mode (toggle "on paste processing" option
 
 or
 
-```Download images locally for all your notes``` - will be processed all the pages in your vault,
-
-that corresponds to **Include** parameter in the plugin's settings.
+```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
 
 **NOTE: This plugin can change all your notes at once, so you should consider doing backups of your files periodically.**
