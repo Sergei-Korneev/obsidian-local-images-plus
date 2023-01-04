@@ -51,7 +51,7 @@ or
 
 **NOTE: This plugin can change all your notes at once, so you should consider doing backups of your files periodically.**
 
-Since 0.14.5 attachments' names are generated according to MD5, therefore they are pretty unique within the vault.        
+Since 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
 
 This means you can place them everywhere, replace in a tag absolute path with file name in your note and Obsidian will still show them.
  
