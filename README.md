@@ -31,7 +31,7 @@ You can also insert any file e.g:
 
 Files will be copied or downloaded to your attachements folder.
 
-**NOTE: I would not recommend to use this plugin for coping really fat files, since buffered reading from disk not implemented to this date (25 dec 2022)**
+**NOTE: I would not recommend to use this plugin for copying really fat files, since buffered reading from disk not implemented to this date (25 dec 2022)**
 
 
 
