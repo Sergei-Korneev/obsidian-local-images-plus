@@ -1,3 +1,10 @@
+0.14.6
+- Fix: Regex issues and better parsing.
+- Fix: Improved error handling. 
+       For example the plugin now shows warning when some attachements were not downloaded due to errors (network, etc.).
+       In this case a note content will be partially changed. 
+- Add: The option "add **original filename**" was replaced with "add  [[original filename]]" as more useful in my opinion.
+- Add: Dropdown menu to select an attachements destination folder.
 
 0.14.5
 - Fix: Some file:// links with '()' and '[]' in path cannot be processed.

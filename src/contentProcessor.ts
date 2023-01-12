@@ -14,8 +14,6 @@ import {
 
 import{
   MD_MEDIA_LINK, 
-  MD_MEDIA_EMBED,
-  MD_ANCHOR,
   MD_LINK,
   SUPPORTED_OS
 } from "./config";
@@ -31,7 +29,7 @@ export function imageTagProcessor(app: App,
   async function processImageTag(match: string,
                                  anchor: string,
                                  link: string) {
-    
+   logError("processImageTag: "+match) 
     if (!isUrl(link)) {
       return match;
     }
@@ -55,7 +53,7 @@ export function imageTagProcessor(app: App,
         }
          if ( fileData  === null ){
             logError("Cannot get an attachment content!", false);
-            return match;
+            return null;
          }
         try {
      
@@ -73,19 +71,35 @@ export function imageTagProcessor(app: App,
           if (fileName) {
            let  shortName = ""
           if (addNameofFile  && protocol == "file://") {
-               shortName = "**"+path.basename(decodeURI(link))+"**\r\n";
-          }
+
+            if (useWikilinks) {
+
+               shortName = "\r\n[[" +
+               fileName +
+                 "\|" +
+                   path.basename(decodeURI(link)) + "]]\r\n";
+            }
+            else
+              {
+               shortName = "\r\n[" +
+               path.basename(decodeURI(link)) +
+               "](" +
+               fileName +
+                  ")\r\n";
+              }
+            }
+
 
              let   fileNameURI= encodeURI(fileName);
             if (useWikilinks) {
 
-                 return `${shortName}![[${fileName}]]`;
+                 return  [match, `${shortName}![[${fileName}]]`];
               }
               else{
-                 return `${shortName}![${anchor}](${fileNameURI})`;
+                 return [match,`${shortName}![${anchor}](${fileNameURI})`];
               }
           } else {
-            return match;
+            return null;
           }
         } catch (error) {
           if (error.message === "File already exists.") {
@@ -94,10 +108,10 @@ export function imageTagProcessor(app: App,
           }
         }
       
-      return match;
+      return null;
     } catch (error) {
       logError("Image processing failed: " + error, false);
-      return match;
+      return null;
     }
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "obsidian-local-images",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "description": "This is a plugin for Obsidian (https://obsidian.md) that downloads images from external links and save in local vault.",
   "main": "build/main.js",
   "scripts": {

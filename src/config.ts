@@ -1,14 +1,22 @@
 export const VERBOSE = false;
+
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
+
 export const USER_AGENT ='Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/106.0';
+
 export const MD_MEDIA_LINK= 
 /(?<anchor>.{0,1}\!\[.+\()(?<link>(htt(p|s)|file).+[^\)])\)/g;
-export const MD_MEDIA_EMBED = 
-/(?<anchor>\!\[.+\()(?<link>(http[s]{0,1}|file).*)/g;
-export const MD_ANCHOR = 
-/\!\[(?<anchor>.*?)\]/g;
+
+export const MD_SEARCH_PATTERN=
+[
+//file link
+/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((file).+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/g,
+//hypertext link
+/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((http(s){0,1}).+?(\) {0,}|\)$|\)\n|\)\]|\)\[)))/g
+]
+
 export const MD_LINK = 
-/\((?<link>(htt(p|s).+?[ |\)]{1}|file.+\){1}))/g;
+/\http(s){0,1}.+?( {1}|\))/g;
 
 
 export const ANY_URL_PATTERN =
@@ -20,7 +28,7 @@ export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
-  saveAttNextToNote: boolean,
+  saveAtt: string,
   realTimeUpdate: boolean;
   realTimeUpdateInterval: number;
   addNameOfFile: boolean;
@@ -31,12 +39,12 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
-  saveAttNextToNote: false,
+  saveAtt: "obsFolder",
   realTimeUpdate: false,
-  realTimeUpdateInterval: 2,
+  realTimeUpdateInterval: 5,
   addNameOfFile: true,
   showNotifications: true,
   include: ".*\\.md",
   mediaRootDirectory: "_resources",
-  useWikilinks: true,
+  useWikilinks: false,
 };

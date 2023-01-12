@@ -7,8 +7,6 @@ import {
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
   VERBOSE,
   MD_MEDIA_LINK, 
-  MD_MEDIA_EMBED,
-  MD_ANCHOR,
   MD_LINK,
   USER_AGENT
 } from "./config";
@@ -32,39 +30,67 @@ export function logError(str: any, isObj: boolean =  false){
 };
 
 
-export async function replaceAsync(str: any, regex: any, asyncFn: any) {
+export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any) {
   logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
+  let errorflag=false;
   const promises: Promise<any>[] = [];
-  str.replace(regex, (match: string, ...args: any) => {
-    
-    logError("Match: " + match, false);
+  let matches;
+  let link;
+  let anchor;
+  let replp;
+  let link_;
 
-                  let link;
-                  let anchor;
-                  let link2;
-                  let rr;
+  regex.forEach((element) => {
+      logError(element);
+          matches =  str.matchAll(element);
 
-    try{
-                   link = match.match(MD_MEDIA_LINK)[0].match(MD_MEDIA_EMBED)[0].match(MD_LINK)[0].replace(/(\)$|^\()/g, '');
-                   anchor = match.match(MD_MEDIA_LINK)[0].match(MD_MEDIA_EMBED)[0].match(MD_ANCHOR)[0].replace(/(\]$|^\!\[)/g, '');
-                   rr={anc:anchor,lnk:link,repl:`![${anchor}](${link})`};
-
-                  if (link){
-//                  link2 = link[1].replace(/(\)$|^\()/g, '');
+    for (const match of matches) {
+                  link = match.groups.link;
+                  link_=link.match(MD_LINK); 
+                  if (link_ !== null){
+                        link=link_[0];
                   }
-        }
-        catch(e){
-              logError("Error in regex: "+e,false);
-        }
+                  link=trimAny(link,[")","(","]","["," "])
+                  anchor = match.groups.anchor;
+                  replp=trimAny(match[0],["[","(","]"]);
 
-    logError(rr, true);
-    const promise = asyncFn(rr.repl, rr.anc, rr.lnk);
+                logError("repl: "+replp+
+                "\r\nahc: "+ anchor+ 
+                "\r\nlink: "+ link +
+                "link repl: "+link.match(MD_LINK));
 
-    logError(promise,true);
-    promises.push(promise);
-  });
+                const promise = asyncFn(replp, anchor, link);
+
+         logError(promise,true);
+         promises.push(promise);
+
+
+
+  };
+
+})
+
   const data = await Promise.all(promises);
-  return str.replace(regex, () => data.shift());
+  logError("Promises: ");
+  logError(data,true);
+//  return str.replace((reg: RegExp, str: String) => { 
+    
+data.forEach((element) => {
+
+  if (element !== null){
+    
+    logError("el: "+element[0]+"  el2: "+element[1]);
+    str=  str.replace(element[0],element[1]);
+  }
+  else{
+    errorflag=true;
+  }
+
+});
+
+return [str,errorflag];
+
+//  return str.replace( () => data.shift());
 }
 
 export function isUrl(link: string) {
@@ -98,15 +124,15 @@ try {
   const res = await  got(url,
                          {responseType: 'buffer',
                           method: 'GET',
-                          retry: 2,
-                          timeout: 10000,
-                          maxRedirects: 5,
+                          retry: 3,
+                          timeout: 8000,
+                          //maxRedirects: 5,
                           headers: {
                             'User-Agent': USER_AGENT,
                            // 'Accept-Language': 'en-US,en;q=0.5',
                           },
-                          });  
-  return res.body;
+                 });  
+return res.body;
 }
 catch(e)
 {
@@ -128,6 +154,23 @@ export async function fileExtByContent(content: ArrayBuffer) {
 
   return fileExt;
 }
+
+
+//https://stackoverflow.com/questions/26156292/trim-specific-character-from-a-string
+
+export function trimAny(str: String, chars: Array<String>) {
+    var start = 0, 
+        end = str.length;
+
+    while(start < end && chars.indexOf(str[start]) >= 0)
+        ++start;
+
+    while(end > start && chars.indexOf(str[end - 1]) >= 0)
+        --end;
+
+    return (start > 0 || end < str.length) ? str.substring(start, end) : str;
+}
+
 
 export function cleanFileName(name: string) {
   const cleanedName = filenamify(name).replace(

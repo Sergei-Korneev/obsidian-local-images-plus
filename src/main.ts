@@ -26,11 +26,13 @@ import {
   ISettings,
   DEFAULT_SETTINGS,
   MD_MEDIA_LINK,
+  MD_SEARCH_PATTERN,
   ANY_URL_PATTERN,
   NOTICE_TIMEOUT,
   TIMEOUT_LIKE_INFINITY,
 } from "./config";
 import { UniqueQueue } from "./uniqueQueue";
+import path from "path";
 
 export default class LocalImagesPlugin extends Plugin {
   settings: ISettings;
@@ -46,37 +48,81 @@ export default class LocalImagesPlugin extends Plugin {
       }
     }
 
+
+    const obsmediadir = this.app.vault.getConfig("attachmentFolderPath");
+    const mediadir = this.settings.mediaRootDirectory;
+    const attdir = this.settings.saveAtt;
+    let root="./";
+          switch (attdir) {
+            case 'nextToNote':
+               root = path.join(file.parent.path, file.basename + "_res");
+              break;
+            
+            case 'inFolderBelow':
+               root = mediadir;
+              break;
+
+            case 'nextToNoteS':
+              root = path.join(file.parent.path,mediadir);
+              break;
+
+            case 'nextToNoteSub':
+              root = path.join(file.parent.path, mediadir, file.basename + "_res");
+              break;
+            default:
+            
+            if ( obsmediadir === '/' ){
+                  root = obsmediadir;
+            }
+            else if ( obsmediadir === './' ){
+                  root = path.join(file.parent.path);
+            }
+            else if  ( obsmediadir.match (/\.\/.+/g) !== null ) {
+                  root = path.join(file.parent.path, obsmediadir.replace('\.\/',''));
+            }
+            else{
+                  root = obsmediadir;
+            }
+
+          }
+
     const content = await this.app.vault.cachedRead(file);
 
-    let root = this.settings.mediaRootDirectory;
-    if (this.settings.saveAttNextToNote){
-           root = file.path + "_res";
-    }
     await this.ensureFolderExists(root);
     const fixedContent = await replaceAsync(
       content,
-      MD_MEDIA_LINK,
+      MD_SEARCH_PATTERN,
       imageTagProcessor(this.app,
                         root,
                         this.settings.useWikilinks,
                         this.settings.addNameOfFile)
     );
 
-    if (content != fixedContent) {
+    if (content != fixedContent[0] && fixedContent[1] === false ) {
       this.modifiedQueue.remove(file);
-      await this.app.vault.modify(file, fixedContent);
+      await this.app.vault.modify(file, fixedContent[0]);
 
       if (this.settings.showNotifications) {
         new Notice(`Attachements for "${file.path}" were processed.`);
       }
     }
-//    else {
-//      if (this.settings.showNotifications) {
-//        new Notice(
-//          `Page "${file.path}" has been processed, but nothing was changed.`
-//        );
-//      }
-//    }
+    else if (content != fixedContent[0] && fixedContent[1] === true ) {
+    
+      this.modifiedQueue.remove(file);
+      await this.app.vault.modify(file, fixedContent[0]);
+
+      if (this.settings.showNotifications) {
+        new Notice(`WARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced due to errors...`);
+      }
+
+    }
+    else {
+      if (this.settings.showNotifications) {
+        new Notice(
+          `Page "${file.path}" has been processed, but nothing was changed.`
+        );
+      }
+    }
   }
 
   // using arrow syntax for callbacks to correctly pass this context
@@ -113,7 +159,7 @@ export default class LocalImagesPlugin extends Plugin {
     }
     if (notice) {
       // dum @ts-expect-error
-      notice.setMessage(`Local Images: ${pagesCount} pages were processed.`);
+      notice.setMessage(`Local Images Plus: ${pagesCount} pages were processed.`);
 
       setTimeout(() => {
         notice.hide();
@@ -125,13 +171,13 @@ export default class LocalImagesPlugin extends Plugin {
 
     this.addCommand({
       id: "download-images",
-      name: "Download images locally",
+      name: "Download all media files.",
       callback: this.processActivePage,
     });
 
     this.addCommand({
       id: "download-images-all",
-      name: "Download images locally for all your notes",
+      name: "Download media files for all your notes",
       callback: this.processAllPages,
     });
     this.app.workspace.on(
@@ -146,6 +192,7 @@ export default class LocalImagesPlugin extends Plugin {
                       new Notice("Media links were found, processing...");
                     }
                        this.enqueueActivePage();
+                         this.setupQueueInterval();
            }
       }
         }
@@ -187,14 +234,14 @@ export default class LocalImagesPlugin extends Plugin {
     const activeFile = this.app.workspace.getActiveFile();
     this.modifiedQueue.push(
       activeFile,
-      4//this.settings.realTimeAttemptsToProcess
+      1//this.settings.realTimeAttemptsToProcess
     );
   }
   // It is good idea to create the plugin more verbose
   displayError(error: Error | string, file?: TFile): void {
     if (file) {
       new Notice(
-        `LocalImages: Error while handling file ${
+        `LocalImagesPlus: Error while handling file ${
           file.name
         }, ${error.toString()}`
       );
@@ -202,7 +249,7 @@ export default class LocalImagesPlugin extends Plugin {
       new Notice(error.toString());
     }
 
-    logError(`LocalImages: error: ${error}`, false);
+    logError(`LocalImagesPlus: error: ${error}`, false);
   }
 
   onunload() {}
@@ -248,7 +295,8 @@ class SettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Local Images Plus" });
+
+    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.6" });
 
     const donheader = containerEl.createEl("div");
     donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
@@ -271,10 +319,7 @@ class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("On paste processing interval")
-      .setDesc("Interval in seconds for processing update.")
-      .setTooltip(
-        ""
-      )
+      .setDesc("Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.")
       .addText((text) =>
         text
           .setValue(String(this.plugin.settings.realTimeUpdateInterval))
@@ -283,14 +328,14 @@ class SettingTab extends PluginSettingTab {
             if (
               isNaN(numberValue) ||
               !Number.isInteger(numberValue) ||
-              numberValue <= 0 ||
+              numberValue <= 5 ||
               numberValue > 3600
             ) {
 
 
               this.plugin.displayError(
 
-                "Realtime processing interval should be a positive integer number between 1 and 3600!"
+                "Realtime processing interval should be a positive integer number between 5 and 3600!"
               );
               return;
             }
@@ -299,39 +344,10 @@ class SettingTab extends PluginSettingTab {
             this.plugin.setupQueueInterval();
           })
       );
-//
-//    new Setting(containerEl)
-//      .setName("Attempts to process")
-//      .setDesc(
-//        "Number of attempts to process content on paste."
-//      )
-//      .setTooltip(
-//        "."
-//      )
-//      .addText((text) =>
-//        text
-//          .setValue(String(this.plugin.settings.realTimeAttemptsToProcess))
-//          .onChange(async (value: string) => {
-//            const numberValue = Number(value);
-//            if (
-//              isNaN(numberValue) ||
-//              !Number.isInteger(numberValue) ||
-//              numberValue < 1 ||
-//              numberValue > 100
-//            ) {
-//              this.plugin.displayError(
-//                "Realtime processing interval should be a positive integer number greater than 1 and lower than 100!"
-//              );
-//              return;
-//            }
-//            this.plugin.settings.realTimeAttemptsToProcess = numberValue;
-//            await this.plugin.saveSettings();
-//          })
-//      );
 
     new Setting(containerEl)
-      .setName("Add original filename before tag.")
-      .setDesc("Add **original filename** before replaced tag (only for file:// protocol).")
+      .setName("Add original filename as a markdown link before tag.")
+      .setDesc("Add [[original filename]] or [original filename](link to attachement) before replaced tag (only for file:// protocol).")
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.addNameOfFile)
@@ -341,17 +357,6 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
-      .setName("Save attachments next to note.")
-      .setDesc("Put all new attachements in ${notepath}.md_res directory.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.saveAttNextToNote)
-          .onChange(async (value) => {
-            this.plugin.settings.saveAttNextToNote = value;
-            await this.plugin.saveSettings();
-          })
-      );
     new Setting(containerEl)
       .setName("Show notifications")
       .setDesc("Show notifications when pages were processed.")
@@ -395,15 +400,72 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Folder to save new attachements.")
+      .setDesc(
+        "Select where all new attachements will be saved."
+      )
+      .addDropdown((text) => 
+        text
+                    .addOption("obsFolder", "Copy Obsidian settings")
+                    .addOption("inFolderBelow", "Save attachements in the root folder specified below")
+                    .addOption("nextToNoteS", "Save attachements next to note in folder specified below")
+                    .addOption("nextToNote", "Save attachements next to note in ${notename}_res")
+                    .addOption("nextToNoteSub", "Save attachements next to note in folder specified below + ${notename}_res")
+                    .setValue(this.plugin.settings.saveAtt)
+
+          .onChange(async (value) => {
+              this.plugin.settings.saveAtt= value;
+                containerEl.findAll(".setting-item").forEach((el) => {
+                 if (el.getAttr("class").includes("media_folder_set")  ){
+
+                          if (this.plugin.settings.saveAtt === "obsFolder" ||
+                              this.plugin.settings.saveAtt === "nextToNote" ){
+                              el.hide();
+                          }
+                          else{
+                              el.show();
+                          }
+                     }
+                }
+
+            )
+
+          await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
       .setName("Media folder")
       .setDesc("Folder to keep all downloaded media files.")
+      .setClass("media_folder_set")
       .addText((text) =>
         text
           .setValue(this.plugin.settings.mediaRootDirectory)
           .onChange(async (value) => {
+
+          if (value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|(\\|\/|\|))/g) !== null )  {
+            this.plugin.displayError(
+              "Unsafe folder name! Some chars are forbidden in some filesystems."
+            );
+            return;
+          }
             this.plugin.settings.mediaRootDirectory = value;
-            await this.plugin.saveSettings();
-          })
+          await this.plugin.saveSettings();
+        })
+
       );
+
+                containerEl.findAll(".setting-item").forEach((el) => {
+                 if (el.getAttr("class").includes("media_folder_set")  ){
+
+                          if (this.plugin.settings.saveAtt === "obsFolder" ||
+                              this.plugin.settings.saveAtt === "nextToNote" ){
+                              el.hide();
+                          }
+                          else{
+                              el.show();
+                          }
+                     }
+                });
   }
 }
