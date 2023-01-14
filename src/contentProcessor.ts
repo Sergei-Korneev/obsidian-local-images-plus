@@ -96,7 +96,7 @@ export function imageTagProcessor(app: App,
                shortName = "\r\n[" +
                path.basename(decodeURI(link)) +
                "](" +
-               fileName +
+               encodeURI(fileName) +
                   ")\r\n";
               }
             }
