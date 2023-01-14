@@ -1,3 +1,8 @@
+0.14.7
+- Fix: URL pattern issue
+- Add: Option not to save unknown filetypes.
+- Add: Option to limit file size. 
+
 0.14.6
 - Fix: Regex issues and better parsing.
 - Fix: Improved error handling. 

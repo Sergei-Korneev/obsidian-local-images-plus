@@ -25,10 +25,14 @@ import{
 export function imageTagProcessor(app: App,
                                   mediaDir: string,
                                   useWikilinks: boolean,
-                                  addNameofFile: boolean) {
+                                  addNameofFile: boolean,
+                                  sizeLim: Number,
+                                  downUnknown: boolean) {
   async function processImageTag(match: string,
                                  anchor: string,
                                  link: string) {
+
+
    logError("processImageTag: "+match) 
     if (!isUrl(link)) {
       return match;
@@ -55,13 +59,21 @@ export function imageTagProcessor(app: App,
             logError("Cannot get an attachment content!", false);
             return null;
          }
+
+         
+         if( Math.round(fileData.byteLength/1024) < sizeLim) {
+            logError("Lower limit of the file size!", false);
+            return null;
+         }
+
         try {
      
           const { fileName, needWrite } = await chooseFileName(
             app.vault.adapter,
             mediaDir,
             link,
-            fileData
+            fileData,
+            downUnknown
           );
 
           if (needWrite && fileName) {
@@ -124,26 +136,30 @@ async function chooseFileName(
   adapter: DataAdapter,
   dir: string,
   link: string,
-  contentData: ArrayBuffer
+  contentData: ArrayBuffer,
+  downUnknown: boolean
 ): Promise<{ fileName: string; needWrite: boolean }> {
   const parsedUrl = new URL(link);
 
-  // If node's package file-type fucked up try to get extension from url (is not this obvious?)
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
   logError("file: "+link+" content: "+contentData,false);
 
-  if (fileExt.length > 4 )
-      {
-          fileExt=fileExt.match(/((http|file|https).+?(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
-      }
-
+//  if (fileExt.length > 4 )
+//      {
+//          fileExt=fileExt.match(/(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
+//          //fileExt=fileExt.match(/((http|file|https).+?(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
+//      }
+//
   if (!fileExt) {
       fileExt = await fileExtByContent(contentData);
   }
   
   if (!fileExt) {
     fileExt = "unknown";
-    //return { fileName: "", needWrite: false };
+
+  if (!downUnknown) {
+    return { fileName: "", needWrite: false };
+    }
   }
 
   logError("File Ext: "+fileExt, false);

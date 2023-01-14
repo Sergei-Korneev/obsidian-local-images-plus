@@ -95,7 +95,10 @@ export default class LocalImagesPlugin extends Plugin {
       imageTagProcessor(this.app,
                         root,
                         this.settings.useWikilinks,
-                        this.settings.addNameOfFile)
+                        this.settings.addNameOfFile,
+                        this.settings.filesizeLimit,
+                        this.settings.downUnknown
+                       )
     );
 
     if (content != fixedContent[0] && fixedContent[1] === false ) {
@@ -290,13 +293,30 @@ class SettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
+  displSw(cont: any): void {
+                cont.findAll(".setting-item").forEach((el: any) => {
+                 if (el.getAttr("class").includes("media_folder_set")  ){
+
+                          if (this.plugin.settings.saveAtt === "obsFolder" ||
+                              this.plugin.settings.saveAtt === "nextToNote" ){
+                              el.hide();
+                          }
+                          else{
+                              el.show();
+                          }
+                     }
+                });
+   }
+
   display(): void {
     let { containerEl } = this;
+   
+
 
     containerEl.empty();
 
 
-    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.6" });
+    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.7" });
 
     const donheader = containerEl.createEl("div");
     donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
@@ -324,7 +344,8 @@ class SettingTab extends PluginSettingTab {
         text
           .setValue(String(this.plugin.settings.realTimeUpdateInterval))
           .onChange(async (value: string) => {
-            const numberValue = Number(value);
+
+            let numberValue = Number(value);
             if (
               isNaN(numberValue) ||
               !Number.isInteger(numberValue) ||
@@ -339,9 +360,44 @@ class SettingTab extends PluginSettingTab {
               );
               return;
             }
+
+            if ( numberValue < 5 ){
+               numberValue = 5;
+            }
             this.plugin.settings.realTimeUpdateInterval = numberValue;
             await this.plugin.saveSettings();
             this.plugin.setupQueueInterval();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("File size lower limit in Kb.")
+      .setDesc("Do not download files with size less than this value. Set 0 for no limit.")
+      .addText((text) =>
+        text
+          .setValue(String(this.plugin.settings.filesizeLimit))
+          .onChange(async (value: string) => {
+
+            let numberValue = Number(value);
+            if (
+              isNaN(numberValue) ||
+              !Number.isInteger(numberValue) ||
+              numberValue < 0 
+            ) {
+
+
+              this.plugin.displayError(
+
+                "The value should be a positive integer!"
+              );
+              return;
+            }
+
+            if ( numberValue < 0 ){
+               numberValue = 0;
+            }
+            this.plugin.settings.filesizeLimit = numberValue;
+            await this.plugin.saveSettings();
           })
       );
 
@@ -382,6 +438,18 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Download unknown filetypes.")
+      .setDesc("Download unknown filetypes and save them with .unknown extension.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.downUnknown)
+          .onChange(async (value) => {
+            this.plugin.settings.downUnknown = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
       .setName("Include")
       .setDesc(
         "Include only files matching this regex pattern when running on all notes."
@@ -415,20 +483,7 @@ class SettingTab extends PluginSettingTab {
 
           .onChange(async (value) => {
               this.plugin.settings.saveAtt= value;
-                containerEl.findAll(".setting-item").forEach((el) => {
-                 if (el.getAttr("class").includes("media_folder_set")  ){
-
-                          if (this.plugin.settings.saveAtt === "obsFolder" ||
-                              this.plugin.settings.saveAtt === "nextToNote" ){
-                              el.hide();
-                          }
-                          else{
-                              el.show();
-                          }
-                     }
-                }
-
-            )
+                 this.displSw(containerEl);
 
           await this.plugin.saveSettings();
           })
@@ -455,17 +510,6 @@ class SettingTab extends PluginSettingTab {
 
       );
 
-                containerEl.findAll(".setting-item").forEach((el) => {
-                 if (el.getAttr("class").includes("media_folder_set")  ){
-
-                          if (this.plugin.settings.saveAtt === "obsFolder" ||
-                              this.plugin.settings.saveAtt === "nextToNote" ){
-                              el.hide();
-                          }
-                          else{
-                              el.show();
-                          }
-                     }
-                });
+                 this.displSw(containerEl);
   }
 }

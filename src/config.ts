@@ -16,20 +16,22 @@ export const MD_SEARCH_PATTERN=
 ]
 
 export const MD_LINK = 
-/\http(s){0,1}.+?( {1}|\))/g;
+/\http(s){0,1}.+?(\..{3,4}\?{1}| {1}|\))/g;
 
 
 export const ANY_URL_PATTERN =
 /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
 // Looks like timeouts in Obsidian API are set in milliseconds
-export const NOTICE_TIMEOUT = 10 * 1000;
+export const NOTICE_TIMEOUT = 15 * 1000;
 export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
+  downUnknown: boolean,
   saveAtt: string,
   realTimeUpdate: boolean;
+  filesizeLimit: number,
   realTimeUpdateInterval: number;
   addNameOfFile: boolean;
   showNotifications: boolean;
@@ -39,8 +41,10 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+  downUnknown: false,
   saveAtt: "obsFolder",
   realTimeUpdate: false,
+  filesizeLimit: 0,
   realTimeUpdateInterval: 5,
   addNameOfFile: true,
   showNotifications: true,

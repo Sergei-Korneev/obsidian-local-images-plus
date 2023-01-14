@@ -50,7 +50,7 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
                   if (link_ !== null){
                         link=link_[0];
                   }
-                  link=trimAny(link,[")","(","]","["," "])
+                  link=trimAny(link,[")","(","]","["," ","?"])
                   anchor = match.groups.anchor;
                   replp=trimAny(match[0],["[","(","]"]);
 
