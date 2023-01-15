@@ -10,7 +10,7 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 ## Installation
 
-- Download the latest version from github or [github page](https://sergei-korneev.github.io/obsidian-local-images-plus) of the project.
+- Download the latest version from GitHub / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus) / or install from "Obsidian Community Plugins". [Read release notes.](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
 - Remove obsidian-local-images plugin to avoid any conflicts.
 - Extract the archive into your Obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
@@ -23,21 +23,11 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 Just copy any web content, Word/Open Office content and paste it into your note.
 
-You can also insert any file e.g:
-
-```![mypdf](http://mysite/mypdf.pdf)```
-
-```![mylocalfile](file:///mylinuxdisk/mysong.mp3)```
-
-Files will be copied or downloaded to your attachements folder.
-
-**NOTE: I would not recommend to use this plugin for copying really fat files, since buffered reading from disk not implemented to this date (25 dec 2022)**
+Use it in the command mode or in the timer mode (toggle "on paste processing" option in the settings):
 
 
+**NOTE: An interval 5 sec or above is recommended. if you have old settings saved change it manually**
 
-Use it in the command mode or in timer mode (toggle "on paste processing" option in the settings):
-
-**AN INTERVAL 5 SEC OR ABOVE IS RECOMMENDED. IF YOU HAVE OLD SETTINGS SAVED CHANGE IT MANUALLY**
 
 ![img](docs/Pasted%20image%2020221219134358.png?raw=true)
 
@@ -51,18 +41,33 @@ or
 ```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
 
+
 **NOTE: This plugin can change all your notes at once, so you should consider doing backups of your files periodically.**
 
-Since 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
+You can also insert any file e.g:
+
+```![mypdf](http://mysite/mypdf.pdf)```
+
+```![mylocalfile](file:///mylinuxdisk/mysong.mp3)```
+
+Files will be copied or downloaded to your attachements folder.
+
+
+**NOTE: I would not recommend to use this plugin for copying really fat files, since buffered reading from disk not implemented yet**
+
+
+
+Starting from version 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
 
 This means you can place them everywhere, replace in a tag absolute path with file name in your note and Obsidian will still show them.
  
+
 
 ## Future development
 
 **This plugin is in development process, so your ideas and donations are very appreciated.**
 
-**Some upcoming plugin features will be added in this readme on the course of releasing new versions.**
+
 
 ## Donations
 
