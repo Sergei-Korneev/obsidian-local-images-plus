@@ -2,21 +2,22 @@ export const VERBOSE = false;
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
 
-export const USER_AGENT ='Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/106.0';
-
+export const USER_AGENT =
+'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36';
 export const MD_MEDIA_LINK= 
-/(?<anchor>.{0,1}\!\[.+\()(?<link>(htt(p|s)|file).+[^\)])\)/g;
+/(?<anchor>.{0,1}\!\[.+\()(?<link>(http(s){0,1}|file).+[^\)])\)/g;
 
 export const MD_SEARCH_PATTERN=
 [
 //file link
-/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((file).+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/g,
+/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((file\:\/).+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/g,
 //hypertext link
-/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((http(s){0,1}).+?(\) {0,}|\)$|\)\n|\)\]|\)\[)))/g
+/\!\[(?<anchor>(.{0}|.+?))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm
 ]
 
 export const MD_LINK = 
-/\http(s){0,1}.+?(\..{3,4}\?{1}| {1}|\))/g;
+/\http(s){0,1}.+?( {1}|\)\n)/g;
+///\http(s){0,1}.+?(\..{3,4}\?{1}| {1}|\))/g;
 
 
 export const ANY_URL_PATTERN =
@@ -28,6 +29,8 @@ export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
+  useRelativePath: boolean,
+  mediaFolderSuff: string,
   downUnknown: boolean,
   saveAtt: string,
   realTimeUpdate: boolean;
@@ -41,6 +44,8 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+  useRelativePath: false,
+  mediaFolderSuff: "|_res",
   downUnknown: false,
   saveAtt: "obsFolder",
   realTimeUpdate: false,

@@ -48,14 +48,16 @@ export default class LocalImagesPlugin extends Plugin {
       }
     }
 
-
+    let prefsuff = this.settings.mediaFolderSuff.split("|");
+    
+    prefsuff.length === 1 ? prefsuff=["",""]: null ;
     const obsmediadir = this.app.vault.getConfig("attachmentFolderPath");
     const mediadir = this.settings.mediaRootDirectory;
     const attdir = this.settings.saveAtt;
     let root="./";
           switch (attdir) {
             case 'nextToNote':
-               root = path.join(file.parent.path, file.basename + "_res");
+               root = path.join(file.parent.path, prefsuff[0] + file.basename + prefsuff[1] );
               break;
             
             case 'inFolderBelow':
@@ -67,7 +69,7 @@ export default class LocalImagesPlugin extends Plugin {
               break;
 
             case 'nextToNoteSub':
-              root = path.join(file.parent.path, mediadir, file.basename + "_res");
+              root = path.join(file.parent.path, mediadir, prefsuff[0] + file.basename + prefsuff[1]);
               break;
             default:
             
@@ -97,7 +99,8 @@ export default class LocalImagesPlugin extends Plugin {
                         this.settings.useWikilinks,
                         this.settings.addNameOfFile,
                         this.settings.filesizeLimit,
-                        this.settings.downUnknown
+                        this.settings.downUnknown,
+                        this.settings.useRelativePath
                        )
     );
 
@@ -174,7 +177,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     this.addCommand({
       id: "download-images",
-      name: "Download all media files.",
+      name: "Download all media files",
       callback: this.processActivePage,
     });
 
@@ -305,6 +308,17 @@ class SettingTab extends PluginSettingTab {
                               el.show();
                           }
                      }
+
+                 if (el.getAttr("class").includes("media_folder_suff")  ){
+
+                          if (this.plugin.settings.saveAtt === "nextToNoteSub" ||
+                              this.plugin.settings.saveAtt === "nextToNote" ){
+                              el.show();
+                          }
+                          else{
+                              el.hide();
+                          }
+                     }
                 });
    }
 
@@ -316,7 +330,7 @@ class SettingTab extends PluginSettingTab {
     containerEl.empty();
 
 
-    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.7" });
+    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.8" });
 
     const donheader = containerEl.createEl("div");
     donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
@@ -371,7 +385,7 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("File size lower limit in Kb.")
+      .setName("File size lower limit in Kb")
       .setDesc("Do not download files with size less than this value. Set 0 for no limit.")
       .addText((text) =>
         text
@@ -402,7 +416,7 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Add original filename as a markdown link before tag.")
+      .setName("Add original filename as a markdown link before tag")
       .setDesc("Add [[original filename]] or [original filename](link to attachement) before replaced tag (only for file:// protocol).")
       .addToggle((toggle) =>
         toggle
@@ -438,7 +452,19 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Download unknown filetypes.")
+      .setName("Do not use relative paths in tags")
+      .setDesc("Use base filename in replaced links.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.useRelativePath)
+          .onChange(async (value) => {
+            this.plugin.settings.useRelativePath = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Download unknown filetypes")
       .setDesc("Download unknown filetypes and save them with .unknown extension.")
       .addToggle((toggle) =>
         toggle
@@ -475,10 +501,10 @@ class SettingTab extends PluginSettingTab {
       .addDropdown((text) => 
         text
                     .addOption("obsFolder", "Copy Obsidian settings")
-                    .addOption("inFolderBelow", "Save attachements in the root folder specified below")
-                    .addOption("nextToNoteS", "Save attachements next to note in folder specified below")
-                    .addOption("nextToNote", "Save attachements next to note in ${notename}_res")
-                    .addOption("nextToNoteSub", "Save attachements next to note in folder specified below + ${notename}_res")
+                    .addOption("inFolderBelow", "In the root folder specified below")
+                    .addOption("nextToNoteS", "Next to note in folder specified below")
+                    .addOption("nextToNote", "Next to note in ${notename}")
+                    .addOption("nextToNoteSub", "Next to note in folder specified below in subfolder called ${notename}")
                     .setValue(this.plugin.settings.saveAtt)
 
           .onChange(async (value) => {
@@ -510,6 +536,36 @@ class SettingTab extends PluginSettingTab {
 
       );
 
+    new Setting(containerEl)
+      .setName("${notename} folder suffixation")
+      .setDesc("Select folder prefix or suffix (20 chars max). Syntax: prefix|suffix. Or leave this field blank.")
+      .setClass("media_folder_suff")
+      .addText((text) =>
+        text
+          .setValue(this.plugin.settings.mediaFolderSuff)
+          .onChange(async (value) => {
+          const val = value.match(/(^.{0,20}\|.{0,20}$|^$)/g);
+
+          if (! val )  {
+            this.plugin.displayError(
+              "Wrong pattern!"
+            );
+            return;
+          }
+
+          else if (val[0].replace("\|","").match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|(\\|\/|\|))/g) !== null )  {
+            this.plugin.displayError(
+              "Unsafe folder name! Some chars are forbidden in some filesystems."
+            );
+            return;
+          }
+
+
+          this.plugin.settings.mediaFolderSuff = value;
+          await this.plugin.saveSettings();
+        })
+
+      );
                  this.displSw(containerEl);
   }
 }

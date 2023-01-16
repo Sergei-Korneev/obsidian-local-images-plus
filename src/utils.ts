@@ -1,5 +1,6 @@
 import path from "path";
-import got from "got";
+//import axios from 'axios';
+//import got, {Options} from 'got';
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
@@ -10,6 +11,9 @@ import {
   MD_LINK,
   USER_AGENT
 } from "./config";
+import {
+  requestUrl
+} from 'obsidian';
 
 /*
 https://stackoverflow.com/a/48032528/1020973
@@ -34,15 +38,15 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
   let errorflag=false;
   const promises: Promise<any>[] = [];
-  let matches;
   let link;
   let anchor;
-  let replp;
+  let replp: any;
   let link_;
+  let dictPatt: Array<any>[] = [];
 
   regex.forEach((element) => {
       logError(element);
-          matches =  str.matchAll(element);
+        const  matches =  str.matchAll(element);
 
     for (const match of matches) {
                   link = match.groups.link;
@@ -50,7 +54,7 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
                   if (link_ !== null){
                         link=link_[0];
                   }
-                  link=trimAny(link,[")","(","]","["," ","?"])
+                  link=trimAny(link,[")","(","]","["," "])
                   anchor = match.groups.anchor;
                   replp=trimAny(match[0],["[","(","]"]);
 
@@ -59,10 +63,9 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
                 "\r\nlink: "+ link +
                 "link repl: "+link.match(MD_LINK));
 
-                const promise = asyncFn(replp, anchor, link);
 
-         logError(promise,true);
-         promises.push(promise);
+                dictPatt[replp]=[anchor,link];
+
 
 
 
@@ -70,7 +73,13 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
 
 })
 
-  const data = await Promise.all(promises);
+  for (var key in dictPatt){
+         const promise = asyncFn(key, dictPatt[key][0],  dictPatt[key][1]);
+         logError(promise,true);
+         promises.push(promise);
+  }
+
+const data = await Promise.all(promises);
   logError("Promises: ");
   logError(data,true);
 //  return str.replace((reg: RegExp, str: String) => { 
@@ -80,7 +89,7 @@ data.forEach((element) => {
   if (element !== null){
     
     logError("el: "+element[0]+"  el2: "+element[1]);
-    str=  str.replace(element[0],element[1]);
+    str =  str.replaceAll(element[0],element[1]);
   }
   else{
     errorflag=true;
@@ -120,26 +129,71 @@ catch(e)
 export async function downloadImage(url: string): Promise<ArrayBuffer> {
 
 logError("Downloading: " + url, false);
-try {
-  const res = await  got(url,
-                         {responseType: 'buffer',
-                          method: 'GET',
-                          retry: 3,
-                          timeout: 8000,
-                          //maxRedirects: 5,
-                          headers: {
-                            'User-Agent': USER_AGENT,
-                           // 'Accept-Language': 'en-US,en;q=0.5',
-                          },
-                 });  
-return res.body;
+const headers = {
+     'method': 'GET',
+     'User-Agent':USER_AGENT
 }
-catch(e)
-{
 
-  logError("Cannot download the file: "+ e,false);
+//
+//    const config = {
+//        method: 'get',
+//        url: url,
+//        headers: {
+//          'User-Agent':' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36',
+////'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+////'HTTPS':'1',
+////'DNT':'1',
+////'Referer':'https://www.usanews.com/',
+////'Accept-Language': 'en-US,en;q=0.8,en-GB;q=0.6,es;q=0.4',
+////'Access-Control-Allow-Origin':'app://obsidian.md',
+////'Cache-Control': 'max-age=0',
+//        }
+//    }
+//
+//
+//
+//    let res = await axios(config)
+//    
+//  })
+//const options = {
+//	headers: {
+// 'Host': 'usnews.com',
+//
+// 'Cache-Control': 'max-age=0',
+// 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+// 'HTTPS': '1',
+// 'DNT': '1',
+// 'Referer': 'https://www.google.com/',
+// 'Accept-Language': 'en-US,en;q=0.8,en-GB;q=0.6,es;q=0.4',
+// 'If-Modified-Since': 'Thu, 23 Jul 2015 20:31:28 GMT',
+// 
+//		'User-Agent':' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36',
+//   // 'method': 'GET',
+//	},
+// // http2: true,
+////  retry: {
+////		limit: 5,
+////		errorCodes: [
+////			'ETIMEDOUT'
+////		],
+////	},
+////	timeout: {
+////	request: 10000,
+////	},
+//};
+//
+//
+//
+try {
+    const res = await requestUrl({url: url, headers})
+    logError(res,true);
+    return res.arrayBuffer;
+  }
+catch(e){
+
+    logError("Cannot download the file: "+ e,false);
     return null;
-}
+  }
 }
 
 export async function fileExtByContent(content: ArrayBuffer) {
@@ -158,7 +212,7 @@ export async function fileExtByContent(content: ArrayBuffer) {
 
 //https://stackoverflow.com/questions/26156292/trim-specific-character-from-a-string
 
-export function trimAny(str: String, chars: Array<String>) {
+export function trimAny(str: string, chars: Array<string>) {
     var start = 0, 
         end = str.length;
 

@@ -27,7 +27,9 @@ export function imageTagProcessor(app: App,
                                   useWikilinks: boolean,
                                   addNameofFile: boolean,
                                   sizeLim: Number,
-                                  downUnknown: boolean) {
+                                  downUnknown: boolean,
+                                  useRelativePath: boolean) {
+
   async function processImageTag(match: string,
                                  anchor: string,
                                  link: string) {
@@ -81,38 +83,50 @@ export function imageTagProcessor(app: App,
           }
 
           if (fileName) {
-           let  shortName = ""
+           
+              let baseFilename = path.basename(fileName);
+              let fileNameURI = encodeURI(fileName);
+              let fileNameW = fileName; 
+              let  shortName = "";
+
+                  if(useRelativePath){
+                      fileNameURI = fileNameW = baseFilename;
+                  }
+
+
           if (addNameofFile  && protocol == "file://") {
 
-            if (useWikilinks) {
+                        if (useWikilinks) {
 
-               shortName = "\r\n[[" +
-               fileName +
-                 "\|" +
-                   path.basename(decodeURI(link)) + "]]\r\n";
-            }
-            else
-              {
-               shortName = "\r\n[" +
-               path.basename(decodeURI(link)) +
-               "](" +
-               encodeURI(fileName) +
-                  ")\r\n";
+                                 shortName = "\r\n[[" +
+                                 fileName +
+                                   "\|" +
+                                     path.basename(decodeURI(link)) + "]]\r\n";
+                        }
+                        else
+                          {
+                                 shortName = "\r\n[" +
+                                 path.basename(decodeURI(link)) +
+                                 "](" +
+                                 fileNameURI +
+                                    ")\r\n";
+                          }
+                }
+
+              if (useWikilinks){
+                 return  [match, `${shortName}![[${fileNameW}]]`];
               }
-            }
-
-
-             let   fileNameURI= encodeURI(fileName);
-            if (useWikilinks) {
-
-                 return  [match, `${shortName}![[${fileName}]]`];
-              }
+              
               else{
                  return [match,`${shortName}![${anchor}](${fileNameURI})`];
               }
+
+
+
           } else {
             return null;
           }
+
         } catch (error) {
           if (error.message === "File already exists.") {
           } else {
@@ -142,7 +156,7 @@ async function chooseFileName(
   const parsedUrl = new URL(link);
 
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
-  logError("file: "+link+" content: "+contentData,false);
+  logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
 
 //  if (fileExt.length > 4 )
 //      {
