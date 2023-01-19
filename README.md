@@ -23,6 +23,9 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 Just copy any web content, Word/Open Office content and paste it into your note.
 
+
+![img](docs/exampleimage.gif?raw=true)
+
 Use it in the command mode or in the timer mode (toggle "on paste processing" option in the settings):
 
 
@@ -52,6 +55,7 @@ You can also insert any file e.g:
 
 Files will be copied or downloaded to your attachements folder.
 
+![img](docs/examplepdf.gif?raw=true)
 
 **NOTE: I would not recommend to use this plugin for copying really fat files, since buffered reading from disk not implemented yet**
 
