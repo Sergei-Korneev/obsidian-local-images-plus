@@ -37,11 +37,11 @@ Use it in the command mode or in the timer mode (toggle "on paste processing" op
 
 
 
-```Download images locally``` - your active page will be processed.
+```Download all media files``` - your active page will be processed.
 
 or
 
-```Download images locally for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
+```Download media files for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
 
 
