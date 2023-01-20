@@ -67,11 +67,6 @@ This means you can place them everywhere, replace in a tag absolute path with fi
  
 
 
-## Future development
-
-**This plugin is in development process, so your ideas and donations are very appreciated.**
-
-
 
 ## Donations
 
