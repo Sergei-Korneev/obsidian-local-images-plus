@@ -57,13 +57,13 @@ Files will be copied or downloaded to your attachements folder.
 
 ![img](docs/examplepdf.gif?raw=true)
 
-**NOTE: I would not recommend to use this plugin for copying really fat files, since buffered reading from disk not implemented yet**
+**NOTE: I would not recommend to use this plugin for copying really big files, since buffered reading from disk not implemented yet.**
 
 
 
 Starting from version 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
 
-This means you can place them everywhere, replace in a tag absolute path with file name in your note and Obsidian will still show them.
+This means you can place an attachement file anywhere within your vault, replace the absolute path in a tag with the file name and Obsidian will still show it in your note.
  
 
 
