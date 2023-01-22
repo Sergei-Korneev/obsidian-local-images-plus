@@ -10,7 +10,7 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 ## Installation
 
-- Download the latest version from GitHub / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus) / or install from "Obsidian Community Plugins". [Read release notes.](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
+- Download the latest version from [GitHub](https://github.com/Sergei-Korneev/obsidian-local-images-plus) / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus) / or install from "Obsidian Community Plugins". [Read release notes](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
 - Remove obsidian-local-images plugin to avoid any conflicts.
 - Extract the archive into your Obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
