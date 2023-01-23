@@ -7,7 +7,6 @@ import filenamify from "filenamify";
 import { 
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
   VERBOSE,
-  MD_MEDIA_LINK, 
   MD_LINK,
   USER_AGENT
 } from "./config";
