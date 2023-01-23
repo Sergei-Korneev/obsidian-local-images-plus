@@ -38,36 +38,26 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
   let errorflag=false;
   const promises: Promise<any>[] = [];
+  let dictPatt: Array<any>[] = [];
   let link;
   let anchor;
   let replp: any;
-  let link_;
-  let dictPatt: Array<any>[] = [];
 
   regex.forEach((element) => {
       logError(element);
-        const  matches =  str.matchAll(element);
+        const  matches = str.matchAll(element);
 
     for (const match of matches) {
-                  link = match.groups.link;
-                  link_=link.match(MD_LINK); 
-                  if (link_ !== null){
-                        link=link_[0];
-                  }
+                  link=(match.groups.link.match(MD_LINK) ?? [match.groups.link])[0]; 
                   link=trimAny(link,[")","(","]","["," "])
                   anchor = match.groups.anchor;
                   replp=trimAny(match[0],["[","(","]"]);
 
-                logError("repl: "+replp+
-                "\r\nahc: "+ anchor+ 
-                "\r\nlink: "+ link +
-                "link repl: "+link.match(MD_LINK));
-
+                  logError("repl: "+replp+
+                  "\r\nahc: "+ anchor+ 
+                  "\r\nlink: "+ link) ;
 
                 dictPatt[replp]=[anchor,link];
-
-
-
 
   };
 
