@@ -124,56 +124,6 @@ const headers = {
      'User-Agent':USER_AGENT
 }
 
-//
-//    const config = {
-//        method: 'get',
-//        url: url,
-//        headers: {
-//          'User-Agent':' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36',
-////'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-////'HTTPS':'1',
-////'DNT':'1',
-////'Referer':'https://www.usanews.com/',
-////'Accept-Language': 'en-US,en;q=0.8,en-GB;q=0.6,es;q=0.4',
-////'Access-Control-Allow-Origin':'app://obsidian.md',
-////'Cache-Control': 'max-age=0',
-//        }
-//    }
-//
-//
-//
-//    let res = await axios(config)
-//    
-//  })
-//const options = {
-//	headers: {
-// 'Host': 'usnews.com',
-//
-// 'Cache-Control': 'max-age=0',
-// 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-// 'HTTPS': '1',
-// 'DNT': '1',
-// 'Referer': 'https://www.google.com/',
-// 'Accept-Language': 'en-US,en;q=0.8,en-GB;q=0.6,es;q=0.4',
-// 'If-Modified-Since': 'Thu, 23 Jul 2015 20:31:28 GMT',
-// 
-//		'User-Agent':' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36',
-//   // 'method': 'GET',
-//	},
-// // http2: true,
-////  retry: {
-////		limit: 5,
-////		errorCodes: [
-////			'ETIMEDOUT'
-////		],
-////	},
-////	timeout: {
-////	request: 10000,
-////	},
-//};
-//
-//
-//
 try {
     const res = await requestUrl({url: url, headers})
     logError(res,true);
