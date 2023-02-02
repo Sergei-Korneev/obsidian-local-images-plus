@@ -13,13 +13,17 @@ import {
 import {
   requestUrl
 } from 'obsidian';
-
+import md5 from 'crypto-js/md5';
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
 
 */
 const fs = require('fs').promises;
+
+
+
+
 
 export function logError(str: any, isObj: boolean =  false){
     if (VERBOSE){
@@ -32,38 +36,71 @@ export function logError(str: any, isObj: boolean =  false){
     }
 };
 
+export function md5Sig(contentData: ArrayBuffer = undefined ){
+
+    try {
+
+      var dec = new TextDecoder("utf-8");
+      const arrMid = Math.round(contentData.byteLength/2);
+      const chunk = 15000;
+      const signature = md5([
+          contentData.slice(0, chunk),
+          contentData.slice(arrMid, arrMid + chunk),
+          contentData.slice(-chunk)
+          ].map(x=>dec.decode(x)).join()
+      ).toString();
+
+      return signature; 
+    }
+    catch(e)
+    {
+
+      logError("Cannot generate md5: "+ e,false);
+        return null;
+    }
+
+}
+
 
 export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any) {
+  
   logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
+
   let errorflag=false;
   const promises: Promise<any>[] = [];
   let dictPatt: Array<any>[] = [];
   let link;
   let anchor;
   let replp: any;
+  let caption = "";
 
   regex.forEach((element) => {
       logError(element);
         const  matches = str.matchAll(element);
 
     for (const match of matches) {
-                  link=(match.groups.link.match(MD_LINK) ?? [match.groups.link])[0]; 
-                  link=trimAny(link,[")","(","]","["," "])
                   anchor = match.groups.anchor;
+                  link = (match.groups.link.match(MD_LINK) ?? [match.groups.link])[0]; 
+                  caption = trimAny((match.groups.link.match(MD_LINK) !== null ?
+                                     (match.groups.link.split(link).length > 1 ?
+                                      match.groups.link.split(link)[1] : "") :
+                                      ""),[")","]","(","["," "]);
+                  link=trimAny(link,[")","(","]","["," "]);
                   replp=trimAny(match[0],["[","(","]"]);
 
-                  logError("repl: "+replp+
-                  "\r\nahc: "+ anchor+ 
-                  "\r\nlink: "+ link) ;
+                  logError("repl: " + replp +
+                  "\r\nahc: " + anchor + 
+                  "\r\nlink: " + link +
+                  "\r\ncaption: " + caption) ;
 
-                dictPatt[replp]=[anchor,link];
+                dictPatt[replp]=[anchor,link,caption];
 
   };
 
 })
 
   for (var key in dictPatt){
-         const promise = asyncFn(key, dictPatt[key][0],  dictPatt[key][1]);
+         const promise = asyncFn(key, dictPatt[key][0],  dictPatt[key][1], dictPatt[key][2]);
          logError(promise,true);
          promises.push(promise);
   }

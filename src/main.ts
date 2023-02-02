@@ -100,7 +100,8 @@ export default class LocalImagesPlugin extends Plugin {
                         this.settings.addNameOfFile,
                         this.settings.filesizeLimit,
                         this.settings.downUnknown,
-                        this.settings.useRelativePath
+                        this.settings.useRelativePath,
+                        this.settings.useCaptions
                        )
     );
 
@@ -330,7 +331,7 @@ class SettingTab extends PluginSettingTab {
     containerEl.empty();
 
 
-    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.8" });
+    containerEl.createEl("h2", { text: "Local Images Plus" + " 0.14.9" });
 
     const donheader = containerEl.createEl("div");
     donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
@@ -385,6 +386,29 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Show notifications")
+      .setDesc("Show notifications when pages were processed.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showNotifications)
+          .onChange(async (value) => {
+            this.plugin.settings.showNotifications = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Preserve link captions")
+      .setDesc("Add media links captions to converted tags.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.useCaptions)
+          .onChange(async (value) => {
+            this.plugin.settings.useCaptions = value;
+            await this.plugin.saveSettings();
+          })
+      );
+    new Setting(containerEl)
       .setName("File size lower limit in Kb")
       .setDesc("Do not download files with size less than this value. Set 0 for no limit.")
       .addText((text) =>
@@ -416,7 +440,7 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Add original filename as a markdown link before tag")
+      .setName("Add original filename as a markdown link after tag")
       .setDesc("Add [[original filename]] or [original filename](link to attachement) before replaced tag (only for file:// protocol).")
       .addToggle((toggle) =>
         toggle
@@ -427,17 +451,6 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
-      .setName("Show notifications")
-      .setDesc("Show notifications when pages were processed.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showNotifications)
-          .onChange(async (value) => {
-            this.plugin.settings.showNotifications = value;
-            await this.plugin.saveSettings();
-          })
-      );
 
     new Setting(containerEl)
       .setName("Use wikilinks format")
@@ -494,7 +507,7 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Folder to save new attachements.")
+      .setName("Folder to save new attachements")
       .setDesc(
         "Select where all new attachements will be saved."
       )

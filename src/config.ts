@@ -29,6 +29,7 @@ export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
+  useCaptions: boolean,
   useRelativePath: boolean,
   mediaFolderSuff: string,
   downUnknown: boolean,
@@ -44,6 +45,7 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+  useCaptions: true,
   useRelativePath: false,
   mediaFolderSuff: "|_res",
   downUnknown: false,

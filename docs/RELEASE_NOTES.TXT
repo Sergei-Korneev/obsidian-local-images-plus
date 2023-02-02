@@ -1,3 +1,8 @@
+0.14.9
+Fix: File naming algorithm might return the same name for similar images.
+Add: Option to preserve original link captions.
+     e.g. now ![anchor](http://link Caption) will be converted to ![[filename|Caption]]
+
 0.14.8
 - Fix: Internal code optimizations.
 - Fix: GOT library was replaced to avoid CORS errors and hangs.

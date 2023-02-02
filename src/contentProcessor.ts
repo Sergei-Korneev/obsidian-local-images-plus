@@ -1,7 +1,6 @@
 import { URL } from "url";
 import path from "path";
 import { App, DataAdapter } from "obsidian";
-import md5 from 'crypto-js/md5';
 import {
   isUrl,
   downloadImage,
@@ -10,6 +9,7 @@ import {
   cleanFileName,
   logError,
   pathJoin,
+  md5Sig,
 } from "./utils";
 
 import{
@@ -28,11 +28,14 @@ export function imageTagProcessor(app: App,
                                   addNameofFile: boolean,
                                   sizeLim: Number,
                                   downUnknown: boolean,
-                                  useRelativePath: boolean) {
+                                  useRelativePath: boolean,
+                                  useCaptions: boolean
+                                 ) {
 
   async function processImageTag(match: string,
                                  anchor: string,
-                                 link: string) {
+                                 link: string,
+                                 caption: string) {
 
 
    logError("processImageTag: "+match) 
@@ -114,11 +117,13 @@ export function imageTagProcessor(app: App,
                 }
 
               if (useWikilinks){
-                 return  [match, `${shortName}![[${fileNameW}]]`];
+                (!useCaptions || !caption.length) ? caption="" : caption="\|"+caption;
+                 return  [match, `![[${fileNameW}${caption}]]${shortName}`];
               }
               
               else{
-                 return [match,`${shortName}![${anchor}](${fileNameURI})`];
+                ( !useCaptions || !caption.length ) ? caption="" : caption=" "+caption;
+                 return [match,`![${anchor}](${fileNameURI}${caption})${shortName}`];
               }
 
 
@@ -158,12 +163,6 @@ async function chooseFileName(
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
   logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
 
-//  if (fileExt.length > 4 )
-//      {
-//          fileExt=fileExt.match(/(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
-//          //fileExt=fileExt.match(/((http|file|https).+?(\.jpg|\.jpeg|\.gif|\.svg|\)|\)))/g)[0].toString();
-//      }
-//
   if (!fileExt) {
       fileExt = await fileExtByContent(contentData);
   }
@@ -177,14 +176,15 @@ async function chooseFileName(
   }
 
   logError("File Ext: "+fileExt, false);
-  var enc = new TextDecoder("utf-8");
-  const baseName =  md5(enc.decode(contentData.slice(0, 15000))).toString() ;
+  
+  const baseName =  md5Sig(contentData);
+
   let needWrite = true;
   let fileName = "";
   const suggestedName = pathJoin(dir, cleanFileName(`${baseName}`+"_MD5"+`.${fileExt}`));
     if (await adapter.exists(suggestedName, false)) {
       const fileData = await adapter.readBinary(suggestedName);
-            const existing_file_md5 = md5(enc.decode(fileData.slice(0,15000))).toString() ;
+            const existing_file_md5 = md5Sig(fileData);
             if (existing_file_md5 === baseName){
               fileName = suggestedName;
               needWrite = false;
