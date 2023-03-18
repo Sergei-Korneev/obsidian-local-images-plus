@@ -1,3 +1,6 @@
+
+export const APP_TITLE = "Local Images Plus  0.15.0";
+
 export const VERBOSE = false;
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
@@ -29,33 +32,35 @@ export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
 export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
+  processCreated: boolean,
+  intClip: boolean,
   useCaptions: boolean,
-  useRelativePath: boolean,
-  mediaFolderSuff: string,
+  pathInTags: string,
   downUnknown: boolean,
-  saveAtt: string,
+  saveAttE: string,
   realTimeUpdate: boolean;
   filesizeLimit: number,
   realTimeUpdateInterval: number;
   addNameOfFile: boolean;
   showNotifications: boolean;
   include: string;
-  mediaRootDirectory: string;
+  mediaRootDir: string;
   useWikilinks: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+  processCreated: true,
+  intClip: true,
   useCaptions: true,
-  useRelativePath: false,
-  mediaFolderSuff: "|_res",
+  pathInTags: "fullDirPath",
   downUnknown: false,
-  saveAtt: "obsFolder",
-  realTimeUpdate: false,
+  saveAttE: "obsFolder",
+  realTimeUpdate: true,
   filesizeLimit: 0,
   realTimeUpdateInterval: 5,
   addNameOfFile: true,
   showNotifications: true,
   include: ".*\\.md",
-  mediaRootDirectory: "_resources",
+  mediaRootDir: "_resources/${notename}",
   useWikilinks: false,
 };

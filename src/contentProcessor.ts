@@ -1,6 +1,12 @@
 import { URL } from "url";
 import path from "path";
-import { App, DataAdapter } from "obsidian";
+import { 
+  App, 
+  DataAdapter,
+  TFile
+} from "obsidian";
+
+
 import {
   isUrl,
   downloadImage,
@@ -8,6 +14,7 @@ import {
   fileExtByContent,
   cleanFileName,
   logError,
+  trimAny,
   pathJoin,
   md5Sig,
 } from "./utils";
@@ -15,21 +22,19 @@ import {
 import{
   MD_MEDIA_LINK, 
   MD_LINK,
+  ISettings,
   SUPPORTED_OS
 } from "./config";
 
 
-//import AsyncLock from "async-lock";
- // var lock = new AsyncLock();
+import AsyncLock from "async-lock";
+ 
+
+
 
 export function imageTagProcessor(app: App,
-                                  mediaDir: string,
-                                  useWikilinks: boolean,
-                                  addNameofFile: boolean,
-                                  sizeLim: Number,
-                                  downUnknown: boolean,
-                                  useRelativePath: boolean,
-                                  useCaptions: boolean
+                                  noteFile: TFile,
+                                  settings: ISettings,
                                  ) {
 
   async function processImageTag(match: string,
@@ -45,17 +50,25 @@ export function imageTagProcessor(app: App,
 
     try {
 
+     var lock = new AsyncLock();
       let fpath;
-      let fileData; 
+      let fileData: ArrayBuffer; 
       const opsys = process.platform;
-      const protocol=link.slice(0,7);
+      const mediaDir = await getMDir(app, noteFile, settings);
+
+    const protocol=link.slice(0,7);
+
+
       if (protocol == "file://")  
         {
          logError("Readlocal: \r\n"+fpath, false);
           if (SUPPORTED_OS.win.includes(opsys)) {fpath=link.replace("file:///",""); }
           else if (SUPPORTED_OS.unix.includes(opsys)) { fpath=link.replace("file://",""); }
           else { fpath=link.replace("file://",""); }
+
              fileData = await readFromDisk(fpath);
+             if ( fileData === null ) {
+                   fileData = await readFromDisk(decodeURI(fpath));}
         }
         else{
            fileData = await downloadImage(link);
@@ -66,64 +79,68 @@ export function imageTagProcessor(app: App,
          }
 
          
-         if( Math.round(fileData.byteLength/1024) < sizeLim) {
+         if( Math.round(fileData.byteLength/1024) < settings.filesizeLimit) {
             logError("Lower limit of the file size!", false);
             return null;
          }
 
         try {
      
+
+  const { fileName, needWrite } = await lock.acquire(match, async function() {
+
+
           const { fileName, needWrite } = await chooseFileName(
             app.vault.adapter,
             mediaDir,
             link,
             fileData,
-            downUnknown
+            settings.downUnknown
           );
+          return {fileName, needWrite};
+    });
+
+
 
           if (needWrite && fileName) {
             await app.vault.createBinary(fileName, fileData);
           }
 
           if (fileName) {
-           
-              let baseFilename = path.basename(fileName);
-              let fileNameURI = encodeURI(fileName);
-              let fileNameW = fileName; 
-              let  shortName = "";
+            
+                let shortName = "";
+                const rdir = await getRDir(noteFile, settings, fileName, link);
+                let pathWiki = rdir[0];
+                let pathMd = rdir[1];
+                   
 
-                  if(useRelativePath){
-                      fileNameURI = fileNameW = baseFilename;
-                  }
+          if (settings.addNameOfFile  && protocol == "file://") {
 
-
-          if (addNameofFile  && protocol == "file://") {
-
-                        if (useWikilinks) {
+                        if (settings.useWikilinks) {
 
                                  shortName = "\r\n[[" +
                                  fileName +
                                    "\|" +
-                                     path.basename(decodeURI(link)) + "]]\r\n";
+                                 rdir[2]["lnkurid"]  + "]]\r\n";
                         }
                         else
                           {
                                  shortName = "\r\n[" +
-                                 path.basename(decodeURI(link)) +
+                                 rdir[2]["lnkurid"]  +
                                  "](" +
-                                 fileNameURI +
+                                 rdir[2]["pathuri"] +
                                     ")\r\n";
                           }
                 }
 
-              if (useWikilinks){
-                (!useCaptions || !caption.length) ? caption="" : caption="\|"+caption;
-                 return  [match, `![[${fileNameW}${caption}]]${shortName}`];
+              if (settings.useWikilinks){
+                (!settings.useCaptions || !caption.length) ? caption="" : caption="\|"+caption;
+                 return  [match, `![[${pathWiki}${caption}]]${shortName}`];
               }
               
               else{
-                ( !useCaptions || !caption.length ) ? caption="" : caption=" "+caption;
-                 return [match,`![${anchor}](${fileNameURI}${caption})${shortName}`];
+                ( !settings.useCaptions || !caption.length ) ? caption="" : caption=" "+caption;
+                 return [match,`![${anchor}](${pathMd}${caption})${shortName}`];
               }
 
 
@@ -148,6 +165,110 @@ export function imageTagProcessor(app: App,
 
   return processImageTag;
 }
+
+
+
+
+
+
+
+
+export async function getRDir(
+                              noteFile: TFile,
+                              settings: ISettings,
+                              fileName: string,
+                              link: string = undefined):
+                              Promise<Array<any>>{
+    let pathWiki = "";
+    let pathMd = "";
+
+    const notePath = noteFile.parent.path.replace(/\\/g, "/");
+    const parsedPath = path.parse(fileName.replace(/\\/g, "/"));
+    
+    const parsedPathE = {
+        parentd: path.basename(parsedPath["dir"]),
+        basen: (parsedPath["name"]+parsedPath["ext"]),
+        lnkurid: path.basename(decodeURI(link)),
+        pathuri:  encodeURI(fileName.replace(/\\/g, "/"))
+      };
+
+
+
+  switch (settings.pathInTags) {
+    case "baseFileName":
+      pathWiki = pathMd = parsedPathE["basen"];
+      break;
+    case "onlyRelative":
+      pathWiki = path.join(path.relative(path.sep + notePath, path.sep + parsedPath["dir"]),parsedPathE["basen"]).replace(/\\/g, "/");
+      pathMd = encodeURI(pathWiki);
+      break;
+    case "fullDirPath":
+      pathWiki = fileName.replace(/\\/g, "/");
+      pathMd = parsedPathE["pathuri"];
+      break;
+    default:
+      pathWiki = fileName;
+      pathMd = parsedPathE["pathuri"];
+  };
+return [pathWiki, pathMd, parsedPathE];
+
+}
+
+
+export async function getMDir(app: App,
+                              noteFile: TFile,
+                              settings: ISettings): Promise<string>{
+
+
+    const notePath = noteFile.parent.path;
+    const date = new Date();
+    const current_date = date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
+    const obsmediadir = app.vault.getConfig("attachmentFolderPath");
+    const mediadir = settings.mediaRootDir;
+    const attdir = settings.saveAttE;
+    let root="/";
+
+
+
+
+          switch (attdir) {
+            
+            case 'inFolderBelow':
+               root = mediadir.replace("${notename}", noteFile.basename).replace("${date}", current_date);
+              break;
+
+            case 'nextToNoteS':
+               root = (path.join(noteFile.parent.path,mediadir)).replace("${notename}", noteFile.basename).replace("${date}", current_date);
+              break;
+
+            default:
+            
+            if ( obsmediadir === '/' ){
+                  root = obsmediadir;
+            }
+            else if ( obsmediadir === './' ){
+                  root = path.join(noteFile.parent.path);
+            }
+            else if  ( obsmediadir.match (/\.\/.+/g) !== null ) {
+                  root = path.join(noteFile.parent.path, obsmediadir.replace('\.\/',''));
+            }
+            else{
+                  root = obsmediadir;
+            }
+
+          }
+
+return trimAny(root,["/","\\"]);
+
+
+}
+
+
+
+
+
+
+
 
 
 
@@ -181,7 +302,7 @@ async function chooseFileName(
 
   let needWrite = true;
   let fileName = "";
-  const suggestedName = pathJoin(dir, cleanFileName(`${baseName}`+"_MD5"+`.${fileExt}`));
+  const suggestedName = pathJoin(dir, cleanFileName(`${baseName}`+`.${fileExt}`));
     if (await adapter.exists(suggestedName, false)) {
       const fileData = await adapter.readBinary(suggestedName);
             const existing_file_md5 = md5Sig(fileData);
@@ -197,7 +318,7 @@ async function chooseFileName(
       fileName = suggestedName;
     }
 
-  logError("Fileneame: "+ fileName,false);
+  logError("File name: "+ fileName,false);
   if (!fileName) {
     throw new Error("Failed to generate file name for media file.");
   }

@@ -1,3 +1,12 @@
+0.15.0
+Fix: Unable to copy URI encoded file:// protocol links. 
+     Now it is possible to use URI in file links. e.g. ')' as %29, '('  as %28 etc.
+Fix: Asynchronous access to files.
+Add: Assign paths for attachements in a more versatile way with temlpates (${date} and ${notename}). 
+Add: Option to handle all new created (cloud-synced etc) markdown files.
+Add: Canvas support.
+Add: Option to process clipboard events.  
+
 0.14.9
 Fix: File naming algorithm might return the same name for similar images.
 Add: Option to preserve original link captions.

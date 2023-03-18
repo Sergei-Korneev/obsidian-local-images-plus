@@ -21,7 +21,10 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 ## Usage
 
-Just copy any web content, Word/Open Office content and paste it into your note.
+Just copy any web content, Word/Open Office content and paste it into your note or a note in canvas.
+
+Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drug&drop for files).
+
 
 
 ![img](docs/exampleimage.gif?raw=true)

@@ -8,18 +8,23 @@ import {
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
   VERBOSE,
   MD_LINK,
-  USER_AGENT
+  USER_AGENT,
+  SUPPORTED_OS
 } from "./config";
 import {
+  App,
   requestUrl
-} from 'obsidian';
-import md5 from 'crypto-js/md5';
+} from "obsidian";
+import md5 from "crypto-js/md5";
+//import fs from "fs";
+const fs = require('fs').promises;
+
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
 
 */
-const fs = require('fs').promises;
+//const fs = require('fs').promises;
 
 
 
@@ -50,7 +55,7 @@ export function md5Sig(contentData: ArrayBuffer = undefined ){
           ].map(x=>dec.decode(x)).join()
       ).toString();
 
-      return signature; 
+      return signature+"_MD5"; 
     }
     catch(e)
     {
@@ -137,11 +142,32 @@ export function isUrl(link: string) {
   }
 }
 
+
+
+export async function copyFromDisk(src: string, dest: string): Promise<null>  {
+  logError("copyFromDisk: " + src+" to "+dest, false);
+try{
+          await fs.copyFile(src, dest,null,(err)=>{
+              if (err) {
+                logError("Error:" + err, false);
+              }
+
+          });
+}
+catch(e){
+    logError("Cannot copy: "+ e,false);
+    return null;
+}
+}
+
+
+
+
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
     logError("readFromDisk: " + file, false);
 try {
-    //   const data = await this.app.vault.adapter.readBinary(file);
-    const data = await fs.readFile(file, null);
+    const data = await fs.readFile(file, null);  
+  //const data = await app.vault.adapter.readBinary(path.relative(app.vault.adapter.basePath, file));
     return Buffer.from(data);
 }
 catch(e)
