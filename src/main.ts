@@ -4,6 +4,7 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
+  Menu,
   TFile,
   Editor,
   htmlToMarkdown,
@@ -212,7 +213,7 @@ for (const file_ of files) {
 
   // using arrow syntax for callbacks to correctly pass this context
   processActivePage = async () => {
-  
+     logError("processactive"); 
     try{
       const activeFile = app.workspace.activeEditor.file;
       await this.processPage(activeFile);
@@ -257,79 +258,26 @@ for (const file_ of files) {
       }, NOTICE_TIMEOUT);
     }
   };
-  async onload() {
-    await this.loadSettings();
-
-    this.addCommand({
-      id: "download-images",
-      name: "Download all media files",
-      callback: this.processActivePage,
-    });
-
-    this.addCommand({
-      id: "download-images-all",
-      name: "Download media files for all your notes",
-      callback: this.processAllPages,
-    });
-    
-
-//    this.app.workspace.on(
-//     "active-leaf-change",
-//         (leaf: WorkspaceLeaf ) => {
-//
-//         });
-//
 
 
-    this.app.workspace.on(
-      "editor-drop",
-       (evt: DragEvent, editor: Editor, info: MarkdownView ) => 
-       {
+private async onDropFunc(evt: DragEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined){
+
+          if (evt === undefined){return;}
 
           if (!this.settings.intClip) {return};
+
                     evt.preventDefault();
                     const activeFile = app.workspace.activeEditor.file;
                     this.processClip(activeFile, evt, editor);
                     return;
-                 
-
-       });
+} 
 
 
 
+private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined){
 
-		this.registerEvent(
-			this.app.vault.on('create', async (file) => 
-			{
+          if (evt === undefined){return;}
 
-        const includeRegex = new RegExp(this.settings.include, "i");
-
-
-				if ( !(file instanceof TFile) || !(this.settings.processCreated))
-					return
-
-				if ( !(file.path.match(includeRegex)) )
-					return
-
-				const timeGapMs = Date.now() - file.stat.ctime;
-
-				if (timeGapMs > 1000)
-					return
-
-					logError( file.path, false)
-            const cont =  await this.app.vault.cachedRead(file);
-            const tt = await cont.search(MD_MEDIA_LINK); 
-               if (tt == -1 ) {return;}
-           //const cont = await this.app.vault.adapter.read(file.path);
-              this.enqueueActivePage(file);
-              // this.setupQueueInterval();
-			})
-		)
-
-    this.app.workspace.on(
-
-      "editor-paste",
-        ( evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
           if (!this.settings.intClip) {return};
 
                 try{
@@ -372,6 +320,107 @@ for (const file_ of files) {
                 new Notice( APP_TITLE+`\nPlease select a note or click inside selected note in canvas.`);
                 return;
                 }
+        
+
+
+} 
+
+private async onCreateFunc(file: TFile = undefined){
+
+
+        if (file === undefined){return;}
+        const includeRegex = new RegExp(this.settings.include, "i");
+
+				if ( !(file instanceof TFile) || !(this.settings.processCreated))
+					return
+
+				if ( !(file.path.match(includeRegex)) )
+					return
+
+				const timeGapMs = Date.now() - file.stat.ctime;
+
+				if (timeGapMs > 1000)
+					return
+
+					logError( file.path, false)
+            const cont =  await this.app.vault.cachedRead(file);
+            const tt = await cont.search(MD_MEDIA_LINK); 
+               if (tt == -1 ) {return;}
+           //const cont = await this.app.vault.adapter.read(file.path);
+              this.enqueueActivePage(file);
+              // this.setupQueueInterval();
+
+}
+
+
+
+
+private async fileMenuCallbackFunc = (
+        menu: Menu,
+    ) => {
+                menu.addSeparator();
+                menu.addItem((item) => {
+                    item.setTitle("Download media files")
+                        .setIcon('link')
+                        .onClick( async () => {
+                          this.processActivePage();
+                        });
+                });
+            menu.addSeparator();
+    };
+
+
+
+
+  async onload() {
+    await this.loadSettings();
+
+    this.addCommand({
+      id: "download-images",
+      name: "Download all media files",
+      callback: this.processActivePage,
+    });
+
+    this.addCommand({
+      id: "download-images-all",
+      name: "Download media files for all your notes",
+      callback: this.processAllPages,
+    });
+    
+
+//    this.app.workspace.on(
+//     "active-leaf-change",
+//         (leaf: WorkspaceLeaf ) => {
+//
+//         });
+//
+this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
+
+
+    this.app.workspace.on(
+      "editor-drop",
+       (evt: DragEvent, editor: Editor, info: MarkdownView ) => 
+       {
+         this.onDropFunc(evt, editor, info);        
+       });
+
+
+
+
+    this.app.vault.on('create', (file: TFile) => 
+    {
+       this.onCreateFunc(file);        
+    });
+
+
+
+
+    this.app.workspace.on(
+
+      "editor-paste",
+        ( evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
+        this.onPasteFunc(evt, editor, info);
+
         }
     );
 
@@ -428,7 +477,12 @@ for (const file_ of files) {
     logError(`LocalImagesPlus: error: ${error}`, false);
   }
 
-  onunload() {}
+  async onunload() {
+         this.app.workspace.off("editor-drop", null);
+         this.app.workspace.off("editor-paste", null);
+//         this.app.vault.off("create",  null);
+         logError(APP_TITLE+" unloaded.");
+  }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

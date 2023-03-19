@@ -1,5 +1,5 @@
 
-export const APP_TITLE = "Local Images Plus  0.15.0";
+export const APP_TITLE = "Local Images Plus  0.15.1";
 
 export const VERBOSE = false;
 

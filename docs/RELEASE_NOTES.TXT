@@ -1,3 +1,8 @@
+0.15.1
+Fix: Disable all events on plugin onload.
+Fix: Minor code edits.
+Add: Menu command.
+
 0.15.0
 Fix: Unable to copy URI encoded file:// protocol links. 
      Now it is possible to use URI in file links. e.g. ')' as %29, '('  as %28 etc.

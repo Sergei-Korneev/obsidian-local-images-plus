@@ -26,10 +26,12 @@ Just copy any web content, Word/Open Office content and paste it into your note 
 Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drug&drop for files).
 
 
+![img](docs/canvasex.png?raw=true)
+
 
 ![img](docs/exampleimage.gif?raw=true)
 
-Use it in the command mode or in the timer mode (toggle "on paste processing" option in the settings):
+Use it in the command/menu mode or in automatic mode (toggle "Automatic processing" option in the settings):
 
 
 **NOTE: An interval 5 sec or above is recommended. if you have old settings saved change it manually**
