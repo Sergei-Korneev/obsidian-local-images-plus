@@ -26,7 +26,7 @@ Just copy any web content, Word/Open Office content and paste it into your note 
 Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drug&drop for files).
 
 
-![img](docs/canvasex.png?raw=true)
+![img](docs/menuex.png?raw=true)
 
 
 ![img](docs/exampleimage.gif?raw=true)
