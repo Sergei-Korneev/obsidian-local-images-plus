@@ -284,7 +284,7 @@ async function chooseFileName(
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
   logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
 
-  if (!fileExt) {
+  if (!fileExt || fileExt.length > 4) {
       fileExt = await fileExtByContent(contentData);
   }
   
