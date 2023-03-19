@@ -26,7 +26,6 @@ Just copy any web content, Word/Open Office content and paste it into your note 
 Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drug&drop for files).
 
 
-![img](docs/menuex.png?raw=true)
 
 
 ![img](docs/exampleimage.gif?raw=true)
@@ -40,6 +39,7 @@ Use it in the command/menu mode or in automatic mode (toggle "Automatic processi
 ![img](docs/Pasted%20image%2020221219134358.png?raw=true)
 
 
+![img](docs/menuex.png?raw=true)
 
 
 ```Download all media files``` - your active page will be processed.
