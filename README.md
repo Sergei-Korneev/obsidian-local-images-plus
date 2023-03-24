@@ -10,10 +10,11 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 ## Installation
 
-- Download the latest version from [GitHub](https://github.com/Sergei-Korneev/obsidian-local-images-plus) / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus) / or install from "Obsidian Community Plugins". [Read release notes](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
+- Download the latest version from [GitHub](https://github.com/Sergei-Korneev/obsidian-local-images-plus) / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus). [Read release notes](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
 - Remove obsidian-local-images plugin to avoid any conflicts.
 - Extract the archive into your Obsidian vault (e.g. Myvault/.obsidian/plugins)
 - Restart Obsidian.
+- Or install from "Obsidian Community Plugins"
 - Open "Community plugins" dialog and change plugin settings at will.
 - Enjoy
 
@@ -21,9 +22,9 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 ## Usage
 
-Just copy any web content, Word/Open Office content and paste it into your note or a note in canvas.
+Just copy any web content, Word/Open Office content and paste it into your regular note or a note in canvas.
 
-Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drug&drop for files).
+Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drag-and-drop for files).
 
 
 
@@ -36,7 +37,7 @@ Use it in the command/menu mode or in automatic mode (toggle "Automatic processi
 **NOTE: An interval 5 sec or above is recommended. if you have old settings saved change it manually**
 
 
-![img](docs/Pasted%20image%2020221219134358.png?raw=true)
+![img](docs/commands.png?raw=true)
 
 
 ![img](docs/menuex.png?raw=true)
