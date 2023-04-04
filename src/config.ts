@@ -1,4 +1,3 @@
-
 export const APP_TITLE = "Local Images Plus  0.15.1";
 
 export const VERBOSE = false;
@@ -7,8 +6,6 @@ export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"
 
 export const USER_AGENT =
 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36';
-export const MD_MEDIA_LINK= 
-/(?<anchor>.{0,1}\!\[.+\()(?<link>(http(s){0,1}|file).+[^\)])\)/g;
 
 export const MD_SEARCH_PATTERN=
 [
