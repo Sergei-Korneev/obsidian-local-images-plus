@@ -40,6 +40,7 @@ import {
 } from "./config";
 import { UniqueQueue } from "./uniqueQueue";
 import path from "path";
+import {ModalW1} from "./modal"; 
 
 export default class LocalImagesPlugin extends Plugin {
   settings: ISettings;
@@ -371,6 +372,12 @@ private async fileMenuCallbackFunc = (
 
 
 
+private async openModal = () => {
+     const mod = new ModalW1 (this.app);
+     mod.plugin = this;
+     mod.open();
+};
+
 
   async onload() {
     await this.loadSettings();
@@ -384,7 +391,7 @@ private async fileMenuCallbackFunc = (
     this.addCommand({
       id: "download-images-all",
       name: "Download media files for all your notes",
-      callback: this.processAllPages,
+      callback: this.openModal,
     });
     
 
