@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.15.1";
+export const APP_TITLE = "Local Images Plus  0.15.2";
 
 export const VERBOSE = true;
 
@@ -39,6 +39,7 @@ export interface ISettings {
   saveAttE: string,
   realTimeUpdate: boolean;
   filesizeLimit: number,
+  tryCount: number,
   realTimeUpdateInterval: number;
   addNameOfFile: boolean;
   showNotifications: boolean;
@@ -56,6 +57,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   saveAttE: "obsFolder",
   realTimeUpdate: true,
   filesizeLimit: 0,
+  tryCount: 2,
   realTimeUpdateInterval: 5,
   addNameOfFile: true,
   showNotifications: true,

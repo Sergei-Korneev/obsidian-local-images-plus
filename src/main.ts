@@ -591,7 +591,7 @@ class SettingTab extends PluginSettingTab {
 
               this.plugin.displayError(
 
-                "Realtime processing interval should be a positive integer number between 5 and 3600!"
+                "The value should be a positive integer number between 5 and 3600!"
               );
               return;
             }
@@ -602,6 +602,31 @@ class SettingTab extends PluginSettingTab {
             this.plugin.settings.realTimeUpdateInterval = numberValue;
             await this.plugin.saveSettings();
             this.plugin.setupQueueInterval();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Number of retries for every single attachment")
+      .setDesc("If an error occurs during downloading (network etc.) try to re-download an attachement several times.")
+      .addText((text) =>
+        text
+          .setValue(String(this.plugin.settings.tryCount))
+          .onChange(async (value: string) => {
+
+            let numberValue = Number(value);
+            if (
+              isNaN(numberValue) ||
+              !Number.isInteger(numberValue) ||
+              numberValue < 1 ||
+              numberValue > 6
+            ) {
+              this.plugin.displayError(
+                "The value should be a positive integer number between 1 and 6!"
+              );
+              return;
+            }
+            this.plugin.settings.tryCount = numberValue;
+            await this.plugin.saveSettings();
           })
       );
 

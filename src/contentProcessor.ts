@@ -72,7 +72,7 @@ export function imageTagProcessor(app: App,
         else{
             //Try to download several times
             let trycount  = 0;
-            while (trycount < 3){ 
+            while (trycount < settings.tryCount){ 
                 fileData = await downloadImage(link);
                 logError("\r\n\nDownloading (try): "+trycount+"\r\n\n");
                 if (fileData !== null){break;}
