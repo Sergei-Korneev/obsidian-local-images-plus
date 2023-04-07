@@ -32,7 +32,6 @@ import {
   APP_TITLE,
   ISettings,
   DEFAULT_SETTINGS,
-  MD_MEDIA_LINK,
   MD_SEARCH_PATTERN,
   ANY_URL_PATTERN,
   NOTICE_TIMEOUT,
@@ -294,13 +293,16 @@ private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = unde
                          if (this.settings.realTimeUpdate)  {
                               const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) + 
                                            htmlToMarkdown(evt.clipboardData.getData("text"));
-                                if (MD_MEDIA_LINK.test(cont)){
+                              for (const reg_p of MD_SEARCH_PATTERN) {
+                                if (reg_p.test(cont)) {
                                     if (this.settings.showNotifications) {
-                                      new Notice( APP_TITLE+"\nMedia links were found, processing...");
+                                         new Notice( APP_TITLE+"\nMedia links were found, processing...");
                                     }
                                        this.enqueueActivePage(activeFile);
-                                         this.setupQueueInterval();
+                                        this.setupQueueInterval();
+                                        break;
                                  }
+                            }
                           }
                     return;
                   }
@@ -328,7 +330,6 @@ private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = unde
 
 private async onCreateFunc(file: TFile = undefined){
 
-
         if (file === undefined){return;}
         const includeRegex = new RegExp(this.settings.include, "i");
 
@@ -344,19 +345,20 @@ private async onCreateFunc(file: TFile = undefined){
 					return
 
 					logError( file.path, false)
-            const cont =  await this.app.vault.cachedRead(file);
-            const tt = await cont.search(MD_MEDIA_LINK); 
-               if (tt == -1 ) {return;}
-           //const cont = await this.app.vault.adapter.read(file.path);
-              this.enqueueActivePage(file);
-              // this.setupQueueInterval();
-
+          const cont =  await this.app.vault.cachedRead(file);
+          for (const reg_p of MD_SEARCH_PATTERN) {
+               if (reg_p.test(cont)) {
+                    this.enqueueActivePage(file);
+                    break;
+                    return;
+               }
+          }
 }
 
 
 
 
-private async fileMenuCallbackFunc = (
+private fileMenuCallbackFunc = (
         menu: Menu,
     ) => {
                 menu.addSeparator();
@@ -372,7 +374,7 @@ private async fileMenuCallbackFunc = (
 
 
 
-private async openModal = () => {
+private openModal = () => {
      const mod = new ModalW1 (this.app);
      mod.plugin = this;
      mod.open();

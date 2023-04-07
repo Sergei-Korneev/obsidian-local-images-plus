@@ -20,7 +20,6 @@ import {
 } from "./utils";
 
 import{
-  MD_MEDIA_LINK, 
   MD_LINK,
   ISettings,
   SUPPORTED_OS
@@ -71,7 +70,14 @@ export function imageTagProcessor(app: App,
                    fileData = await readFromDisk(decodeURI(fpath));}
         }
         else{
-           fileData = await downloadImage(link);
+            //Try to download several times
+            let trycount  = 0;
+            while (trycount < 3){ 
+                fileData = await downloadImage(link);
+                logError("\r\n\nDownloading (try): "+trycount+"\r\n\n");
+                if (fileData !== null){break;}
+                trycount++;
+            }
         }
          if ( fileData  === null ){
             logError("Cannot get an attachment content!", false);
