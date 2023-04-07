@@ -1,6 +1,6 @@
 export const APP_TITLE = "Local Images Plus  0.15.2";
 
-export const VERBOSE = true;
+export const VERBOSE = false;
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
 
@@ -47,6 +47,7 @@ export interface ISettings {
   include: string;
   mediaRootDir: string;
   useWikilinks: boolean;
+  disAddCom: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -65,4 +66,5 @@ export const DEFAULT_SETTINGS: ISettings = {
   include: ".*\\.md",
   mediaRootDir: "_resources/${notename}",
   useWikilinks: false,
+  disAddCom: false
 };

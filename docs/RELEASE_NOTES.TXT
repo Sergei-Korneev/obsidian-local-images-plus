@@ -1,8 +1,11 @@
 0.15.2
 Fix: Content parsing issues on some sites.
 Add: Option to retry download attempts several times on each attachement.
-Add: A modal window to confirm mass note processing.
+Add: A modal window to confirm all notes processing.
 Add: Support for base64 encoded data.
+Add: Command to rename a note according to the first found # tag. 
+     (It is useful for me ;) when I copy/pasting entire webpages.)
+
 
 0.15.1
 Fix: Disable all events on plugin onload.

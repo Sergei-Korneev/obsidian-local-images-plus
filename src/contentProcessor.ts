@@ -182,6 +182,19 @@ export function imageTagProcessor(app: App,
 
 
 
+export async function setTitleAsName(
+  noteFile: TFile,
+  adapter: DataAdapter
+): Promise<any>{
+
+const fileData = await adapter.read(noteFile);
+const title = await fileData.match(/#{1,6} .+?$/);
+logError(fileData);
+logError(title);
+
+//const fileData = await adapter.read(noteFile, );
+
+}
 
 
 

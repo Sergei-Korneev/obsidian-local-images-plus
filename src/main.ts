@@ -16,7 +16,7 @@ import safeRegex from "safe-regex";
 import { 
   imageTagProcessor,
   getMDir,
-  getRDir
+  getRDir,
 } from "./contentProcessor";
 
 import { 
@@ -24,7 +24,9 @@ import {
   copyFromDisk,
   readFromDisk,
   cleanFileName,
+  cFileName,
   md5Sig,
+  trimAny,
   logError
 } from "./utils";
 
@@ -126,7 +128,7 @@ logError(fItems,true);
 
 for (const file_ of files) {
 
-          const fpath_ = path.join(pat,path.basename(file_).replace(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g,"_"));
+          const fpath_ = cFileName(path.join(pat,path.basename(file_)));
           const rdir_ = await getRDir(file, this.settings, fpath_);
 
               const ex = await app.vault.adapter.exists(fpath_);
@@ -327,7 +329,6 @@ private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = unde
 
 
 } 
-
 private async onCreateFunc(file: TFile = undefined){
 
         if (file === undefined){return;}
@@ -358,7 +359,7 @@ private async onCreateFunc(file: TFile = undefined){
 
 
 
-private fileMenuCallbackFunc = (
+  private fileMenuCallbackFunc = (
         menu: Menu,
     ) => {
                 menu.addSeparator();
@@ -374,27 +375,35 @@ private fileMenuCallbackFunc = (
 
 
 
-private openModal = () => {
-     const mod = new ModalW1 (this.app);
-     mod.plugin = this;
-     mod.open();
-};
+  private openModal = () => {
+       const mod = new ModalW1 (this.app);
+       mod.plugin = this;
+       mod.open();
+  };
 
 
   async onload() {
     await this.loadSettings();
+  if (!this.settings.disAddCom){
+        this.addCommand({
+          id: "set-title-as-name",
+          name: "Set first # header as a note name.",
+          callback: this.setTitleAsName,
+        });
 
+        this.addCommand({
+          id: "download-images-all",
+          name: "Download media files for all your notes",
+          callback: this.openModal,
+        });
+
+  }
     this.addCommand({
       id: "download-images",
       name: "Download all media files",
       callback: this.processActivePage,
     });
 
-    this.addCommand({
-      id: "download-images-all",
-      name: "Download media files for all your notes",
-      callback: this.openModal,
-    });
     
 
 //    this.app.workspace.on(
@@ -456,6 +465,36 @@ this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
     }
   }
   
+
+
+  setTitleAsName = async () => {
+    try{
+          const noteFile = app.workspace.activeEditor.file;
+          const fileData =  await this.app.vault.cachedRead(noteFile);
+          const title =  fileData.match(/^#{1,6} .+?($|\n)/gm);
+          var ind = 0;
+          if (title !== null){
+              const newName = cFileName(trimAny(title[0].toString(),["#", " "])).slice(0,200);
+              var fullPath = path.join(noteFile.parent.path,newName+".md");
+              var fExist =  await this.app.vault.exists(fullPath);
+              if (trimAny(noteFile.path, ["\\","/"]) != trimAny(fullPath, ["\\","/"])) {
+                    while (fExist){
+                        ind++;
+                        var fullPath =  path.join(noteFile.parent.path,newName+" ("+ind+")"+".md");
+                        var fExist =  await this.app.vault.exists(fullPath);
+                    }
+                    await this.app.vault.rename(noteFile, fullPath);
+                    if (this.settings.showNotifications) {
+                        new Notice( APP_TITLE+`\nThe note was renamed to `+fullPath);
+                    }
+            }
+          }
+
+    }catch(e){
+    new Notice( APP_TITLE+`\nCannot rename. Please select a note or click inside selected note in canvas.`);
+    return;
+    }
+  };
 
 
   processModifiedQueue = async () => {
@@ -606,8 +645,36 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName("Show notifications")
+      .setDesc("Show notifications when pages were processed.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showNotifications)
+          .onChange(async (value) => {
+            this.plugin.settings.showNotifications = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+
+    new Setting(containerEl)
+      .setName("Disable additional commands")
+      .setDesc("Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.disAddCom)
+          .onChange(async (value) => {
+            this.plugin.settings.disAddCom = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+
+
+      
+    new Setting(containerEl)
       .setName("Number of retries for every single attachment")
-      .setDesc("If an error occurs during downloading (network etc.) try to re-download an attachement several times.")
+      .setDesc("If an error occurs during downloading (network etc.) try to re-download several times.")
       .addText((text) =>
         text
           .setValue(String(this.plugin.settings.tryCount))
@@ -645,7 +712,7 @@ class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Intercept clipboard events")
-      .setDesc("Plugin will also process drug&drop, copy/paste events (for files and screenshots).")
+      .setDesc("Plugin will also process drag-and-drop, copy/paste events (for files and screenshots).")
       .addToggle((toggle) =>
         toggle
           .setValue(this.plugin.settings.intClip)
@@ -656,17 +723,6 @@ class SettingTab extends PluginSettingTab {
       );
 
 
-    new Setting(containerEl)
-      .setName("Show notifications")
-      .setDesc("Show notifications when pages were processed.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showNotifications)
-          .onChange(async (value) => {
-            this.plugin.settings.showNotifications = value;
-            await this.plugin.saveSettings();
-          })
-      );
 
     new Setting(containerEl)
       .setName("Preserve link captions")

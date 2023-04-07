@@ -16,7 +16,6 @@ import {
   requestUrl
 } from "obsidian";
 import md5 from "crypto-js/md5";
-import Base64 from 'crypto-js/enc-base64';
 //import fs from "fs";
 const fs = require('fs').promises;
 
@@ -244,6 +243,14 @@ export function trimAny(str: string, chars: Array<string>) {
     return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
 
+
+export function cFileName(name: string) {
+  const cleanedName = name.replace(
+    /(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g,
+    " "
+  );
+  return cleanedName;
+}
 
 export function cleanFileName(name: string) {
   const cleanedName = filenamify(name).replace(
