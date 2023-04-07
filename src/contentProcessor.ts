@@ -16,6 +16,7 @@ import {
   logError,
   trimAny,
   pathJoin,
+  base64ToBuff,
   md5Sig,
 } from "./utils";
 
@@ -55,10 +56,15 @@ export function imageTagProcessor(app: App,
       const opsys = process.platform;
       const mediaDir = await getMDir(app, noteFile, settings);
 
-    const protocol=link.slice(0,7);
+    const protocol=link.slice(0,5);
 
+      if (protocol == "data:"){
+         logError("ReadBase64: \r\n"+fpath, false);
+         fileData = await  base64ToBuff(link);
+      } 
+      else 
 
-      if (protocol == "file://")  
+      if (protocol == "file:")  
         {
          logError("Readlocal: \r\n"+fpath, false);
           if (SUPPORTED_OS.win.includes(opsys)) {fpath=link.replace("file:///",""); }
@@ -120,7 +126,7 @@ export function imageTagProcessor(app: App,
                 let pathMd = rdir[1];
                    
 
-          if (settings.addNameOfFile  && protocol == "file://") {
+          if (settings.addNameOfFile  && protocol == "file:") {
 
                         if (settings.useWikilinks) {
 

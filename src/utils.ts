@@ -16,6 +16,7 @@ import {
   requestUrl
 } from "obsidian";
 import md5 from "crypto-js/md5";
+import Base64 from 'crypto-js/enc-base64';
 //import fs from "fs";
 const fs = require('fs').promises;
 
@@ -161,6 +162,22 @@ catch(e){
 }
 
 
+
+
+export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
+    logError("base64ToBuff: \r\n", false);
+try {
+    const BufferData = Buffer.from(data.split("base64,")[1], 'base64');
+    logError(BufferData);
+    return BufferData;
+}
+catch(e)
+{
+
+  logError("Cannot read base64: "+ e,false);
+    return null;
+}
+}
 
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
