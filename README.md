@@ -43,8 +43,6 @@ Starting from version 0.15.0 the plugin also handles clipboard events (screensho
 Use it in the command/menu mode or in automatic mode (toggle "Automatic processing" option in the settings):
 
 
-**NOTE: An interval 5 sec or above is recommended. if you have old settings saved change it manually**
-
 
 ![img](docs/commands.png?raw=true)
 
