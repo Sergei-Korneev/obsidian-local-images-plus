@@ -18,6 +18,15 @@ The plugin searches for all external media links in your notes, downloads and sa
 - Open "Community plugins" dialog and change plugin settings at will.
 - Enjoy
 
+```
+
+This plugin has known compatibility issues with following plugins:
+
+- Paste Image Rename
+
+- BibTex
+
+```
 
 
 ## Usage
