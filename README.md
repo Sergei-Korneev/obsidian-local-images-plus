@@ -22,9 +22,9 @@ The plugin searches for all external media links in your notes, downloads and sa
 
 This plugin has known compatibility issues with the following plugins:
 
-- Paste Image Rename
+* Paste Image Rename
 
-- BibTex
+* BibTex
 
 ```
 
