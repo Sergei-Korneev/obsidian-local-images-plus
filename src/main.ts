@@ -13,17 +13,15 @@ import {
 //import * as CodeMirror from "codemirror";
 import safeRegex from "safe-regex";
 
-import { 
+import {
   imageTagProcessor,
   getMDir,
   getRDir,
 } from "./contentProcessor";
 
-import { 
-  replaceAsync, 
+import {
+  replaceAsync,
   copyFromDisk,
-  readFromDisk,
-  cleanFileName,
   cFileName,
   md5Sig,
   trimAny,
@@ -35,13 +33,13 @@ import {
   ISettings,
   DEFAULT_SETTINGS,
   MD_SEARCH_PATTERN,
-  ANY_URL_PATTERN,
   NOTICE_TIMEOUT,
-  TIMEOUT_LIKE_INFINITY,
+  TIMEOUT_LIKE_INFINITY
 } from "./config";
+
 import { UniqueQueue } from "./uniqueQueue";
-import path from "path";
-import {ModalW1} from "./modal"; 
+import path from "path"
+import { ModalW1 } from "./modal";
 
 export default class LocalImagesPlugin extends Plugin {
   settings: ISettings;
@@ -49,195 +47,195 @@ export default class LocalImagesPlugin extends Plugin {
   intervalId: number = null;
 
 
-private async processClip(file: TFile, obj: DragEvent | ClipboardEvent, editor: Editor ){
+  private async processClip(file: TFile, obj: DragEvent | ClipboardEvent, editor: Editor) {
 
-  if (this.settings.showNotifications) {
-    new Notice(APP_TITLE+"\nProcessing clipboard...");
-  };
- logError(obj,true);
+    if (this.settings.showNotifications) {
+      new Notice(APP_TITLE + "\nProcessing clipboard...");
+    };
+    logError(obj, true);
 
-  const pat =  await getMDir(this.app, file, this.settings);
-  const files = [];
-  let openf = "";
+    const pat = await getMDir(this.app, file, this.settings);
+    const files = [];
+    let openf = "";
 
-   if (obj.constructor.name == "DragEvent" ){
+    if (obj.constructor.name == "DragEvent") {
       const fItems = obj.dataTransfer.files;
       const tItems = obj.dataTransfer.items;
 
- logError(obj.dataTransfer,true);
- logError(tItems,true);
- logError(fItems,true);
-        for (const key in tItems) {
-        if ( tItems[key].kind == "file" ){
-          
-          if (fItems[key].path !== '' ){
+      logError(obj.dataTransfer, true);
+      logError(tItems, true);
+      logError(fItems, true);
+      for (const key in tItems) {
+        if (tItems[key].kind == "file") {
+
+          if (fItems[key].path !== '') {
             files.push(fItems[key].path);
           }
         }
       }
-     }
+    }
 
-   if (obj.constructor.name == "ClipboardEvent" ){
+    if (obj.constructor.name == "ClipboardEvent") {
 
       const fItems = obj.clipboardData.files;
-      const tItems = obj.clipboardData.items;
+      const tItems = obj.clipboardData.items;rootroot
 
- logError(obj.clipboardData,true);
- logError(tItems,true);
- logError(fItems,true);
+      logError(obj.clipboardData, true);
+      logError(tItems, true);
+      logError(fItems, true);
       for (const key in tItems) {
-      if ( tItems[key].kind == "file" ){
-        
-        if (fItems[key].path !== '' ){
-          files.push(fItems[key].path);
-        }
-        else{
+        if (tItems[key].kind == "file") {
 
-logError("File:\n",false);
-
-logError(fItems,true);
-          const blob = await tItems[key].getAsFile();
-          const binData =  await blob.arrayBuffer();
-          const ext =  path.extname(fItems[key]["name"]);
-          const fpath =  path.join(pat, md5Sig(binData) + ext );
-          const rdir = await getRDir(file, this.settings, fpath);
-
-          await this.ensureFolderExists(pat.replace(/\\/g, "/"));
-          this.app.vault.adapter.writeBinary(fpath.replace(/\\/g, "/"), binData);
-
-
-              if (this.settings.useWikilinks){
-                  if (this.settings.addNameOfFile){openf = "\r\n[[" + rdir[0] + "|Open file:]]"};
-                  editor.replaceRange(openf + "\r\n![[" + rdir[0] + "]]\r\n", editor.getCursor());
-              }
-              
-              else{
-                  if (this.settings.addNameOfFile){openf = "\r\n[Open file:]" + "(" + rdir[1] + ")"};
-                  editor.replaceRange(openf + "\r\n![](" + rdir[1] + ")\r\n", editor.getCursor());
-              }
-
-              this.app.workspace.activeLeaf.rebuildView();
-          return;
-        }
-
+          if (fItems[key].path !== '') {
+            files.push(fItems[key].path);
           }
+          else {
+
+            logError("File:\n", false);
+
+            logError(fItems, true);
+            const blob = await tItems[key].getAsFile();
+            const binData = await blob.arrayBuffer();
+            const ext = path.extname(fItems[key]["name"]);
+            const fpath = path.join(pat, md5Sig(binData) + ext);
+            const rdir = await getRDir(file, this.settings, fpath);
+
+            await this.ensureFolderExists(pat.replace(/\\/g, "/"));
+            this.app.vault.adapter.writeBinary(fpath.replace(/\\/g, "/"), binData);
+
+
+            if (this.settings.useWikilinks) {
+              if (this.settings.addNameOfFile) { openf = "\r\n[[" + rdir[0] + "|Open file:]]" };
+              editor.replaceRange(openf + "\r\n![[" + rdir[0] + "]]\r\n", editor.getCursor());
+            }
+
+            else {
+              if (this.settings.addNameOfFile) { openf = "\r\n[Open file:]" + "(" + rdir[1] + ")" };
+              editor.replaceRange(openf + "\r\n![](" + rdir[1] + ")\r\n", editor.getCursor());
+            }
+
+            this.app.workspace.activeLeaf.rebuildView();
+            return;
+          }
+
+        }
       }
 
- }
+    }
 
 
-for (const file_ of files) {
+    for (const file_ of files) {
 
-          const fpath_ = cFileName(path.join(pat,path.basename(file_)));
-          const rdir_ = await getRDir(file, this.settings, fpath_);
+      const fpath_ = cFileName(path.join(pat, path.basename(file_)));
+      const rdir_ = await getRDir(file, this.settings, fpath_);
 
-              const ex = await app.vault.adapter.exists(fpath_);
-             var res = true;
-              if (!ex) {
+      const ex = await app.vault.adapter.exists(fpath_);
+      var res = true;
+      if (!ex) {
 
-               await this.ensureFolderExists(pat);
-               res = await copyFromDisk(file_, path.join(this.app.vault.adapter.basePath, fpath_));
-             } 
+        await this.ensureFolderExists(pat);
+        res = await copyFromDisk(file_, path.joinroot(this.app.vault.adapter.basePath, fpath_));
+      }
 
-             if (res !== null  ||  ex ){
-                    if (this.settings.useWikilinks){
-                        
-                      if (this.settings.addNameOfFile){openf = "\r\n[[" + rdir_[0] + "|Open file: "+ path.basename(file_) +"]]"};
-                      editor.replaceRange( openf + "\r\n![[" + rdir_[0] + "]]\r\n", editor.getCursor());
+      if (res !== null || ex) {
+        if (this.settings.useWikilinks) {
 
-                    }
-                    
-                    else{
+          if (this.settings.addNameOfFile) { openf = "\r\n[[" + rdir_[0] + "|Open file: " + path.basename(file_) + "]]" };
+          editor.replaceRange(openf + "\r\n![[" + rdir_[0] + "]]\r\n", editor.getCursor());
 
-                        if (this.settings.addNameOfFile){openf = "\r\n[Open file: " + path.basename(file_) + "]" + "(" + rdir_[1] + ")"};
-                        editor.replaceRange(openf + "\r\n![](" + rdir_[1] + ")\r\n", editor.getCursor());
+        }
 
-                    }
-               }
+        else {
 
-             
-}
-              this.app.workspace.activeLeaf.rebuildView();
+          if (this.settings.addNameOfFile) { openf = "\r\n[Open file: " + path.basename(file_) + "]" + "(" + rdir_[1] + ")" };
+          editor.replaceRange(openf + "\r\n![](" + rdir_[1] + ")\r\n", editor.getCursor());
 
-}
+        }
+      }
 
-  private async processPage(file: TFile): Promise<any>  {
 
-    logError(file,true);
-    if ( file  == null ) {
+    }
+    this.app.workspace.activeLeaf.rebuildView();
+
+  }
+
+  private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
+
+    logError(file, true);
+    if (file == null) {
       if (this.settings.showNotifications) {
-        new Notice(APP_TITLE  + `\nEmpty note!`);
+        new Notice(APP_TITLE + `\nEmpty note!`);
         return null;
       }
     }
 
-    var root =  await getMDir(this.app, file, this.settings);
     const content = await this.app.vault.cachedRead(file);
-      logError(file.path+"\n\n'"+content+"'");
+    logError(file.path + "\n\n'" + content + "'");
 
-    logError(root,true);
-    await this.ensureFolderExists(root);
     const fixedContent = await replaceAsync(
       content,
       MD_SEARCH_PATTERN,
-      imageTagProcessor(this.app,
-                        file,
-                        this.settings
-                       )
+      imageTagProcessor(this,
+        file,
+        this.settings,
+        defaultdir
+      )
     );
 
-    if (content != fixedContent[0] && fixedContent[1] === false ) {
+    if (content != fixedContent[0] && fixedContent[1] === false) {
       this.modifiedQueue.remove(file);
       await this.app.vault.modify(file, fixedContent[0]);
 
       if (this.settings.showNotifications) {
-        new Notice( APP_TITLE+`\nAttachements for "${file.path}" were processed.`);
+        new Notice(APP_TITLE + `\nAttachements for "${file.path}" were processed.`);
       }
     }
-    else if (content != fixedContent[0] && fixedContent[1] === true ) {
-    
+    else if (content != fixedContent[0] && fixedContent[1] === true) {
+
       this.modifiedQueue.remove(file);
       await this.app.vault.modify(file, fixedContent[0]);
 
       if (this.settings.showNotifications) {
-        new Notice( APP_TITLE+`\nWARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced...`);
+        new Notice(APP_TITLE + `\nWARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced...`);
       }
 
     }
     else {
       if (this.settings.showNotifications) {
         new Notice(
-           APP_TITLE+`\nPage "${file.path}" has been processed, but nothing was changed.`
+          APP_TITLE + `\nPage "${file.path}" has been processed, but nothing was changed.`
         );
       }
     }
   }
 
   // using arrow syntax for callbacks to correctly pass this context
-  processActivePage = async () => {
-     logError("processactive"); 
-    try{
+
+  processActivePage = (defaultdir: boolean) => async () =>  {
+    logError("processactive");
+    try {
       const activeFile = app.workspace.activeEditor.file;
-      await this.processPage(activeFile);
-    }catch(e){
-    new Notice( APP_TITLE+`\nPlease select a note or click inside selected note in canvas.`);
-    return;
+      await this.processPage(activeFile, defaultdir);
+    } catch (e) {
+      new Notice(APP_TITLE + `\nPlease select a note or click inside selected note in canvas.`);
+      return;
     }
+   
   };
 
   processAllPages = async () => {
     const files = this.app.vault.getMarkdownFiles();
 
-    
+
     const includeRegex = new RegExp(this.settings.include, "i");
 
     const pagesCount = files.length;
 
     const notice = this.settings.showNotifications
       ? new Notice(
-          APP_TITLE+`\nLocal Images Plus \nStart processing. Total ${pagesCount} pages. `,
-          TIMEOUT_LIKE_INFINITY
-        )
+        APP_TITLE + `\nLocal Images Plus \nStart processing. Total ${pagesCount} pages. `,
+        TIMEOUT_LIKE_INFINITY
+      )
       : null;
 
     for (const [index, file] of files.entries()) {
@@ -245,7 +243,7 @@ for (const file_ of files) {
         if (notice) {
           //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
           notice.setMessage(
-             APP_TITLE+`\nLocal Images Plus: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
+            APP_TITLE + `\nLocal Images Plus: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
           );
         }
         await this.processPage(file);
@@ -253,7 +251,7 @@ for (const file_ of files) {
     }
     if (notice) {
       // dum @ts-expect-error
-      notice.setMessage( APP_TITLE+`\nLocal Images Plus: ${pagesCount} pages were processed.`);
+      notice.setMessage(APP_TITLE + `\nLocal Images Plus: ${pagesCount} pages were processed.`);
 
       setTimeout(() => {
         notice.hide();
@@ -262,172 +260,180 @@ for (const file_ of files) {
   };
 
 
-private async onDropFunc(evt: DragEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined){
+  private async onDropFunc(evt: DragEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined) {
 
-          if (evt === undefined){return;}
+    if (evt === undefined) { return; }
 
-          if (!this.settings.intClip) {return};
+    if (!this.settings.intClip) { return };
 
-                    evt.preventDefault();
-                    const activeFile = app.workspace.activeEditor.file;
-                    this.processClip(activeFile, evt, editor);
-                    return;
-} 
-
-
-
-private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined){
-
-          if (evt === undefined){return;}
-
-          if (!this.settings.intClip) {return};
-
-                try{
-                  const activeFile = app.workspace.activeEditor.file;
-                  const fItems = evt.clipboardData.files;
-                  const tItems = evt.clipboardData.items;
-
-                  for (const key in tItems) {
-
-                  // Check if it was a text/html
-                  if ( tItems[key].kind == "string" ){
-
-                         if (this.settings.realTimeUpdate)  {
-                              const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) + 
-                                           htmlToMarkdown(evt.clipboardData.getData("text"));
-                              for (const reg_p of MD_SEARCH_PATTERN) {
-                                if (reg_p.test(cont)) {
-                                    if (this.settings.showNotifications) {
-                                         new Notice( APP_TITLE+"\nMedia links were found, processing...");
-                                    }
-                                       this.enqueueActivePage(activeFile);
-                                        this.setupQueueInterval();
-                                        break;
-                                 }
-                            }
-                          }
-                    return;
-                  }
-
-                  // Check if it is a file(s)
-                  if ( tItems[key].kind == "file" ){
-                      if (!this.settings.intClip) {return};
-                      evt.preventDefault();
-                      this.processClip(activeFile, evt, editor);
-                      return;
-                      }
-                  }
+    evt.preventDefault();
+    const activeFile = app.workspace.activeEditor.file;
+    this.processClip(activeFile, evt, editor);
+    return;
+  }
 
 
 
+  private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined) {
 
-                }catch(e){
-                new Notice( APP_TITLE+`\nPlease select a note or click inside selected note in canvas.`);
-                return;
+    if (evt === undefined) { return; }
+
+    if (!this.settings.intClip) { return };
+
+    try {
+      const activeFile = app.workspace.activeEditor.file;
+      const fItems = evt.clipboardData.files;
+      const tItems = evt.clipboardData.items;
+
+      for (const key in tItems) {
+
+        // Check if it was a text/html
+        if (tItems[key].kind == "string") {
+
+          if (this.settings.realTimeUpdate) {
+            const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) +
+              htmlToMarkdown(evt.clipboardData.getData("text"));
+            for (const reg_p of MD_SEARCH_PATTERN) {
+              if (reg_p.test(cont)) {
+                if (this.settings.showNotifications) {
+                  new Notice(APP_TITLE + "\nMedia links were found, processing...");
                 }
-        
-
-
-} 
-private async onCreateFunc(file: TFile = undefined){
-
-        if (file === undefined){return;}
-        const includeRegex = new RegExp(this.settings.include, "i");
-
-				if ( !(file instanceof TFile) || !(this.settings.processCreated))
-					return
-
-				if ( !(file.path.match(includeRegex)) )
-					return
-
-				const timeGapMs = Date.now() - file.stat.ctime;
-
-				if (timeGapMs > 1000)
-					return
-
-					logError( file.path, false)
-          const cont =  await this.app.vault.cachedRead(file);
-          for (const reg_p of MD_SEARCH_PATTERN) {
-               if (reg_p.test(cont)) {
-                    this.enqueueActivePage(file);
-                    break;
-                    return;
-               }
+                this.enqueueActivePage(activeFile);
+                this.setupQueueInterval();
+                break;
+              }
+            }
           }
-}
+          return;
+        }
+
+        // Check if it is a file(s)
+        if (tItems[key].kind == "file") {
+          if (!this.settings.intClip) { return };
+          evt.preventDefault();
+          this.processClip(activeFile, evt, editor);
+          return;
+        }
+      }
+
+
+
+
+    } catch (e) {
+      new Notice(APP_TITLE + `\nPlease select a note or click inside selected note in canvas.`);
+      return;
+    }
+
+
+
+  }
+  private async onCreateFunc(file: TFile = undefined) {
+
+    if (file === undefined) { return; }
+    const includeRegex = new RegExp(this.settings.include, "i");
+
+    if (!(file instanceof TFile) || !(this.settings.processCreated))
+      return
+
+    if (!(file.path.match(includeRegex)))
+      return
+
+    const timeGapMs = Date.now() - file.stat.ctime;
+
+    if (timeGapMs > 1000)
+      return
+
+    logError(file.path, false)
+    const cont = await this.app.vault.cachedRead(file);
+    for (const reg_p of MD_SEARCH_PATTERN) {
+      if (reg_p.test(cont)) {
+        this.enqueueActivePage(file);
+        break;
+        return;
+      }
+    }
+  }
 
 
 
 
   private fileMenuCallbackFunc = (
-        menu: Menu,
-    ) => {
-                menu.addSeparator();
-                menu.addItem((item) => {
-                    item.setTitle("Download media files")
-                        .setIcon('link')
-                        .onClick( async () => {
-                          this.processActivePage();
-                        });
-                });
-            menu.addSeparator();
-    };
+    menu: Menu,
+  ) => {
+    menu.addSeparator();
+    menu.addItem((item) => {
+      item.setTitle("Download media files")
+        .setIcon('link')
+        .onClick(async () => {
+          this.processActivePage();
+        });
+    });
+    menu.addSeparator();
+  };
 
 
 
   private openModal = () => {
-       const mod = new ModalW1 (this.app);
-       mod.plugin = this;
-       mod.open();
+    const mod = new ModalW1(this.app);
+    mod.plugin = this;
+    mod.open();
   };
 
 
   async onload() {
+    
     await this.loadSettings();
-  if (!this.settings.disAddCom){
-        this.addCommand({
-          id: "set-title-as-name",
-          name: "Set first # header as a note name.",
-          callback: this.setTitleAsName,
-        });
-
-        this.addCommand({
-          id: "download-images-all",
-          name: "Download media files for all your notes",
-          callback: this.openModal,
-        });
-
-  }
+    
+    
     this.addCommand({
       id: "download-images",
-      name: "Download all media files",
-      callback: this.processActivePage,
+      name: "Download all media files (Plugin folder)",
+      callback: this.processActivePage(false),
     });
 
-    
 
-//    this.app.workspace.on(
-//     "active-leaf-change",
-//         (leaf: WorkspaceLeaf ) => {
-//
-//         });
-//
-this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
+    this.addCommand({
+      id: "download-images-def",
+      name: "Download all media files (Obsidian folder)",
+      callback: this.processActivePage(true),
+    });
+
+    if (!this.settings.disAddCom) {
+      this.addCommand({
+        id: "set-title-as-name",
+        name: "Set first # header as a note name.",
+        callback: this.setTitleAsName,
+      });
+
+      this.addCommand({
+        id: "download-images-all",
+        name: "Download media files for all your notes",
+        callback: this.openModal,
+      });
+
+    }
+
+
+    //    this.app.workspace.on(
+    //     "active-leaf-change",
+    //         (leaf: WorkspaceLeaf ) => {
+    //
+    //         });
+    //
+    this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
 
 
     this.app.workspace.on(
       "editor-drop",
-       (evt: DragEvent, editor: Editor, info: MarkdownView ) => 
-       {
-         this.onDropFunc(evt, editor, info);        
-       });
+      (evt: DragEvent, editor: Editor, info: MarkdownView) => {
+        this.onDropFunc(evt, editor, info);
+      });
 
 
 
 
-    this.app.vault.on('create', (file: TFile) => 
-    {
-       this.onCreateFunc(file);        
+    this.app.vault.on('create', (file: TFile) => {
+      this.onCreateFunc(file);
     });
 
 
@@ -436,10 +442,10 @@ this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
     this.app.workspace.on(
 
       "editor-paste",
-        ( evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
+      (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
         this.onPasteFunc(evt, editor, info);
 
-        }
+      }
     );
 
     this.setupQueueInterval();
@@ -459,40 +465,40 @@ this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
     ) {
       this.intervalId = window.setInterval(
         this.processModifiedQueue,
-        this.settings.realTimeUpdateInterval*1000
+        this.settings.realTimeUpdateInterval * 1000
       );
       this.registerInterval(this.intervalId);
     }
   }
-  
+
 
 
   setTitleAsName = async () => {
-    try{
-          const noteFile = app.workspace.activeEditor.file;
-          const fileData =  await this.app.vault.cachedRead(noteFile);
-          const title =  fileData.match(/^#{1,6} .+?($|\n)/gm);
-          var ind = 0;
-          if (title !== null){
-              const newName = cFileName(trimAny(title[0].toString(),["#", " "])).slice(0,200);
-              var fullPath = path.join(noteFile.parent.path,newName+".md");
-              var fExist =  await this.app.vault.exists(fullPath);
-              if (trimAny(noteFile.path, ["\\","/"]) != trimAny(fullPath, ["\\","/"])) {
-                    while (fExist){
-                        ind++;
-                        var fullPath =  path.join(noteFile.parent.path,newName+" ("+ind+")"+".md");
-                        var fExist =  await this.app.vault.exists(fullPath);
-                    }
-                    await this.app.vault.rename(noteFile, fullPath);
-                    if (this.settings.showNotifications) {
-                        new Notice( APP_TITLE+`\nThe note was renamed to `+fullPath);
-                    }
-            }
+    try {
+      const noteFile = app.workspace.activeEditor.file;
+      const fileData = await this.app.vault.cachedRead(noteFile);
+      const title = fileData.match(/^#{1,6} .+?($|\n)/gm);
+      var ind = 0;
+      if (title !== null) {
+        const newName = cFileName(trimAny(title[0].toString(), ["#", " "])).slice(0, 200);
+        var fullPath = path.join(noteFile.parent.path, newName + ".md");
+        var fExist = await this.app.vault.exists(fullPath);
+        if (trimAny(noteFile.path, ["\\", "/"]) != trimAny(fullPath, ["\\", "/"])) {
+          while (fExist) {
+            ind++;
+            var fullPath = path.join(noteFile.parent.path, newName + " (" + ind + ")" + ".md");
+            var fExist = await this.app.vault.exists(fullPath);
           }
+          await this.app.vault.rename(noteFile, fullPath);
+          if (this.settings.showNotifications) {
+            new Notice(APP_TITLE + `\nThe note was renamed to ` + fullPath);
+          }
+        }
+      }
 
-    }catch(e){
-    new Notice( APP_TITLE+`\nCannot rename. Please select a note or click inside selected note in canvas.`);
-    return;
+    } catch (e) {
+      new Notice(APP_TITLE + `\nCannot rename. Please select a note or click inside selected note in canvas.`);
+      return;
     }
   };
 
@@ -514,8 +520,7 @@ this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
   displayError(error: Error | string, file?: TFile): void {
     if (file) {
       new Notice(
-        `LocalImagesPlus: Error while handling file ${
-          file.name
+        `LocalImagesPlus: Error while handling file ${file.name
         }, ${error.toString()}`
       );
     } else {
@@ -526,10 +531,12 @@ this.app.workspace.on('file-menu', this.fileMenuCallbackFunc);
   }
 
   async onunload() {
-         this.app.workspace.off("editor-drop", null);
-         this.app.workspace.off("editor-paste", null);
-//         this.app.vault.off("create",  null);
-         logError(APP_TITLE+" unloaded.");
+    this.app.workspace.off("editor-drop", null);
+    this.app.workspace.off("editor-paste", null);
+    this.app.workspace.off('file-menu', null);
+
+    //         this.app.vault.off("create",  null);
+    logError(APP_TITLE + " unloaded.");
   }
 
   async loadSettings() {
@@ -569,33 +576,63 @@ class SettingTab extends PluginSettingTab {
   }
 
   displSw(cont: any): void {
-                cont.findAll(".setting-item").forEach((el: any) => {
-                 if (el.getAttr("class").includes("media_folder_set")  ){
+    cont.findAll(".setting-item").forEach((el: any) => {
+      if (el.getAttr("class").includes("media_folder_set")) {
 
-                          if (this.plugin.settings.saveAttE === "obsFolder" ||
-                              this.plugin.settings.saveAttE === "nextToNote" ){
-                              el.hide();
-                          }
-                          else{
-                              el.show();
-                          }
-                     }
-                });
-   }
+        if (this.plugin.settings.saveAttE === "obsFolder" ||
+          this.plugin.settings.saveAttE === "nextToNote") {
+          el.hide();
+        }
+        else {
+          el.show();
+        }
+      }
+    });
+  }
 
   display(): void {
     let { containerEl } = this;
-   
+
 
 
     containerEl.empty();
 
 
-    containerEl.createEl("h2", { text: APP_TITLE});
+    containerEl.createEl("h1", { text: APP_TITLE });
 
     const donheader = containerEl.createEl("div");
-    donheader.createEl("a", { text: "Support the project! "  , href:"https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
-    donheader.createEl("a", { text: " GitHub"  , href:"https://github.com/Sergei-Korneev/obsidian-local-images-plus", cls: "donheader_txt" });
+    donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" });
+    donheader.createEl("a", { text: " GitHub", href: "https://github.com/Sergei-Korneev/obsidian-local-images-plus", cls: "donheader_txt" });
+
+    containerEl.createEl("h3", { text: "Interface settings" });
+    
+    new Setting(containerEl)
+      .setName("Show notifications")
+      .setDesc("Show notifications when pages were processed.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.showNotifications)
+          .onChange(async (value) => {
+            this.plugin.settings.showNotifications = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+      new Setting(containerEl)
+      .setName("Disable additional commands")
+      .setDesc("Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.disAddCom)
+          .onChange(async (value) => {
+            this.plugin.settings.disAddCom = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    containerEl.createEl("h3", { text: "Processing settings" });
+
+
 
     new Setting(containerEl)
       .setName("Automatic processing")
@@ -635,8 +672,8 @@ class SettingTab extends PluginSettingTab {
               return;
             }
 
-            if ( numberValue < 5 ){
-               numberValue = 5;
+            if (numberValue < 5) {
+              numberValue = 5;
             }
             this.plugin.settings.realTimeUpdateInterval = numberValue;
             await this.plugin.saveSettings();
@@ -644,35 +681,9 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
-      .setName("Show notifications")
-      .setDesc("Show notifications when pages were processed.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.showNotifications)
-          .onChange(async (value) => {
-            this.plugin.settings.showNotifications = value;
-            await this.plugin.saveSettings();
-          })
-      );
 
 
-    new Setting(containerEl)
-      .setName("Disable additional commands")
-      .setDesc("Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.disAddCom)
-          .onChange(async (value) => {
-            this.plugin.settings.disAddCom = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-
-
-      
-    new Setting(containerEl)
+      new Setting(containerEl)
       .setName("Number of retries for every single attachment")
       .setDesc("If an error occurs during downloading (network etc.) try to re-download several times.")
       .addText((text) =>
@@ -708,7 +719,7 @@ class SettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
-      
+
 
     new Setting(containerEl)
       .setName("Intercept clipboard events")
@@ -722,20 +733,19 @@ class SettingTab extends PluginSettingTab {
           })
       );
 
-
-
-    new Setting(containerEl)
-      .setName("Preserve link captions")
-      .setDesc("Add media links captions to converted tags.")
+      new Setting(containerEl)
+      .setName("Download unknown filetypes")
+      .setDesc("Download unknown filetypes and save them with .unknown extension.")
       .addToggle((toggle) =>
         toggle
-          .setValue(this.plugin.settings.useCaptions)
+          .setValue(this.plugin.settings.downUnknown)
           .onChange(async (value) => {
-            this.plugin.settings.useCaptions = value;
+            this.plugin.settings.downUnknown = value;
             await this.plugin.saveSettings();
           })
       );
-    new Setting(containerEl)
+
+      new Setting(containerEl)
       .setName("File size lower limit in Kb")
       .setDesc("Do not download files with size less than this value. Set 0 for no limit.")
       .addText((text) =>
@@ -747,7 +757,7 @@ class SettingTab extends PluginSettingTab {
             if (
               isNaN(numberValue) ||
               !Number.isInteger(numberValue) ||
-              numberValue < 0 
+              numberValue < 0
             ) {
 
 
@@ -758,8 +768,8 @@ class SettingTab extends PluginSettingTab {
               return;
             }
 
-            if ( numberValue < 0 ){
-               numberValue = 0;
+            if (numberValue < 0) {
+              numberValue = 0;
             }
             this.plugin.settings.filesizeLimit = numberValue;
             await this.plugin.saveSettings();
@@ -767,41 +777,62 @@ class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Add original filename or 'Open file' tag")
-      .setDesc("Add [[original filename]] or [original filename](link to attachement) after replaced tag (only for file:// protocol or dropped/pasted files ).")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.addNameOfFile)
+      .setName("Exclusions")
+      .setDesc("Ignored attachements extensions. E.g. cnt|php")
+      .addText((text) =>
+        text
+          .setValue(this.plugin.settings.ignoredExt)
           .onChange(async (value) => {
-            this.plugin.settings.addNameOfFile = value;
+            this.plugin.settings.ignoredExt = value;
             await this.plugin.saveSettings();
           })
-      );
+    );
 
 
-    new Setting(containerEl)
-      .setName("Use wikilinks format")
-      .setDesc("Use ![[]] format for replaced links.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.useWikilinks)
-          .onChange(async (value) => {
-            this.plugin.settings.useWikilinks = value;
-            await this.plugin.saveSettings();
-          })
-      );
 
-    new Setting(containerEl)
-      .setName("Download unknown filetypes")
-      .setDesc("Download unknown filetypes and save them with .unknown extension.")
-      .addToggle((toggle) =>
-        toggle
-          .setValue(this.plugin.settings.downUnknown)
-          .onChange(async (value) => {
-            this.plugin.settings.downUnknown = value;
-            await this.plugin.saveSettings();
-          })
-      );
+   containerEl.createEl("h3", { text: "Note settings" });
+
+   new Setting(containerEl)
+   .setName("Preserve link captions")
+   .setDesc("Add media links captions to converted tags.")
+   .addToggle((toggle) =>
+     toggle
+       .setValue(this.plugin.settings.useCaptions)
+       .onChange(async (value) => {
+         this.plugin.settings.useCaptions = value;
+         await this.plugin.saveSettings();
+       })
+   );
+
+
+   new Setting(containerEl)
+   .setName("Add original filename or 'Open file' tag")
+   .setDesc("Add [[original filename]] or [original filename](link to attachement) after replaced tag (only for file:// protocol or dropped/pasted files ).")
+   .addToggle((toggle) =>
+     toggle
+       .setValue(this.plugin.settings.addNameOfFile)
+       .onChange(async (value) => {
+         this.plugin.settings.addNameOfFile = value;
+         await this.plugin.saveSettings();
+       })
+   );
+
+   new Setting(containerEl)
+   .setName("Use wikilinks format")
+   .setDesc("Use ![[]] format for replaced links.")
+   .addToggle((toggle) =>
+     toggle
+       .setValue(this.plugin.settings.useWikilinks)
+       .onChange(async (value) => {
+         this.plugin.settings.useWikilinks = value;
+         await this.plugin.saveSettings();
+       })
+   );
+
+
+
+
+
 
     new Setting(containerEl)
       .setName("Include")
@@ -821,36 +852,39 @@ class SettingTab extends PluginSettingTab {
         })
       );
 
-    new Setting(containerEl)
-      .setName("How to write paths in tags")
-      .setDesc("Select whether to write full paths in tags or not.")
-      .addDropdown((text) => 
-        text
-                    .addOption("fullDirPath", "Full path")
-                    .addOption("onlyRelative", "Relative to note")
-                    .addOption("baseFileName", "Only filename")
-                    .setValue(this.plugin.settings.pathInTags)
-                    .onChange(async (value) => {
-                        this.plugin.settings.pathInTags = value;
-                    await this.plugin.saveSettings();
-          })
-      );
+
+ containerEl.createEl("h3", { text: "Media folder settings" });
+
+ new Setting(containerEl)
+ .setName("How to write paths in tags")
+ .setDesc("Select whether to write full paths in tags or not.")
+ .addDropdown((text) =>
+   text
+     .addOption("fullDirPath", "Full path")
+     .addOption("onlyRelative", "Relative to note")
+     .addOption("baseFileName", "Only filename")
+     .setValue(this.plugin.settings.pathInTags)
+     .onChange(async (value) => {
+       this.plugin.settings.pathInTags = value;
+       await this.plugin.saveSettings();
+     })
+ );
 
     new Setting(containerEl)
       .setName("Folder to save new attachements")
       .setDesc("Select where all new attachements will be saved.\nYou can use templates e.g. _resouces/${date}/${notename}")
-      .addDropdown((text) => 
+      .addDropdown((text) =>
         text
-                    .addOption("obsFolder", "Copy Obsidian settings")
-                    .addOption("inFolderBelow", "In the root folder specified below")
-                    .addOption("nextToNoteS", "Next to note in folder specified below")
-                    .setValue(this.plugin.settings.saveAttE)
+          .addOption("obsFolder", "Copy Obsidian settings")
+          .addOption("inFolderBelow", "In the root folder specified below")
+          .addOption("nextToNoteS", "Next to note in the folder specified below")
+          .setValue(this.plugin.settings.saveAttE)
 
           .onChange(async (value) => {
-              this.plugin.settings.saveAttE= value;
-                 this.displSw(containerEl);
+            this.plugin.settings.saveAttE = value;
+            this.displSw(containerEl);
 
-          await this.plugin.saveSettings();
+            await this.plugin.saveSettings();
           })
       );
 
@@ -863,19 +897,19 @@ class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.mediaRootDir)
           .onChange(async (value) => {
 
-          if (value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g) !== null )  {
-            this.plugin.displayError(
-              "Unsafe folder name! Some chars are forbidden in some filesystems."
-            );
-            return;
-          }
+            if (value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g) !== null) {
+              this.plugin.displayError(
+                "Unsafe folder name! Some chars are forbidden in some filesystems."
+              );
+              return;
+            }
             this.plugin.settings.mediaRootDir = value;
-          await this.plugin.saveSettings();
-        })
+            await this.plugin.saveSettings();
+          })
 
 
 
       );
-                 this.displSw(containerEl);
+    this.displSw(containerEl);
   }
 }

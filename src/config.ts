@@ -1,6 +1,6 @@
-export const APP_TITLE = "Local Images Plus  0.15.2";
+export const APP_TITLE = "Local Images Plus  0.15.3";
 
-export const VERBOSE = false;
+export const VERBOSE = true;
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
 
@@ -33,6 +33,7 @@ export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
 
 export interface ISettings {
   processCreated: boolean,
+  ignoredExt: string,
   intClip: boolean,
   useCaptions: boolean,
   pathInTags: string,
@@ -52,6 +53,7 @@ export interface ISettings {
 
 export const DEFAULT_SETTINGS: ISettings = {
   processCreated: true,
+  ignoredExt: "cnt|php",
   intClip: true,
   useCaptions: true,
   pathInTags: "fullDirPath",

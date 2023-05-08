@@ -3,7 +3,8 @@ import path from "path";
 import { 
   App, 
   DataAdapter,
-  TFile
+  TFile,
+  Plugin
 } from "obsidian";
 
 
@@ -21,7 +22,7 @@ import {
 } from "./utils";
 
 import{
-  MD_LINK,
+
   ISettings,
   SUPPORTED_OS
 } from "./config";
@@ -32,9 +33,10 @@ import AsyncLock from "async-lock";
 
 
 
-export function imageTagProcessor(app: App,
+export function imageTagProcessor(app: Plugin,
                                   noteFile: TFile,
                                   settings: ISettings,
+                                  defaultdir: boolean
                                  ) {
 
   async function processImageTag(match: string,
@@ -50,13 +52,13 @@ export function imageTagProcessor(app: App,
 
     try {
 
-     var lock = new AsyncLock();
+      var lock = new AsyncLock();
       let fpath;
       let fileData: ArrayBuffer; 
       const opsys = process.platform;
-      const mediaDir = await getMDir(app, noteFile, settings);
-
-    const protocol=link.slice(0,5);
+      const mediaDir = await getMDir(app.app, noteFile, settings, defaultdir);
+      await app.ensureFolderExists(mediaDir);
+      const protocol=link.slice(0,5);
 
       if (protocol == "data:"){
          logError("ReadBase64: \r\n"+fpath, false);
@@ -103,11 +105,11 @@ export function imageTagProcessor(app: App,
 
 
           const { fileName, needWrite } = await chooseFileName(
-            app.vault.adapter,
+            app.app.vault.adapter,
             mediaDir,
             link,
             fileData,
-            settings.downUnknown
+            settings
           );
           return {fileName, needWrite};
     });
@@ -115,7 +117,7 @@ export function imageTagProcessor(app: App,
 
 
           if (needWrite && fileName) {
-            await app.vault.createBinary(fileName, fileData);
+            await app.app.vault.createBinary(fileName, fileData);
           }
 
           if (fileName) {
@@ -242,7 +244,8 @@ return [pathWiki, pathMd, parsedPathE];
 
 export async function getMDir(app: App,
                               noteFile: TFile,
-                              settings: ISettings): Promise<string>{
+                              settings: ISettings,
+                              defaultdir: boolean = false): Promise<string>{
 
 
     const notePath = noteFile.parent.path;
@@ -250,7 +253,8 @@ export async function getMDir(app: App,
     const current_date = date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
     const obsmediadir = app.vault.getConfig("attachmentFolderPath");
     const mediadir = settings.mediaRootDir;
-    const attdir = settings.saveAttE;
+    var attdir = settings.saveAttE;
+    if (defaultdir) { attdir  = ""};
     let root="/";
 
 
@@ -302,24 +306,31 @@ async function chooseFileName(
   dir: string,
   link: string,
   contentData: ArrayBuffer,
-  downUnknown: boolean
+  settings: ISettings
 ): Promise<{ fileName: string; needWrite: boolean }> {
   const parsedUrl = new URL(link);
+  const ignoredExt = settings.ignoredExt.split("|");
 
   let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
+
   logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
 
-  if (!fileExt || fileExt.length > 4) {
+  if (!fileExt || fileExt.length > 4 || ["php"].includes(fileExt) ) {
       fileExt = await fileExtByContent(contentData);
   }
   
   if (!fileExt) {
     fileExt = "unknown";
 
-  if (!downUnknown) {
+  if (!settings.downUnknown) {
     return { fileName: "", needWrite: false };
     }
   }
+
+  if (settings.ignoredExt.includes(fileExt)) {
+    return { fileName: "", needWrite: false };
+  }
+
 
   logError("File Ext: "+fileExt, false);
   

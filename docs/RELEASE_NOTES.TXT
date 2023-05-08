@@ -1,9 +1,18 @@
+0.15.3
+Fix: Cannot download images embedded on some sites as a php GET string.
+Fix: Issues with svg images on some sites.
+Add: Option to add exclusions.
+Add: Command which allows downloading files to default obsidian folder.
+Add: Frontmatter support.
+
+
+
 0.15.2
 Fix: Content parsing issues on some sites.
 Add: Option to retry download attempts several times on each attachement.
 Add: A modal window to confirm all notes processing.
 Add: Support for base64 encoded data.
-Add: Command to rename a note according to the first found # tag. 
+Add: Command to rename a note according to the first found # header. 
      (It is useful for me ;) when I copy/pasting entire webpages.)
 
 
