@@ -742,6 +742,8 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.off("editor-drop", null)
     this.app.workspace.off("editor-paste", null)
     this.app.workspace.off('file-menu', null)
+    
+
     //         this.app.vault.off("create",  null)
     logError(" unloaded.")
   }
