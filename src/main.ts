@@ -396,10 +396,10 @@ export default class LocalImagesPlugin extends Plugin {
         };
         let content = await this.app.vault.cachedRead(file)
         content = content
-          // .replaceAll("](" + encodeURI(oldRootdir), "](" + encodeURI(newRootDir))
-          .replaceAll("](" + encodeURI(oldRootdir_), "](" + encodeURI(newRootDir_))
-          //.replaceAll("[" + oldRootdir, "[" + newRootDir)
-          .replaceAll("[" + oldRootdir_, "[" + newRootDir_);
+           .replaceAll("](" + encodeURI(oldRootdir), "](" + encodeURI(newRootDir))
+          //.replaceAll("](" + encodeURI(oldRootdir_), "](" + encodeURI(newRootDir_))
+          .replaceAll("[" + oldRootdir, "[" + newRootDir)
+          //.replaceAll("[" + oldRootdir_, "[" + newRootDir_);
         this.app.vault.modify(file, content)
         showBalloon("Attachment folder was renamed to " + newRootDir_, this.settings.showNotifications)
       }
