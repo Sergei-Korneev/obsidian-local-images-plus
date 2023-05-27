@@ -186,7 +186,7 @@ export default class LocalImagesPlugin extends Plugin {
             for (const reg_p of MD_SEARCH_PATTERN) {
               if (reg_p.test(cont)) {
 
-                showBalloon(APP_TITLE + "\nMedia links were found, processing...", this.settings.showNotifications)
+                showBalloon("Media links were found, processing...", this.settings.showNotifications)
 
                 this.enqueueActivePage(activeFile)
                 this.setupQueueInterval()
@@ -743,7 +743,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.off("editor-paste", null)
     this.app.workspace.off('file-menu', null)
     //         this.app.vault.off("create",  null)
-    logError(APP_TITLE + " unloaded.")
+    logError(" unloaded.")
   }
 
   async loadSettings() {
