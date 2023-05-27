@@ -1,6 +1,6 @@
 import { App, Modal, Notice} from "obsidian";
 import { APP_TITLE } from "./config";
-import {LocalImagesPlugin} from "./main";
+import LocalImagesPlugin from "./main";
 
 
 export class ModalW1 extends Modal {

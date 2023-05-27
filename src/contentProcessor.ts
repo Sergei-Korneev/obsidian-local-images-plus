@@ -12,13 +12,14 @@ import {
   isUrl,
   downloadImage,
   readFromDisk,
-  fileExtByContent,
   cleanFileName,
   logError,
   trimAny,
   pathJoin,
+  normalizePath,
   base64ToBuff,
   md5Sig,
+  getFileExt,
 } from "./utils";
 
 import{
@@ -38,6 +39,8 @@ export function imageTagProcessor(app: Plugin,
                                   settings: ISettings,
                                   defaultdir: boolean
                                  ) {
+                                  
+  const unique = Math.random().toString(16).slice(2,);
 
   async function processImageTag(match: string,
                                  anchor: string,
@@ -56,7 +59,7 @@ export function imageTagProcessor(app: Plugin,
       let fpath;
       let fileData: ArrayBuffer; 
       const opsys = process.platform;
-      const mediaDir = await getMDir(app.app, noteFile, settings, defaultdir);
+      const mediaDir = await getMDir(app.app, noteFile, settings, defaultdir, unique);
       await app.ensureFolderExists(mediaDir);
       const protocol=link.slice(0,5);
 
@@ -130,7 +133,7 @@ export function imageTagProcessor(app: Plugin,
 
           if (settings.addNameOfFile  && protocol == "file:") {
 
-                        if (settings.useWikilinks) {
+                        if (!app.app.vault.getConfig("useMarkdownLinks")) {
 
                                  shortName = "\r\n[[" +
                                  fileName +
@@ -147,14 +150,14 @@ export function imageTagProcessor(app: Plugin,
                           }
                 }
 
-              if (settings.useWikilinks){
+              if (!app.app.vault.getConfig("useMarkdownLinks")){
                 (!settings.useCaptions || !caption.length) ? caption="" : caption="\|"+caption;
-                 return  [match, `![[${pathWiki}${caption}]]${shortName}`];
+                 return  [match, `![[${pathWiki}${caption}]]`, `${shortName}`];
               }
               
               else{
                 ( !settings.useCaptions || !caption.length ) ? caption="" : caption=" "+caption;
-                 return [match,`![${anchor}](${pathMd}${caption})${shortName}`];
+                 return [match,`![${anchor}](${pathMd}${caption})`, `${shortName}`];
               }
 
 
@@ -181,23 +184,7 @@ export function imageTagProcessor(app: Plugin,
 }
 
 
-
-
-
-export async function setTitleAsName(
-  noteFile: TFile,
-  adapter: DataAdapter
-): Promise<any>{
-
-const fileData = await adapter.read(noteFile);
-const title = await fileData.match(/#{1,6} .+?$/);
-logError(fileData);
-logError(title);
-
-//const fileData = await adapter.read(noteFile, );
-
-}
-
+ 
 
 
 export async function getRDir(
@@ -209,14 +196,14 @@ export async function getRDir(
     let pathWiki = "";
     let pathMd = "";
 
-    const notePath = noteFile.parent.path.replace(/\\/g, "/");
-    const parsedPath = path.parse(fileName.replace(/\\/g, "/"));
+    const notePath = normalizePath(noteFile.parent.path);
+    const parsedPath = path.parse(normalizePath(fileName));
     
     const parsedPathE = {
         parentd: path.basename(parsedPath["dir"]),
         basen: (parsedPath["name"]+parsedPath["ext"]),
         lnkurid: path.basename(decodeURI(link)),
-        pathuri:  encodeURI(fileName.replace(/\\/g, "/"))
+        pathuri:  encodeURI(normalizePath(fileName))
       };
 
 
@@ -226,7 +213,7 @@ export async function getRDir(
       pathWiki = pathMd = parsedPathE["basen"];
       break;
     case "onlyRelative":
-      pathWiki = path.join(path.relative(path.sep + notePath, path.sep + parsedPath["dir"]),parsedPathE["basen"]).replace(/\\/g, "/");
+      pathWiki =  pathJoin([path.relative(path.sep + notePath, path.sep + parsedPath["dir"]),parsedPathE["basen"]]);
       pathMd = encodeURI(pathWiki);
       break;
     case "fullDirPath":
@@ -245,7 +232,8 @@ return [pathWiki, pathMd, parsedPathE];
 export async function getMDir(app: App,
                               noteFile: TFile,
                               settings: ISettings,
-                              defaultdir: boolean = false): Promise<string>{
+                              defaultdir: boolean = false,
+                              unique: string = ""): Promise<string>{
 
 
     const notePath = noteFile.parent.path;
@@ -263,11 +251,17 @@ export async function getMDir(app: App,
           switch (attdir) {
             
             case 'inFolderBelow':
-               root = mediadir.replace("${notename}", noteFile.basename).replace("${date}", current_date);
+               root = mediadir
+               .replace("${notename}", noteFile.basename)
+               .replace("${unique}", unique)
+               .replace("${date}", current_date);
               break;
 
             case 'nextToNoteS':
-               root = (path.join(noteFile.parent.path,mediadir)).replace("${notename}", noteFile.basename).replace("${date}", current_date);
+               root = (pathJoin([noteFile.parent.path,mediadir]))
+               .replace("${notename}", noteFile.basename)
+               .replace("${unique}", unique)
+               .replace("${date}", current_date);
               break;
 
             default:
@@ -276,13 +270,13 @@ export async function getMDir(app: App,
                   root = obsmediadir;
             }
             else if ( obsmediadir === './' ){
-                  root = path.join(noteFile.parent.path);
+                  root = pathJoin([noteFile.parent.path]);
             }
             else if  ( obsmediadir.match (/\.\/.+/g) !== null ) {
-                  root = path.join(noteFile.parent.path, obsmediadir.replace('\.\/',''));
+                  root = pathJoin([noteFile.parent.path, obsmediadir.replace('\.\/','')]);
             }
             else{
-                  root = obsmediadir;
+                  root = normalizePath(obsmediadir);
             }
 
           }
@@ -310,35 +304,27 @@ async function chooseFileName(
 ): Promise<{ fileName: string; needWrite: boolean }> {
   const parsedUrl = new URL(link);
   const ignoredExt = settings.ignoredExt.split("|");
-
-  let fileExt = path.extname(parsedUrl.pathname).replace("\.","");
-
+  let fileExt = await getFileExt(contentData, parsedUrl.pathname);
   logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
 
-  if (!fileExt || fileExt.length > 4 || ["php"].includes(fileExt) ) {
-      fileExt = await fileExtByContent(contentData);
-  }
-  
-  if (!fileExt) {
-    fileExt = "unknown";
-
-  if (!settings.downUnknown) {
+ 
+  if (fileExt == "unknown" && !settings.downUnknown) {
     return { fileName: "", needWrite: false };
     }
-  }
+  
 
-  if (settings.ignoredExt.includes(fileExt)) {
+  if (ignoredExt.includes(fileExt)) {
     return { fileName: "", needWrite: false };
   }
 
 
-  logError("File Ext: "+fileExt, false);
+ 
   
   const baseName =  md5Sig(contentData);
 
   let needWrite = true;
   let fileName = "";
-  const suggestedName = pathJoin(dir, cleanFileName(`${baseName}`+`.${fileExt}`));
+  const suggestedName = pathJoin([dir, cleanFileName(`${baseName}`+`.${fileExt}`)]);
     if (await adapter.exists(suggestedName, false)) {
       const fileData = await adapter.readBinary(suggestedName);
             const existing_file_md5 = md5Sig(fileData);
@@ -347,7 +333,7 @@ async function chooseFileName(
               needWrite = false;
             }
             else{
-              fileName =  pathJoin(dir, cleanFileName( Math.random().toString(9).slice(2,) +`.${fileExt}`));
+              fileName =  pathJoin([dir, cleanFileName( Math.random().toString(9).slice(2,) +`.${fileExt}`)]);
             }
 
     } else {

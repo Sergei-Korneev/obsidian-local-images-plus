@@ -1,9 +1,11 @@
 0.15.3
 Fix: Cannot download images embedded on some sites as a php GET string.
 Fix: Issues with svg images on some sites.
-Add: Option to add exclusions.
 Add: Command which allows downloading files to default obsidian folder.
-Add: Frontmatter support.
+Add: Option to add exclusions.
+Remove: The option "Use wikilinks format" is now copied from Obsidian settings.
+Add: Rewritten clipboard algorithm. The plugin now processes all new attachments universally.
+Add: Option to move/rename attachment folder when associated note is moved/renamed.
 
 
 

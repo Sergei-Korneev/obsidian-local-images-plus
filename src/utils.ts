@@ -8,30 +8,57 @@ import {
   VERBOSE,
   MD_LINK,
   USER_AGENT,
+  NOTICE_TIMEOUT,
+  APP_TITLE
 
 } from "./config";
 
 import {
-  requestUrl
+  requestUrl,
+  Notice,
+  TFile,
+  App,
+  normalizePath
 } from "obsidian";
 
 import md5 from "crypto-js/md5";
+
+//import { TIMEOUT } from "dns";
 //import fs from "fs";
+
 const fs = require('fs').promises;
+
+
 
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
 
 */
-//const fs = require('fs').promises;
 
 
+export async function showBalloon(str: string, show: boolean = true, timeout = NOTICE_TIMEOUT) {
+  if (show) {
+    new Notice(APP_TITLE + "\r\n" + str, timeout);
+  };
+}
 
 
+export function displayError(error: Error | string, file?: TFile): void {
+  if (file) {
+    showBalloon(`LocalImagesPlus: Error while handling file ${file.name}, ${error.toString()}`);
+  } else {
+    showBalloon(error.toString());
+  }
 
-export function logError(str: any, isObj: boolean = false) {
+  logError(`LocalImagesPlus: error: ${error}`, false);
+}
+
+export async function logError(str: any, isObj: boolean = false) {
   if (VERBOSE) {
+
+    console.log(APP_TITLE + ":  ");
+
     if (isObj) {
       console.table(str);
     }
@@ -68,7 +95,8 @@ export function md5Sig(contentData: ArrayBuffer = undefined) {
 
 export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any) {
 
-  logError("replaceAsync: str: " + str + ' regex: ' + regex, false);
+  logError("replaceAsync: \r\nstr: " + str + "\r\nregex: ")
+  logError(regex, true);
 
   let errorflag = false;
   const promises: Promise<any>[] = [];
@@ -77,12 +105,16 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   let anchor;
   let replp: any;
   let caption = "";
+  let filesArr: Array<any> = [];
 
   regex.forEach((element) => {
-    logError(element);
+    logError("cur regex:  " + element);
     const matches = str.matchAll(element);
 
     for (const match of matches) {
+      logError("match: ")
+      logError(match)
+
       anchor = match.groups.anchor;
       link = (match.groups.link.match(MD_LINK) ?? [match.groups.link])[0];
       caption = trimAny((match.groups.link.match(MD_LINK) !== null ?
@@ -118,8 +150,9 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
 
     if (element !== null) {
 
-      logError("el: " + element[0] + "  el2: " + element[1]);
-      str = str.replaceAll(element[0], element[1]);
+      logError("el: " + element[0] + "  el2: " + element[1] + element[2]);
+      str = str.replaceAll(element[0], element[1] + element[2]);
+      filesArr.push(element[1]);
     }
     else {
       errorflag = true;
@@ -127,7 +160,7 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
 
   });
 
-  return [str, errorflag];
+  return [str, errorflag, filesArr];
 
   //  return str.replace( () => data.shift());
 }
@@ -140,6 +173,10 @@ export function isUrl(link: string) {
     return false;
   }
 }
+
+
+
+
 
 
 
@@ -211,17 +248,27 @@ export async function downloadImage(url: string): Promise<ArrayBuffer> {
   }
 }
 
-export async function fileExtByContent(content: ArrayBuffer) {
+export async function getFileExt(content: ArrayBuffer, link: string) {
 
-  const fileExt = (await fromBuffer(content))?.ext;
+  const fileExtByLink = path.extname(link).replace("\.", "");
+  const fileExtByBuffer = (await fromBuffer(content))?.ext;
 
   // if XML, probably it is SVG
-  if (fileExt == "xml" || !fileExt) {
+  if (fileExtByBuffer == "xml" || !fileExtByBuffer) {
     const buffer = Buffer.from(content);
     if (isSvg(buffer)) return "svg";
   }
 
-  return fileExt;
+  if (fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer.length > 0) {
+    return fileExtByBuffer;
+  }
+
+
+  if (fileExtByLink && fileExtByLink.length <= 5 && fileExtByBuffer.length > 0) {
+    return fileExtByLink;
+  }
+
+  return "unknown";
 }
 
 
@@ -257,8 +304,20 @@ export function cleanFileName(name: string) {
   return cleanedName;
 }
 
-export function pathJoin(dir: string, subpath: string): string {
-  const result = path.join(dir, subpath);
+export function pathJoin(parts: Array<string>): string {
+  const result = path.join(...parts);
   // it seems that obsidian do not understand paths with backslashes in Windows, so turn them into forward slashes
   return result.replace(/\\/g, "/");
+}
+
+export function normalizePath(path: string) {
+  return path.replace(/\\/g, "/");
+
+}
+
+export function encObsURI(e: string) {
+  return e.replace(/[\\\x00\x08\x0B\x0C\x0E-\x1F ]/g, (function (e) {
+    return encodeURIComponent(e)
+  }
+  ))
 }

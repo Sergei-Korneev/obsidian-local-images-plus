@@ -24,7 +24,7 @@ This plugin has known compatibility issues with the following plugins:
 
 * Paste Image Rename
 
-* BibTex
+* Pretty BibTex
 
 ```
 
