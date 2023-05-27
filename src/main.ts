@@ -510,7 +510,7 @@ export default class LocalImagesPlugin extends Plugin {
     if (!file ||
       !(file instanceof TFile) ||
       file.path.match(includeRegex) ||
-      !(this.settings.processCreated))
+      !(this.settings.processAll))
       return
 
     if (!file.stat.ctime)
