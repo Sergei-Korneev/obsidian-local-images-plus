@@ -388,6 +388,7 @@ export default class LocalImagesPlugin extends Plugin {
             await this.ensureFolderExists(path.dirname(newRootDir_))
             //await this.app.fileManager.renameFile(app.vault.getAbstractFileByPath(oldRootdir),newRootDir)
             await this.app.vault.adapter.rename(oldRootdir_, newRootDir_)
+            showBalloon("Attachment folder was renamed to " + newRootDir_, this.settings.showNotifications)
           }
         } catch (e) {
           showBalloon("Cannot move attachment folder: \r\n" + e, this.settings.showNotifications)
@@ -401,7 +402,7 @@ export default class LocalImagesPlugin extends Plugin {
           .replaceAll("[" + oldRootdir, "[" + newRootDir)
           //.replaceAll("[" + oldRootdir_, "[" + newRootDir_);
         this.app.vault.modify(file, content)
-        showBalloon("Attachment folder was renamed to " + newRootDir_, this.settings.showNotifications)
+        
       }
     })
 
