@@ -33,7 +33,7 @@ This plugin has known compatibility issues with the following plugins:
 
 Just copy any web content, Word/Open Office content and paste it into your regular note or a note in canvas.
 
-Starting from version 0.15.0 the plugin also handles clipboard events (screenshots/drag-and-drop for files).
+Starting from version 0.15.0 the plugin also handles all attachments (screenshots/drag-and-drop for files/audio records).
 
 
 

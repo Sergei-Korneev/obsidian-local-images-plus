@@ -1,5 +1,9 @@
+0.15.5
+Fix: A bug that can cause an attachment in the vault root to be irretrievably deleted.
+Fix: Minor code edits
+
 0.15.4
-Fix: Bug in folder renaming algorithm.
+Fix: A bug in folder renaming algorithm.
 
 0.15.3
 Fix: Cannot download images embedded on some sites as a php GET string.

@@ -362,14 +362,14 @@ export default class LocalImagesPlugin extends Plugin {
         !(file instanceof TFile) ||
         !(file.path.match(includeRegex)) ||
         !this.settings.removeMediaFolder ||
-        this.settings.saveAttE != "nextToNoteS") {
+        this.settings.saveAttE != "nextToNoteS" ||
+        this.settings.pathInTags != "onlyRelative") {
         return
       }
 
       let oldRootdir = this.settings.mediaRootDir
 
-      if (this.settings.saveAttE != "obsFolder" &&
-        path.basename(oldRootdir).includes("${notename}") &&
+      if (path.basename(oldRootdir).includes("${notename}") &&
         !oldRootdir.includes("${date}")) {
 
         oldRootdir = oldRootdir.replace("${notename}", path.parse(oldPath)?.name)
@@ -397,12 +397,12 @@ export default class LocalImagesPlugin extends Plugin {
         };
         let content = await this.app.vault.cachedRead(file)
         content = content
-           .replaceAll("](" + encodeURI(oldRootdir), "](" + encodeURI(newRootDir))
+          .replaceAll("](" + encodeURI(oldRootdir), "](" + encodeURI(newRootDir))
           //.replaceAll("](" + encodeURI(oldRootdir_), "](" + encodeURI(newRootDir_))
           .replaceAll("[" + oldRootdir, "[" + newRootDir)
-          //.replaceAll("[" + oldRootdir_, "[" + newRootDir_);
+        //.replaceAll("[" + oldRootdir_, "[" + newRootDir_);
         this.app.vault.modify(file, content)
-        
+
       }
     })
 
@@ -593,10 +593,11 @@ export default class LocalImagesPlugin extends Plugin {
 
 
                 if (newFileData === oldFileData) {
-
-                  logError("deleting " + oldpath)
-                  await this.app.vault.delete(oldfileA)
-
+                  if (oldpath !== newpath) {
+                    logError(path.dirname(oldpath))
+                    logError("deleting " + oldpath)
+                    await this.app.vault.delete(oldfileA)
+                  }
                 }
 
                 else {
@@ -743,7 +744,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.off("editor-drop", null)
     this.app.workspace.off("editor-paste", null)
     this.app.workspace.off('file-menu', null)
-    
+
 
     //         this.app.vault.off("create",  null)
     logError(" unloaded.")
@@ -1098,7 +1099,7 @@ class SettingTab extends PluginSettingTab {
       .setName("Move/delete/rename media folder")
       .setDesc("Rename or move this folder to the obsidian or system garbage can when the associated note is deleted/renamed/moved. \
                 This setting takes effect only if the path contains ${notename} template at the end\
-                and the option 'Next to note in the folder specified below' selected.\
+                and the options 'Next to note in the folder specified below' / 'Relative to note' are selected.\
                 Use this setting at your own risk.")
       .setClass("media_folder_set")
       .addToggle((toggle) =>
