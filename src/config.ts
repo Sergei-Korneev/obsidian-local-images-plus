@@ -1,6 +1,6 @@
 export const APP_TITLE = "Local Images Plus  0.15.4";
 
-export const VERBOSE = true;
+export const VERBOSE = false;
 
 export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"};
 
