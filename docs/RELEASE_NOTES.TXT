@@ -1,3 +1,6 @@
+0.15.6
+Add: Commands to remove orphaned attachments. 
+
 0.15.5
 Fix: A bug that can cause an attachment in the vault root to be irretrievably deleted.
 Fix: Minor code edits

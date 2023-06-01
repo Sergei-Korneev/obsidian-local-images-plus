@@ -4,12 +4,12 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
-  Menu,
   TFile,
   Editor,
   htmlToMarkdown,
   MarkdownView,
   TFolder,
+  CachedMetadata
 } from "obsidian"
 
 
@@ -44,7 +44,7 @@ import {
 
 import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
-import { ModalW1 } from "./modal"
+import { ModalW1, ModalW2 } from "./modal"
 //import { count, log } from "console"
 
 export default class LocalImagesPlugin extends Plugin {
@@ -59,189 +59,9 @@ export default class LocalImagesPlugin extends Plugin {
 
 
 
-  private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
-
-    if (file == null) {
-      showBalloon(`Empty note!`, this.settings.showNotifications)
-      return null
-    }
-
-    const content = await this.app.vault.cachedRead(file);
-    const fixedContent = await replaceAsync(
-      content,
-      MD_SEARCH_PATTERN,
-      imageTagProcessor(this,
-        file,
-        this.settings,
-        defaultdir
-      )
-    )
-
-
-
-
-
-    if (content != fixedContent[0] && fixedContent[1] === false) {
-      this.modifiedQueue.remove(file)
-      await this.app.vault.modify(file, fixedContent[0])
-
-      fixedContent[2].forEach(element => {
-        this.newfCreatedByDownloader.push(element)
-      })
-
-      showBalloon(`Attachements for "${file.path}" were processed.`, this.settings.showNotifications)
-
-    }
-
-    else if (content != fixedContent[0] && fixedContent[1] === true) {
-
-      this.modifiedQueue.remove(file)
-      await this.app.vault.modify(file, fixedContent[0])
-
-      fixedContent[2].forEach(element => {
-        this.newfCreatedByDownloader.push(element)
-      })
-
-      showBalloon(`WARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced...`, this.settings.showNotifications)
-    }
-    else {
-      if (this.settings.showNotifications) {
-        showBalloon(`Page "${file.path}" has been processed, but nothing was changed.`, this.settings.showNotifications)
-      }
-    }
-  }
-
-  // using arrow syntax for callbacks to correctly pass this context
-
-  processActivePage = (defaultdir: boolean = false) => async () => {
-    logError("processactive")
-    try {
-      const activeFile = app.workspace.activeEditor.file
-      await this.processPage(activeFile, defaultdir)
-    } catch (e) {
-      showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
-      return
-    }
-
-  }
-
-  processAllPages = async () => {
-    const files = this.app.vault.getMarkdownFiles()
-
-
-    const includeRegex = new RegExp(this.settings.include, "i")
-
-    const pagesCount = files.length
-
-    const notice = this.settings.showNotifications
-      ? new Notice(
-        APP_TITLE + `\nLocal Images Plus \nStart processing. Total ${pagesCount} pages. `,
-        TIMEOUT_LIKE_INFINITY
-      )
-      : null
-
-    for (const [index, file] of files.entries()) {
-      if (file.path.match(includeRegex)) {
-        if (notice) {
-          //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
-          notice.setMessage(
-            APP_TITLE + `\nLocal Images Plus: Processing \n"${file.path}" \nPage ${index} of ${pagesCount}`
-          )
-        }
-        await this.processPage(file)
-      }
-    }
-    if (notice) {
-      // dum @ts-expect-error
-      notice.setMessage(APP_TITLE + `\nLocal Images Plus: ${pagesCount} pages were processed.`)
-
-      setTimeout(() => {
-        notice.hide()
-      }, NOTICE_TIMEOUT)
-    }
-  }
-
-
-
-
-  private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined) {
-
-    if (evt === undefined) { return }
-
-    if (!this.settings.realTimeUpdate) { return }
-
-    try {
-      const activeFile = app.workspace.activeEditor.file
-      const fItems = evt.clipboardData.files
-      const tItems = evt.clipboardData.items
-
-      for (const key in tItems) {
-
-        // Check if it was a text/html
-        if (tItems[key].kind == "string") {
-
-          if (this.settings.realTimeUpdate) {
-            const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) +
-              htmlToMarkdown(evt.clipboardData.getData("text"))
-            for (const reg_p of MD_SEARCH_PATTERN) {
-              if (reg_p.test(cont)) {
-
-                showBalloon("Media links were found, processing...", this.settings.showNotifications)
-
-                this.enqueueActivePage(activeFile)
-                this.setupQueueInterval()
-                break
-              }
-            }
-          }
-          return
-        }
-
-      }
-
-
-
-
-    } catch (e) {
-      showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
-      return
-    }
-
-
-
-  }
-
-
-
-  // private fileMenuCallbackFunc = (
-  //   menu: Menu,
-  // ) => {
-  //   menu.addSeparator()
-  //   menu.addItem((item) => {
-  //     item.setTitle("Download media files (plugin folder)")
-  //       .setIcon('link')
-  //       .onClick(() => {
-  //         this.processActivePage(false)()
-  //       })
-  //   })
-  //   menu.addSeparator()
-  // }
-
-
-
-  private openModal = () => {
-    const mod = new ModalW1(this.app)
-    mod.plugin = this
-    mod.open()
-  }
-
-
   async onload() {
 
     await this.loadSettings()
-
-
-
 
     this.addCommand({
       id: "download-images",
@@ -271,7 +91,7 @@ export default class LocalImagesPlugin extends Plugin {
       this.addCommand({
         id: "download-images-all",
         name: "Download media files for all your notes",
-        callback: this.openModal,
+        callback: this.openProcessAllModal,
       })
 
       this.addCommand({
@@ -279,30 +99,22 @@ export default class LocalImagesPlugin extends Plugin {
         name: "Convert selection to URI",
         callback: this.convertSelToURI,
       })
+
+      this.addCommand({
+        id: "remove-orphans-from-obsidian-folder",
+        name: "Remove all orphaned attachments (Obsidian folder)",
+        callback: () => { this.removeOrphans("obsidian")() },
+      })
+
+      this.addCommand({
+        id: "remove-orphans-from-plugin-folder",
+        name: "Remove all orphaned attachments (Plugin folder)",
+        callback: () => { this.removeOrphans("plugin")() },
+      })
     }
-    Plugin
-
-    //    this.app.workspace.on(
-    //   "active-leaf-change",
-    //     (leaf: WorkspaceLeaf ) => {
-
-    //logError("change lleaf")
 
 
-    //   })
-
-    // this.app.workspace.on(
-    //   'file-menu',
-    //   this.fileMenuCallbackFunc
-    // )
-
-
-    // this.app.workspace.on(
-    //   "editor-drop",
-    //   (evt: DragEvent, editor: Editor, info: MarkdownView) => {
-    //     this.onDropFunc(evt, editor, info)
-    //   })
-
+ 
 
 
     // Some file has been created
@@ -356,6 +168,7 @@ export default class LocalImagesPlugin extends Plugin {
     })
 
 
+
     this.app.vault.on('rename', async (file: TFile, oldPath: string) => {
       const includeRegex = new RegExp(this.settings.include, "i")
       if (!file ||
@@ -377,11 +190,9 @@ export default class LocalImagesPlugin extends Plugin {
         let newRootDir_ = newRootDir
         let oldRootdir_ = oldRootdir
 
-
-        // if (this.settings.saveAttE == "nextToNoteS") {
         oldRootdir_ = pathJoin([(path.dirname(oldPath) || ""), oldRootdir])
         newRootDir_ = pathJoin([(path.dirname(file.path) || ""), newRootDir])
-        // }
+
 
         try {
           if (this.app.vault.getAbstractFileByPath(oldRootdir_) instanceof TFolder) {
@@ -398,9 +209,7 @@ export default class LocalImagesPlugin extends Plugin {
         let content = await this.app.vault.cachedRead(file)
         content = content
           .replaceAll("](" + encodeURI(oldRootdir), "](" + encodeURI(newRootDir))
-          //.replaceAll("](" + encodeURI(oldRootdir_), "](" + encodeURI(newRootDir_))
           .replaceAll("[" + oldRootdir, "[" + newRootDir)
-        //.replaceAll("[" + oldRootdir_, "[" + newRootDir_);
         this.app.vault.modify(file, content)
 
       }
@@ -467,6 +276,336 @@ export default class LocalImagesPlugin extends Plugin {
       )
       this.registerInterval(this.intervalId)
     }
+  }
+
+
+
+
+
+  private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
+
+    if (file == null) {
+      showBalloon(`Empty note!`, this.settings.showNotifications)
+      return null
+    }
+
+    const content = await this.app.vault.cachedRead(file);
+    const fixedContent = await replaceAsync(
+      content,
+      MD_SEARCH_PATTERN,
+      imageTagProcessor(this,
+        file,
+        this.settings,
+        defaultdir
+      )
+    )
+
+
+
+
+
+    if (content != fixedContent[0] && fixedContent[1] === false) {
+      this.modifiedQueue.remove(file)
+      await this.app.vault.modify(file, fixedContent[0])
+
+      fixedContent[2].forEach((element: string) => {
+        this.newfCreatedByDownloader.push(element)
+      })
+
+      showBalloon(`Attachements for "${file.path}" were processed.`, this.settings.showNotifications)
+
+    }
+
+    else if (content != fixedContent[0] && fixedContent[1] === true) {
+
+      this.modifiedQueue.remove(file)
+      await this.app.vault.modify(file, fixedContent[0])
+
+      fixedContent[2].forEach((element: string) => {
+        this.newfCreatedByDownloader.push(element)
+      })
+
+      showBalloon(`WARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced...`, this.settings.showNotifications)
+    }
+    else {
+      if (this.settings.showNotifications) {
+        showBalloon(`Page "${file.path}" has been processed, but nothing was changed.`, this.settings.showNotifications)
+      }
+    }
+  }
+
+  // using arrow syntax for callbacks to correctly pass this context
+
+  processActivePage = (defaultdir: boolean = false) => async () => {
+    logError("processactive")
+    try {
+      const activeFile = app.workspace.getActiveFile()
+      await this.processPage(activeFile, defaultdir)
+    } catch (e) {
+      showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
+      return
+    }
+
+  }
+
+  processAllPages = async () => {
+    const files = this.app.vault.getMarkdownFiles()
+
+
+    const includeRegex = new RegExp(this.settings.include, "i")
+
+    const pagesCount = files.length
+
+    const notice = this.settings.showNotifications
+      ? new Notice(
+        APP_TITLE + `\nStart processing. Total ${pagesCount} pages. `,
+        TIMEOUT_LIKE_INFINITY
+      )
+      : null
+
+    for (const [index, file] of files.entries()) {
+      if (file.path.match(includeRegex)) {
+        if (notice) {
+          //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
+          notice.setMessage(
+            APP_TITLE + `\nProcessing \n"${file.path}" \nPage ${index} of ${pagesCount}`
+          )
+        }
+        await this.processPage(file)
+      }
+    }
+    if (notice) {
+      // dum @ts-expect-error
+      notice.setMessage(APP_TITLE + `\n${pagesCount} pages were processed.`)
+
+      setTimeout(() => {
+        notice.hide()
+      }, NOTICE_TIMEOUT)
+    }
+  }
+
+
+
+
+  private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined) {
+
+    if (evt === undefined) { return }
+
+    if (!this.settings.realTimeUpdate) { return }
+
+    try {
+      const activeFile = app.workspace.activeEditor.file
+      const fItems = evt.clipboardData.files
+      const tItems = evt.clipboardData.items
+
+      for (const key in tItems) {
+
+        // Check if it was a text/html
+        if (tItems[key].kind == "string") {
+
+          if (this.settings.realTimeUpdate) {
+            const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) +
+              htmlToMarkdown(evt.clipboardData.getData("text"))
+            for (const reg_p of MD_SEARCH_PATTERN) {
+              if (reg_p.test(cont)) {
+
+                showBalloon("Media links were found, processing...", this.settings.showNotifications)
+
+                this.enqueueActivePage(activeFile)
+                this.setupQueueInterval()
+                break
+              }
+            }
+          }
+          return
+        }
+
+      }
+
+
+
+
+    } catch (e) {
+      showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
+      return
+    }
+
+
+
+  }
+
+
+
+
+  private removeOrphans = (type: string = undefined,
+    filesToRemove: Array<TFile> = undefined,
+    noteFile: TFile = undefined) => async () => {
+
+      const obsmediadir = app.vault.getConfig("attachmentFolderPath")
+      const allFiles = this.app.vault.getFiles()
+      const includeRegex = new RegExp(this.settings.include, "i")
+
+      if (type == "plugin") {
+        let orphanedAttachments = []
+        let allAttachmentsLinks = []
+        if (this.settings.saveAttE != "nextToNoteS") {
+          showBalloon("This command requires the setting 'Next to note in the folder specified below' to be enabled!\nPlease, change settings first!\r\n", this.settings.showNotifications)
+          return
+        }
+        logError(noteFile, true)
+        if (!noteFile) {
+          noteFile = this.app.workspace.getActiveFile()
+          if (!noteFile) {
+            showBalloon("Please, select a note or click inside a note in canvas!", this.settings.showNotifications)
+            return
+          }
+
+        }
+        let oldRootdir = this.settings.mediaRootDir
+
+        if (noteFile.path.match(includeRegex) &&
+          path.basename(oldRootdir).includes("${notename}") &&
+          !oldRootdir.includes("${date}")) {
+
+          oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
+          oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
+          if (! await this.app.vault.exists(oldRootdir)) {
+            showBalloon("The attachment folder " + oldRootdir + " does not exist!", this.settings.showNotifications)
+            return
+          }
+          const allAttachments = await this.app.vault.getAbstractFileByPath(oldRootdir)?.children
+          const metaCache = this.app.metadataCache.getFileCache(noteFile)
+          const embeds = metaCache?.embeds
+
+          if (embeds) {
+            for (const embed of embeds) {
+              allAttachmentsLinks.push(path.basename(embed.link))
+            }
+          }
+
+          if (allAttachments) {
+            for (const attach of allAttachments) {
+              if (!allAttachmentsLinks.includes(attach.name)) {
+                logError("orph: " + attach.basename)
+                orphanedAttachments.push(attach)
+              }
+            }
+          }
+
+
+          if (orphanedAttachments.length > 0) {
+            const mod = new ModalW1(this.app)
+            mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + oldRootdir + "'\r\n\r\n      "
+            mod.plugin = this
+            mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
+            mod.open()
+          } else {
+            showBalloon("No orphaned files found!", this.settings.showNotifications)
+          }
+
+        }
+
+
+      }
+
+      if (type == "obsidian") {
+
+        if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
+          showBalloon("This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n", this.settings.showNotifications)
+          return
+        }
+
+        const allAttachments = this.app.vault.getAbstractFileByPath(obsmediadir)?.children
+        let orphanedAttachments = []
+        let allAttachmentsLinks = []
+
+
+        if (allFiles) {
+
+          for (const file of allFiles) {
+
+            if (file.path.match(includeRegex)) {
+
+              const metaCache = this.app.metadataCache.getCache(file.path)
+              const embeds = metaCache?.embeds
+
+              if (embeds) {
+                for (const embed of embeds) {
+                  allAttachmentsLinks.push(path.basename(embed.link))
+                }
+              }
+            }
+
+          }
+
+          for (const attach of allAttachments) {
+            if (!allAttachmentsLinks.includes(attach.name)) {
+              logError("orph: " + attach.basename)
+              orphanedAttachments.push(attach)
+            }
+          }
+
+        }
+
+
+        logError("Orphaned: ")
+        logError(orphanedAttachments, true)
+        if (orphanedAttachments.length > 0) {
+          const mod = new ModalW1(this.app)
+          mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + obsmediadir + "'\r\n\r\n      "
+          mod.plugin = this
+          mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
+          mod.open()
+        } else {
+          showBalloon("No orphaned files found!", this.settings.showNotifications)
+        }
+
+
+
+
+      }
+
+
+
+      if (type == "execremove") {
+        const useSysTrash = (this.app.vault.getConfig("trashOption") === "system")
+        const remcompl = this.settings.removeOrphansCompl
+        let msg = "";
+
+        if (filesToRemove) {
+
+          filesToRemove.forEach((el: TFile) => {
+
+            if (remcompl) {
+              msg = "were deleted completely."
+              this.app.vault.delete(el, true)
+            } else {
+              if (useSysTrash) {
+                msg = "were moved to the system garbage can."
+              } else {
+                msg = "were moved to the Obsidian garbage can."
+              }
+              this.app.vault.trash(el, useSysTrash)
+            }
+
+          })
+        }
+
+        showBalloon(filesToRemove.length + " file(s) " + msg, this.settings.showNotifications)
+
+      }
+
+    }
+
+
+
+
+  private openProcessAllModal = () => {
+    const mod = new ModalW1(this.app)
+    mod.messg = "Confirm processing all pages.\r\n "
+    mod.plugin = this
+    mod.callbackFunc = this.processAllPages
+    mod.open()
   }
 
 
@@ -1059,6 +1198,19 @@ class SettingTab extends PluginSettingTab {
         })
       )
 
+    containerEl.createEl("h3", { text: "Orphaned attachments" })
+
+    new Setting(containerEl)
+      .setName("Remove files completely")
+      .setDesc("Do not move orphaned files into the garbage can.")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.removeOrphansCompl)
+          .onChange(async (value) => {
+            this.plugin.settings.removeOrphansCompl = value
+            await this.plugin.saveSettings()
+          })
+      )
 
     containerEl.createEl("h3", { text: "Media folder settings" })
 

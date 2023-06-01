@@ -1,10 +1,15 @@
-import { App, Modal, Notice} from "obsidian";
+import { App, Modal } from "obsidian";
 import { APP_TITLE } from "./config";
 import LocalImagesPlugin from "./main";
 
 
 export class ModalW1 extends Modal {
-  plugin: LocalImagesPlugin;
+
+	plugin: LocalImagesPlugin;
+	messg: string = "";
+	callbackFunc: CallableFunction = null;
+	 
+
 	constructor(app: App) {
 		super(app);
 	}
@@ -13,7 +18,7 @@ export class ModalW1 extends Modal {
 		let { contentEl, titleEl } = this;
 		titleEl.setText(APP_TITLE);
 		const div = contentEl.createDiv({
-			text: "\r\nConfirm processing all pages.\r\n\r\n      "
+			text: this.messg
 		})
 
 
@@ -21,16 +26,56 @@ export class ModalW1 extends Modal {
 			cls: ["mod-cta"],
 			text: "Cancel"
 		}).addEventListener("click", async () => {
-      this.close(); 
-    } );
+			this.close();
+		});
 
 
 		contentEl.createEl("button", {
 			cls: ["mod-cta"],
 			text: "Confirm"
 		}).addEventListener("click", async () => {
-      this.close(); 
-      this.plugin.processAllPages();
+			 
+			this.close();
+			
+			if (this.callbackFunc) {
+				this.callbackFunc();
+			}
+
+		});
+	}
+
+	onClose() {
+		let { contentEl } = this;
+		contentEl.empty();
+	}
+}
+
+
+
+export class ModalW2 extends Modal {
+
+	plugin: LocalImagesPlugin;
+	messg: string = "";
+
+	constructor(app: App) {
+		super(app);
+	}
+
+	onOpen() {
+		let { contentEl, titleEl } = this;
+		titleEl.setText(APP_TITLE);
+		const div = contentEl.createDiv({
+			text: this.messg
+		})
+
+ 		contentEl.createEl("button", {
+			cls: ["mod-cta"],
+			text: "OK"
+		}).addEventListener("click", async () => {
+			 
+			this.close();
+ 
+
 		});
 	}
 

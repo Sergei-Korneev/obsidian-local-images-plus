@@ -16,9 +16,7 @@ import {
 import {
   requestUrl,
   Notice,
-  TFile,
-  App,
-  normalizePath
+  TFile
 } from "obsidian";
 
 import md5 from "crypto-js/md5";
@@ -105,7 +103,7 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   let anchor;
   let replp: any;
   let caption = "";
-  let filesArr: Array<any> = [];
+  let filesArr: Array<string> = [];
 
   regex.forEach((element) => {
     logError("cur regex:  " + element);
@@ -183,7 +181,7 @@ export function isUrl(link: string) {
 export async function copyFromDisk(src: string, dest: string): Promise<null> {
   logError("copyFromDisk: " + src + " to " + dest, false);
   try {
-    await fs.copyFile(src, dest, null, (err) => {
+    await fs.copyFile(src, dest, null, (err: Error) => {
       if (err) {
         logError("Error:" + err, false);
       }

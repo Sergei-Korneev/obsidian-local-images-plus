@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.15.5";
+export const APP_TITLE = "Local Images Plus  0.15.6";
 
 export const VERBOSE = false;
 
@@ -50,6 +50,7 @@ export interface ISettings {
   disAddCom: boolean;
   useMD5ForNewAtt: boolean;
   removeMediaFolder: boolean;
+  removeOrphansCompl: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -70,5 +71,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   mediaRootDir: "_resources/${notename}",
   disAddCom: false,
   useMD5ForNewAtt: true,
-  removeMediaFolder: true
+  removeMediaFolder: true,
+  removeOrphansCompl: false
 };
