@@ -1,12 +1,13 @@
-0.15.6
+0.15.7
 Add: Commands to remove orphaned attachments. 
+Fix: Bug in version 0.14.6
 
 0.15.5
 Fix: A bug that can cause an attachment in the vault root to be irretrievably deleted.
 Fix: Minor code edits
 
 0.15.4
-Fix: A bug in folder renaming algorithm.
+Fix: A bug in the folder renaming algorithm.
 
 0.15.3
 Fix: Cannot download images embedded on some sites as a php GET string.

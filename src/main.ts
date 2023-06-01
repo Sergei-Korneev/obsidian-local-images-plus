@@ -114,7 +114,7 @@ export default class LocalImagesPlugin extends Plugin {
     }
 
 
- 
+
 
 
     // Some file has been created
@@ -476,13 +476,18 @@ export default class LocalImagesPlugin extends Plugin {
           const allAttachments = await this.app.vault.getAbstractFileByPath(oldRootdir)?.children
           const metaCache = this.app.metadataCache.getFileCache(noteFile)
           const embeds = metaCache?.embeds
+          const links = metaCache?.links
 
           if (embeds) {
             for (const embed of embeds) {
               allAttachmentsLinks.push(path.basename(embed.link))
             }
           }
-
+          if (links) {
+            for (const link of links) {
+              allAttachmentsLinks.push(path.basename(link.link))
+            }
+          }
           if (allAttachments) {
             for (const attach of allAttachments) {
               if (!allAttachmentsLinks.includes(attach.name)) {
@@ -528,10 +533,16 @@ export default class LocalImagesPlugin extends Plugin {
 
               const metaCache = this.app.metadataCache.getCache(file.path)
               const embeds = metaCache?.embeds
+              const links = metaCache?.links
 
               if (embeds) {
                 for (const embed of embeds) {
                   allAttachmentsLinks.push(path.basename(embed.link))
+                }
+              }
+              if (links) {
+                for (const link of links) {
+                  allAttachmentsLinks.push(path.basename(link.link))
                 }
               }
             }
