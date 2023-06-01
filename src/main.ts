@@ -563,7 +563,8 @@ export default class LocalImagesPlugin extends Plugin {
         logError(orphanedAttachments, true)
         if (orphanedAttachments.length > 0) {
           const mod = new ModalW1(this.app)
-          mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + obsmediadir + "'\r\n\r\n      "
+          mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + obsmediadir + "  '\r\n \
+          NOTE: Be careful when running this command on Obsidian attachments folder, since some html-linked files may also be moved.\r\n      "
           mod.plugin = this
           mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
           mod.open()
