@@ -72,7 +72,7 @@ Files will be copied or downloaded to your attachements folder.
 
 **NOTE: I would not recommend to use this plugin for copying really big files, since buffered reading from disk not implemented yet.**
 
-Starting from version 0.14.6 the plugin will also allow you to remove unused attachments by running commands
+Starting from version 0.14.6 the plugin also allows you to remove unused attachments by running commands:
 
 ```Remove all orphaned attachments (Plugin folder)```
 
@@ -80,7 +80,7 @@ and
 
 ```Remove all orphaned attachments (Obsidian folder)```
 
-The first one searches orphans in folder next to the active note , while the second one searches all unused attachments for all your notes. (this requires you to set some root subfolder in Obsidian settings)
+The first one searches orphans in the folder next to the active note, while the second one searches all unused attachments for all your notes. (this requires you to set some root subfolder in Obsidian settings)
 
 
 Starting from version 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
