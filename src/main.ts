@@ -101,6 +101,12 @@ export default class LocalImagesPlugin extends Plugin {
       })
 
       this.addCommand({
+        id: "convert-selection-to-md",
+        name: "Convert selection from html to markdown",
+        callback: this.convertSelToMD,
+      })
+
+      this.addCommand({
         id: "remove-orphans-from-obsidian-folder",
         name: "Remove all orphaned attachments (Obsidian folder)",
         callback: () => { this.removeOrphans("obsidian")() },
@@ -513,6 +519,8 @@ export default class LocalImagesPlugin extends Plugin {
 
       }
 
+
+      
       if (type == "obsidian") {
 
         if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
@@ -576,7 +584,6 @@ export default class LocalImagesPlugin extends Plugin {
 
 
       }
-
 
 
       if (type == "execremove") {
@@ -867,6 +874,9 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.activeEditor.editor.replaceSelection(encObsURI(await this.app.workspace.activeEditor.getSelection()))
   }
 
+  private convertSelToMD = async () => {
+    this.app.workspace.activeEditor.editor.replaceSelection(htmlToMarkdown(await this.app.workspace.activeEditor.getSelection()))
+  }
 
 
 
