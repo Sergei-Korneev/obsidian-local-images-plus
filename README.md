@@ -50,9 +50,14 @@ Use it in the command/menu mode or in automatic mode (toggle "Automatic processi
 ![img](docs/menuex.png?raw=true)
 
 
-```Download all media files``` - your active page will be processed.
+```Download all media files (Plugin folder)``` - your active page will be processed and attachments will be saved in the folder preconfigured in the plugin settings. 
 
 or
+
+```Download all media files (Obsidian folder)``` - your active page will be processed and attachments will be saved in the folder preconfigured in the Obsidian settings.
+
+or
+
 
 ```Download media files for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
 
@@ -72,7 +77,7 @@ Files will be copied or downloaded to your attachements folder.
 
 **NOTE: I would not recommend to use this plugin for copying really big files, since buffered reading from disk not implemented yet.**
 
-Starting from version 0.14.6 the plugin also allows you to remove unused attachments by running commands:
+Starting from version 0.15.6 the plugin also allows you to remove unused attachments by running commands:
 
 ```Remove all orphaned attachments (Plugin folder)```
 
