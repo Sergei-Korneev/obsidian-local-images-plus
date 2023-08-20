@@ -1,3 +1,8 @@
+0.15.8
+Add: Command to convert selection from html to markdown (for some notes with mixed html/markdown content).
+Fix: Broken canvas support
+Add: Option to process html tags 
+
 0.15.7
 Add: Commands to remove orphaned attachments. 
 Fix: Bug in version 0.14.6

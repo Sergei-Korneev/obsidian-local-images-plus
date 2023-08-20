@@ -7,9 +7,9 @@ export const SUPPORTED_OS = {"win":"win32","unix":"linux,darwin,freebsd,openbsd"
 export const USER_AGENT =
 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82  Safari/537.36';
 
-export const HTML_EMBED =
-//html embedded image
-/(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
+// export const HTML_EMBED =
+// //html embedded image
+// /(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
 
 export const MD_SEARCH_PATTERN=
 [

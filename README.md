@@ -50,16 +50,16 @@ Use it in the command/menu mode or in automatic mode (toggle "Automatic processi
 ![img](docs/menuex.png?raw=true)
 
 
-```Download all media files (Plugin folder)``` - your active page will be processed and attachments will be saved in the folder preconfigured in the plugin settings. 
+```Localize attachments for the current note (plugin folder)``` - your active note will be processed and attachments will be saved in the folder preconfigured in the plugin settings. 
 
 or
 
-```Download all media files (Obsidian folder)``` - your active page will be processed and attachments will be saved in the folder preconfigured in the Obsidian settings.
+```Localize attachments for the current note (Obsidian folder)``` - your active note will be processed and attachments will be saved in the folder preconfigured in the Obsidian settings.
 
 or
 
 
-```Download media files for all your notes``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings.
+```Localize attachments for all your notes (plugin folder)``` - will be processed all the pages in your vault, that corresponds to **Include** parameter in the plugin's settings and attachments will be saved in the folder(s) preconfigured in the plugin settings.
 
 
 
