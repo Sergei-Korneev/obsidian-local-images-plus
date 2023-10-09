@@ -28,7 +28,7 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 - Enjoy
 
 
-## Installation
+## Updating
 
 - Update the plugin from Obsidian settings and restart Obsidian
 
