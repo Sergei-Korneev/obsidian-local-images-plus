@@ -25,7 +25,10 @@ import {
   showBalloon,
   displayError,
   encObsURI,
-  pathJoin
+  pathJoin,
+  pngToJpeg,
+  getFileExt,
+  readFromDiskB
 } from "./utils"
 
 import {
@@ -34,13 +37,14 @@ import {
   DEFAULT_SETTINGS,
   MD_SEARCH_PATTERN,
   NOTICE_TIMEOUT,
-  TIMEOUT_LIKE_INFINITY
+  TIMEOUT_LIKE_INFINITY,
+
 } from "./config"
 
 import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
 import { ModalW1 } from "./modal"
-
+const fs = require('fs').promises;
 
 //import { count, log } from "console"
 
@@ -263,6 +267,10 @@ export default class LocalImagesPlugin extends Plugin {
 
   }
 
+
+
+
+
   setupQueueInterval() {
     if (this.intervalId) {
       const intervalId = this.intervalId
@@ -282,13 +290,22 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
 
+  private getCurrentNote(): TFile | null {
+    try {
+      const noteFile = app.workspace.activeEditor.file
+      return noteFile
+    } catch (e) {
+      showBalloon("Cannot get current note! ", this.settings.showNotifications)
 
+    }
+    return null
+
+  }
 
 
   private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
 
     if (file == null) {
-      showBalloon(`Empty note!`, this.settings.showNotifications)
       return null
     }
 
@@ -342,7 +359,7 @@ export default class LocalImagesPlugin extends Plugin {
   processActivePage = (defaultdir: boolean = false) => async () => {
     logError("processactive")
     try {
-      const activeFile = this.app.workspace.activeEditor?.file
+      const activeFile = this.getCurrentNote()
       await this.processPage(activeFile, defaultdir)
     } catch (e) {
       showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
@@ -396,7 +413,7 @@ export default class LocalImagesPlugin extends Plugin {
     if (!this.settings.realTimeUpdate) { return }
 
     try {
-      const activeFile = app.workspace.activeEditor.file
+      const activeFile = this.getCurrentNote()
       const fItems = evt.clipboardData.files
       const tItems = evt.clipboardData.items
 
@@ -446,28 +463,29 @@ export default class LocalImagesPlugin extends Plugin {
       const obsmediadir = app.vault.getConfig("attachmentFolderPath")
       const allFiles = this.app.vault.getFiles()
       const includeRegex = new RegExp(this.settings.include, "i")
+      let oldRootdir = this.settings.mediaRootDir
 
       if (type == "plugin") {
         let orphanedAttachments = []
         let allAttachmentsLinks = []
-        if (this.settings.saveAttE != "nextToNoteS") {
-          showBalloon("This command requires the setting 'Next to note in the folder specified below' to be enabled!\nPlease, change settings first!\r\n", this.settings.showNotifications)
+        if (this.settings.saveAttE != "nextToNoteS" ||
+          !path.basename(oldRootdir).endsWith("${notename}") ||
+          oldRootdir.includes("${date}")) {
+          showBalloon("This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n", this.settings.showNotifications)
           return
         }
         logError(noteFile, true)
         if (!noteFile) {
-          noteFile = this.app.workspace.getActiveFile()
+          noteFile = this.getCurrentNote()
           if (!noteFile) {
             showBalloon("Please, select a note or click inside a note in canvas!", this.settings.showNotifications)
             return
           }
 
         }
-        let oldRootdir = this.settings.mediaRootDir
 
-        if (noteFile.path.match(includeRegex) &&
-          path.basename(oldRootdir).includes("${notename}") &&
-          !oldRootdir.includes("${date}")) {
+
+        if (noteFile.path.match(includeRegex)) {
 
           oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
           oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
@@ -516,7 +534,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
 
 
-      
+
       if (type == "obsidian") {
 
         if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
@@ -671,7 +689,7 @@ export default class LocalImagesPlugin extends Plugin {
     if (!file.stat.ctime)
       return
 
-    const timeGapMs = Math.abs(Date.now() - file.stat.ctime)
+    const timeGapMs = Math.abs(Date.now() - file.stat.mtime)
 
     if (timeGapMs > 1000)
       return
@@ -679,7 +697,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.newfCreated.push(file.path)
     this.newfMoveReq = true
     this.setupNewMdFilesProcInterval()
-
+    logError("file created  ")
   }
 
 
@@ -688,133 +706,204 @@ export default class LocalImagesPlugin extends Plugin {
 
   private processMdFilesOnTimer = async () => {
 
+    const th = this
+    function onRet() {
+      th.newfCreated = []
+      th.newfCreatedByDownloader = []
+      th.noteModified = []
+      th.newfMoveReq = false
+      window.clearInterval(th.newfProcInt)
+      th.newfProcInt = 0
+    }
+
     logError("func processMdFilesOnTimer:\r\n")
     logError(this.noteModified, true)
 
-    window.clearInterval(this.newfProcInt)
-    this.newfProcInt = 0
-    this.newfMoveReq = false
-    let itemcount = 0
-    const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
+    try {
+
+
+      window.clearInterval(this.newfProcInt)
+      this.newfProcInt = 0
+      this.newfMoveReq = false
+      let itemcount = 0
+      const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
 
 
 
-    for (let note of this.noteModified) {
+      for (let note of this.noteModified) {
 
-      const metaCache = this.app.metadataCache.getFileCache(note)
-      let filedata = await this.app.vault.cachedRead(note)
-      const mdir = await getMDir(this.app, note, this.settings)
-      const obsmdir = await getMDir(this.app, note, this.settings, true)
-      let embeds = metaCache?.embeds
+        const metaCache = this.app.metadataCache.getFileCache(note)
+        let filedata = await this.app.vault.cachedRead(note)
+        const mdir = await getMDir(this.app, note, this.settings)
+        const obsmdir = await getMDir(this.app, note, this.settings, true)
+        let embeds = metaCache?.embeds
 
+ 
 
-
-      if (embeds) {
-        await this.ensureFolderExists(mdir)
-
-
-        for (let el of embeds) {
-
-
-          let oldpath = pathJoin([obsmdir, path.basename(el.link)])
-          let newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
-          let newlink: Array<string> = await getRDir(note, this.settings, newpath)
-          let oldtag = el["original"];
+        if (obsmdir != "" && ! await this.app.vault.adapter.exists(obsmdir)) {
+          this.ensureFolderExists(obsmdir)
+          showBalloon("You obsidian media folder set to '" + obsmdir + "', and has been created by the plugin. Please, try again. ", this.settings.showNotifications)
+          onRet()
+          return
+        }
+        
 
 
-          if (this.newfCreated.includes(oldpath) &&
-            !this.newfCreatedByDownloader.includes(oldtag)) {
+        if (embeds) {
 
-            let oldFileData: string | null;
-            let newFileData: string | null;
-
-            let oldfileA = this.app.vault.getAbstractFileByPath(oldpath)
+  
+          await this.ensureFolderExists(mdir)
 
 
-            if (this.settings.useMD5ForNewAtt && oldfileA !== null) {
-              oldFileData = md5Sig(await this.app.vault.adapter.readBinary(oldfileA.path));
-              newpath = pathJoin([mdir, oldFileData + path.extname(el.link)])
-              newlink = await getRDir(note, this.settings, newpath)
-            }
+          for (let el of embeds) {
 
-            let newfileA = this.app.vault.getAbstractFileByPath(newpath)
+            logError(el)
 
-            if (await this.app.vault.adapter.exists(newpath)) {
-              if (oldfileA !== null && newfileA !== null) {
+            let oldpath = pathJoin([obsmdir, path.basename(el.link)])
+            let oldtag = el["original"];
 
-                newFileData = md5Sig(await this.app.vault.adapter.readBinary(newfileA.path));
-                oldFileData = md5Sig(await this.app.vault.adapter.readBinary(oldfileA.path));
+      
+
+            logError(this.newfCreated)
+            if (this.newfCreated.indexOf(el.link) != -1  &&
+              !this.newfCreatedByDownloader.includes(oldtag)) {
 
 
-                if (newFileData === oldFileData) {
-                  if (oldpath !== newpath) {
-                    logError(path.dirname(oldpath))
-                    logError("deleting " + oldpath)
-                    await this.app.vault.delete(oldfileA)
-                  }
+                if (! await this.app.vault.adapter.exists(el.link))
+                {
+                 logError("Cannot find " + el.link + " skipping...")
+                 continue
                 }
 
-                else {
 
-                  logError("renaming existing " + oldpath)
+              let newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
+              let newlink: Array<string> = await getRDir(note, this.settings, newpath)
+
+              logError(el.link)
+
+              let newBinData: Buffer | null = null
+              let newMD5: string | null = null
+              const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]), 5000)
+              const oldMD5 = md5Sig(oldBinData)
+              const fileExt = await getFileExt(oldBinData, oldpath)
+
+              logError("oldbindata")
+              logError(oldBinData)
+              logError("oldext")
+              logError(fileExt)
+
+              if (this.settings.PngToJpegLocal && fileExt == "png") {
+                logError("converting to Jpeg")
+                newBinData = await pngToJpeg(await this.app.vault.adapter.readBinary(oldpath), this.settings.JpegQuality)
+                newMD5 = md5Sig(newBinData)
+                logError(newBinData)
+                if (newBinData != null) {
+
+                  if (this.settings.useMD5ForNewAtt) {
+                    newpath = pathJoin([mdir, newMD5 + ".jpeg"])
+                  } else {
+                    newpath = pathJoin([mdir, cFileName(path.parse(el.link)?.name + ".jpeg")])
+                  }
+                  newlink = await getRDir(note, this.settings, newpath)
+                }
+
+              } else if (this.settings.useMD5ForNewAtt) {
+                newpath = pathJoin([mdir, oldMD5 + path.extname(el.link)])
+                newlink = await getRDir(note, this.settings, newpath)
+
+              } else if (!this.settings.useMD5ForNewAtt) {
+                newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
+                newlink = await getRDir(note, this.settings, newpath)
+              }
+
+
+
+              if (await this.app.vault.adapter.exists(newpath)) {
+
+                let newFMD5
+                if (newBinData != null) {
+                  newFMD5 = md5Sig(await this.app.vault.adapter.readBinary(newpath))
+                } else {
+                  newFMD5 = md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath]), 5000))
+                }
+
+
+                if (newMD5 === newFMD5 || (oldMD5 === newFMD5 && oldpath != newpath)) {
+
+                  logError(path.dirname(oldpath))
+                  logError("Deleting duplicate file: " + oldpath)
+                  await this.app.vault.adapter.remove(oldpath)
+
+                } else if (oldpath != newpath) {
+
+                  logError("Renaming existing: " + oldpath)
                   let inc = 1
                   while (await this.app.vault.adapter.exists(newpath)) {
                     newpath = pathJoin([mdir, `(${inc}) ` + cFileName(path.basename(el.link))])
                     inc++
                   }
+
                   newlink = await getRDir(note, this.settings, newpath)
-                  await this.app.vault.rename(oldfileA, newpath)
+                  await this.app.vault.adapter.rename(oldpath, newpath)
+                }
+
+              } else {
+                logError(`renaming  ${oldpath}  to  ${newpath}`)
+                try {
+                  if (newBinData != null) {
+                    await this.app.vault.adapter.writeBinary(newpath, newBinData).then(
+                    ); {
+                      await this.app.vault.adapter.remove(oldpath)
+                    }
+
+                  } else {
+                    await this.app.vault.adapter.rename(oldpath, newpath)
+                  }
+
+                } catch (error) {
+                  logError(error)
                 }
 
 
               }
 
-            } else {
-              logError(`renaming  ${oldpath}  to  ${newpath}`)
-              if (oldfileA !== null) {
-                await this.app.vault.rename(oldfileA, newpath)
+
+              let addName = "";
+              if (this.settings.addNameOfFile) {
+                if (useMdLinks) {
+                  addName = `[Open: ${path.basename(el.link)}](${newlink[1]})\r\n`
+                } else {
+                  addName = `[[${newlink[0]}|Open: ${path.basename(el.link)}]]\r\n`
+                }
+
               }
-            }
 
 
-            let addName = "";
-            if (this.settings.addNameOfFile) {
+              let newtag = addName + oldtag.replace(el.link, newlink[0])
+
               if (useMdLinks) {
-                addName = `[Open: ${el.link}](${newlink[1]})\r\n`
-              } else {
-                addName = `[[${newlink[0]}|Open: ${el.link}]]\r\n`
+                newtag = addName + oldtag.replace(encObsURI(el.link), newlink[1])
               }
 
+
+              filedata = filedata.replaceAll(oldtag, newtag)
+              itemcount++
             }
-
-
-            let newtag = addName + oldtag.replace(el.link, newlink[0])
-
-            if (useMdLinks) {
-              newtag = addName + oldtag.replace(encObsURI(el.link), newlink[1])
-            }
-
-
-            filedata = filedata.replaceAll(oldtag, newtag)
-            itemcount++
           }
+
+
         }
-
-
+        if (itemcount > 0) {
+          await this.app.vault.modify(note, filedata)
+          showBalloon(itemcount + " attachements for note " + note.path + " were processed.", this.settings.showNotifications)
+          itemcount = 0
+        }
       }
-      if (itemcount > 0) {
-        await this.app.vault.modify(note, filedata)
-        showBalloon(itemcount + " attachements for note " + note.path + " were processed.", this.settings.showNotifications)
-        itemcount = 0
-      }
+    } catch (e) {
+      logError(e)
+      onRet()
     }
-
-    this.newfCreated = []
-    this.newfCreatedByDownloader = []
-    this.noteModified = []
-    this.newfMoveReq = false
-    window.clearInterval(this.newfProcInt)
-    this.newfProcInt = 0
+    onRet()
 
   }
 
@@ -824,7 +913,7 @@ export default class LocalImagesPlugin extends Plugin {
 
   private setTitleAsName = async () => {
     try {
-      const noteFile = app.workspace.getActiveFile()
+      const noteFile = this.getCurrentNote()
       const fileData = await this.app.vault.cachedRead(noteFile)
       const title = fileData.match(/^#{1,6} .+?($|\n)/gm)
       var ind = 0

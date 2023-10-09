@@ -1,7 +1,16 @@
-0.15.8
-Add: Command to convert selection from html to markdown (for some notes with mixed html/markdown content).
-Fix: Broken canvas support
+
+0.15.9
 Add: Option to process html tags 
+Add: Templates 
+
+0.15.8
+Fix: Broken canvas support
+Fix: Some fixes to clipboard algorithm, e.g. Unable to process some huge pasted files  (But still I do not recommend to copy/paste big files)
+Add: Option to convert PNG images to JPEG with various quality
+Add: Command to convert selection from html to markdown (for some notes with mixed html/markdown content).
+Add: Option to enable debug output to console
+Add: Option to send photos from your front-facing camera to the author ([just kidding](https://github.com/Sergei-Korneev/obsidian-local-images-plus/issues/43)) 
+
 
 0.15.7
 Add: Commands to remove orphaned attachments. 

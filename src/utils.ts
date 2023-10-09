@@ -1,15 +1,21 @@
-import path from "path";
+
+
+import path, { resolve } from "path";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
+import Jimp from "jimp";
+import md5 from "crypto-js/md5";
+const fs2 = require('fs').promises;
+import fs from "fs";
 
 import {
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
-  VERBOSE,
   MD_LINK,
   USER_AGENT,
   NOTICE_TIMEOUT,
-  APP_TITLE
+  APP_TITLE,
+  VERBOSE
 
 } from "./config";
 
@@ -19,12 +25,12 @@ import {
   TFile
 } from "obsidian";
 
-import md5 from "crypto-js/md5";
+
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
 
-const fs = require('fs').promises;
+
 
 
 
@@ -53,6 +59,7 @@ export function displayError(error: Error | string, file?: TFile): void {
 }
 
 export async function logError(str: any, isObj: boolean = false) {
+
   if (VERBOSE) {
 
     console.log(APP_TITLE + ":  ");
@@ -178,6 +185,8 @@ export function isUrl(link: string) {
 
 
 
+
+
 export async function copyFromDisk(src: string, dest: string): Promise<null> {
   logError("copyFromDisk: " + src + " to " + dest, false);
   try {
@@ -196,6 +205,34 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
 
 
 
+export async function pngToJpeg(buffer: ArrayBuffer, quality: number = 100): Promise<Buffer | null> {
+
+  let buf: Buffer | void
+  buf = await Jimp.read(Buffer.from(buffer, 0, buffer.byteLength))
+    .then(async (image) => {
+
+      image
+        .quality(quality) // set JPEG quality
+      //return buffer;
+      buf = (await image.getBufferAsync(Jimp.MIME_JPEG)); // save
+      return buf
+    })
+    .catch((e) => {
+      // Handle an exception.
+      logError("Cannot convert to jpeg: " + e, false);
+      return null
+    });
+
+  if (buf instanceof Buffer) {
+    return buf;
+
+  } else {
+    return null
+  };
+
+}
+
+
 
 export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   logError("base64ToBuff: \r\n", false);
@@ -211,12 +248,32 @@ export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   }
 }
 
+export async function readFromDiskB(file: string, count: number = undefined): Promise<Buffer> {
+
+  try {
+
+    const buffer = Buffer.alloc(count);
+    const fd: number = fs.openSync(file, "r+")
+    fs.readSync(fd, buffer, 0, buffer.length, 0)
+    logError(buffer)
+    fs.closeSync(fd)
+    return buffer
+
+  } catch (e) {
+    logError("Cannot read the file: " + e, false);
+    return null
+  }
+
+
+
+}
+
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
   logError("readFromDisk: " + file, false);
+
   try {
-    const data = await fs.readFile(file, null);
-    //const data = await app.vault.adapter.readBinary(path.relative(app.vault.adapter.basePath, file));
+    const data = await fs2.readFile(file, null);
     return Buffer.from(data);
   }
   catch (e) {
@@ -257,12 +314,12 @@ export async function getFileExt(content: ArrayBuffer, link: string) {
     if (isSvg(buffer)) return "svg";
   }
 
-  if (fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer.length > 0) {
+  if (fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer?.length > 0) {
     return fileExtByBuffer;
   }
 
 
-  if (fileExtByLink && fileExtByLink.length <= 5 && fileExtByBuffer.length > 0) {
+  if (fileExtByLink && fileExtByLink.length <= 5 && fileExtByBuffer?.length > 0) {
     return fileExtByLink;
   }
 

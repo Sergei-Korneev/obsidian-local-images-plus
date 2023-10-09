@@ -20,6 +20,7 @@ import {
   base64ToBuff,
   md5Sig,
   getFileExt,
+  pngToJpeg
 } from "./utils";
 
 import{
@@ -31,8 +32,6 @@ import{
 
 import AsyncLock from "async-lock";
  
-
-
 
 export function imageTagProcessor(app: Plugin,
                                   noteFile: TFile,
@@ -91,7 +90,7 @@ export function imageTagProcessor(app: Plugin,
             }
         }
          if ( fileData  === null ){
-            logError("Cannot get an attachment content!", false);
+            logError("Cannot get an attachment content!", fileDatafalse);
             return null;
          }
 
@@ -106,7 +105,17 @@ export function imageTagProcessor(app: Plugin,
 
   const { fileName, needWrite } = await lock.acquire(match, async function() {
 
+  
+    const parsedUrl = new URL(link);
+     
+    let fileExt = await getFileExt(fileData, parsedUrl.pathname);
+   
 
+    if (fileExt == "png" && settings.PngToJpeg ) {
+      fileData = await pngToJpeg(fileData, settings.JpegQuality);
+      logError("arbuf: ")
+      logError(fileData)
+    }
           const { fileName, needWrite } = await chooseFileName(
             app.app.vault.adapter,
             mediaDir,
@@ -306,6 +315,7 @@ async function chooseFileName(
   const ignoredExt = settings.ignoredExt.split("|");
   let fileExt = await getFileExt(contentData, parsedUrl.pathname);
   logError("file: "+link+" content: "+contentData+" file ext: "+fileExt,false);
+  
 
  
   if (fileExt == "unknown" && !settings.downUnknown) {
