@@ -738,7 +738,7 @@ export default class LocalImagesPlugin extends Plugin {
         const obsmdir = await getMDir(this.app, note, this.settings, true)
         let embeds = metaCache?.embeds
 
- 
+
 
         if (obsmdir != "" && ! await this.app.vault.adapter.exists(obsmdir)) {
           this.ensureFolderExists(obsmdir)
@@ -746,12 +746,12 @@ export default class LocalImagesPlugin extends Plugin {
           onRet()
           return
         }
-        
+
 
 
         if (embeds) {
 
-  
+
           await this.ensureFolderExists(mdir)
 
 
@@ -761,19 +761,19 @@ export default class LocalImagesPlugin extends Plugin {
 
             let oldpath = pathJoin([obsmdir, path.basename(el.link)])
             let oldtag = el["original"];
+            logError(useMdLinks)
 
-      
+
 
             logError(this.newfCreated)
-            if (this.newfCreated.indexOf(el.link) != -1  &&
+            if ((this.newfCreated.indexOf(el.link) != -1 || (obsmdir != "" && (this.newfCreated.includes(oldpath) || this.newfCreated.includes(el.link)))) &&
               !this.newfCreatedByDownloader.includes(oldtag)) {
 
 
-                if (! await this.app.vault.adapter.exists(el.link))
-                {
-                 logError("Cannot find " + el.link + " skipping...")
-                 continue
-                }
+              if (! await this.app.vault.adapter.exists(oldpath)) {
+                logError("Cannot find " + el.link + " skipping...")
+                continue
+              }
 
 
               let newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
