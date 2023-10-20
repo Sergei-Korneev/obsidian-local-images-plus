@@ -25,7 +25,7 @@ export default {
     exports: "default",
     banner,
   },
-  external: ["obsidian"],
+  external: ["obsidian", "Buffer"],
   plugins: [
     execute([
       ` mkdir -p ${currentDir}/obsidian_local_images_plus_latest`,

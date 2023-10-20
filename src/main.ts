@@ -1019,3 +1019,6 @@ export default class LocalImagesPlugin extends Plugin {
     }
   }
 }
+
+//isBuffer fix for jimp
+Buffer.isBuffer = (e) => e && e.__proto__ instanceof Uint8Array
