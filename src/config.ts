@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.15.8";
+export const APP_TITLE = "Local Images Plus  0.15.9";
 
 
 
@@ -73,6 +73,7 @@ export interface ISettings {
   PngToJpeg: boolean;
   PngToJpegLocal: boolean;
   JpegQuality: number;
+  DoNotCreateObsFolder: boolean
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -97,5 +98,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   removeOrphansCompl: false,
   PngToJpeg: false,
   PngToJpegLocal: true,
-  JpegQuality: 80
+  JpegQuality: 80,
+  DoNotCreateObsFolder: false
 };

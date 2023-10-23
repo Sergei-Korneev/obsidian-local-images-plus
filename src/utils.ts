@@ -1,5 +1,3 @@
-
-
 import path, { resolve } from "path";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
@@ -8,6 +6,23 @@ import Jimp from "jimp";
 import md5 from "crypto-js/md5";
 const fs2 = require('fs').promises;
 import fs from "fs";
+ 
+
+//Jimp buffer package fix
+
+Buffer.isBuffer = (e) => {
+  
+  return (
+    e != null && (
+    Object.getPrototypeOf(e) instanceof Uint8Array &&
+    typeof e.constructor.isBuffer == "function" ) ||
+    (e.isBuffer  || e._isBuffer)
+    
+    )
+
+}
+
+ 
 
 import {
   FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
@@ -24,8 +39,7 @@ import {
   Notice,
   TFile
 } from "obsidian";
-
-
+ 
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";

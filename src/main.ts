@@ -741,9 +741,11 @@ export default class LocalImagesPlugin extends Plugin {
 
 
         if (obsmdir != "" && ! await this.app.vault.adapter.exists(obsmdir)) {
+         if ( ! this.settings.DoNotCreateObsFolder){
           this.ensureFolderExists(obsmdir)
           showBalloon("You obsidian media folder set to '" + obsmdir + "', and has been created by the plugin. Please, try again. ", this.settings.showNotifications)
           onRet()
+        }
           return
         }
 

@@ -1,8 +1,12 @@
 
-0.15.9
+0.16.0
 Add: Option to process html tags 
-Add: Templates 
+Add: Templates
 
+0.15.9
+Fix: Compatibililty with some plugins (local REST API etc)
+Add: Option to not create attachements folder (for compatibility reasons)
+ 
 0.15.8
 Fix: Broken canvas support
 Fix: Some fixes to clipboard algorithm, e.g. Unable to process some huge pasted files  (But still I do not recommend to copy/paste big files)

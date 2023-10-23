@@ -302,6 +302,18 @@ export default class SettingTab extends PluginSettingTab {
             )
 
 
+            new Setting(containerEl)
+            .setName("Do not create Obsidian attachment folder (For compatibility with other plugins)")
+            .setDesc("The plugin will not create an Obsidian attachments folder. This may cause the plugin to behave incorrectly. ")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.DoNotCreateObsFolder)
+                    .onChange(async (value) => {
+                        this.plugin.settings.DoNotCreateObsFolder = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
 
         containerEl.createEl("h3", { text: "Note settings" })
 
