@@ -8,15 +8,16 @@ const fs2 = require('fs').promises;
 import fs from "fs";
  
 
-//Jimp buffer package fix
+// Jimp buffer package fix
+// https://github.com/Sergei-Korneev/obsidian-local-images-plus/issues/47
+
 
 Buffer.isBuffer = (e) => {
   
   return (
-    e != null && (
-    Object.getPrototypeOf(e) instanceof Uint8Array &&
-    typeof e.constructor.isBuffer == "function" ) ||
-    (e.isBuffer  || e._isBuffer)
+    (e != null  && e != undefined) && ( 
+      (Object.getPrototypeOf(e) instanceof Uint8Array && typeof e.constructor.isBuffer == "function" )  
+    )
     
     )
 
