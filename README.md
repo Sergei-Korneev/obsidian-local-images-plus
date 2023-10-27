@@ -2,9 +2,9 @@
 
 
 
-By using this software, you accept all terms and agree to the [license agreement](https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/LICENSE).
+**By using this software, you accept all terms and agree to the [license agreement](https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/LICENSE).**
 
-The author of this software is not obligated to provide any form of support and assumes no liability.
+**The author of this software is not obligated to provide any form of support and assumes no liability.**
 
 
 
