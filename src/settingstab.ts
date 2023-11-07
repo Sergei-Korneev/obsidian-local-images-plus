@@ -173,8 +173,8 @@ export default class SettingTab extends PluginSettingTab {
 
 
         new Setting(containerEl)
-            .setName("Process all new attachements")
-            .setDesc("The plugin will also move all attachements from obsidian default folder to plugin folder.")
+            .setName("Process all new attachments")
+            .setDesc("The plugin will also move all attachments from obsidian default folder to plugin folder.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.processAll)
@@ -185,8 +185,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Use MD5 for new attachements")
-            .setDesc("The plugin will use MD5 when renaming all new attachements.")
+            .setName("Use MD5 for new attachments")
+            .setDesc("The plugin will use MD5 when renaming all new attachments.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.useMD5ForNewAtt)
@@ -291,7 +291,7 @@ export default class SettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Exclusions")
-            .setDesc("The plugin will not download attachements with these extensions.")
+            .setDesc("The plugin will not download attachments with these extensions.")
             .addText((text) =>
                 text
                     .setValue(this.plugin.settings.ignoredExt)
@@ -332,7 +332,7 @@ export default class SettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Add original filename or 'Open file' tag")
-            .setDesc("Add [[original filename]] or [original filename](link to attachement) after replaced tag (only for file:// protocol or dropped/pasted files ).")
+            .setDesc("Add [[original filename]] or [original filename](link to attachment) after replaced tag (only for file:// protocol or dropped/pasted files ).")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.addNameOfFile)
@@ -394,8 +394,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Folder to save new attachements")
-            .setDesc("Select where all new attachements will be saved.\nYou can use templates e.g. _resouces/${date}/${notename}")
+            .setName("Folder to save new attachments")
+            .setDesc("Select where all new attachments will be saved.\nYou can use templates e.g. _resouces/${date}/${notename}")
             .addDropdown((text) =>
                 text
                     .addOption("obsFolder", "Copy Obsidian settings")
