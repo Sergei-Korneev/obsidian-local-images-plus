@@ -93,7 +93,7 @@ You can also insert any file e.g:
 
 ```![mylocalfile](file:///mylinuxdisk/mysong.mp3)```
 
-Files will be copied or downloaded to your attachements folder.
+Files will be copied or downloaded to your attachments folder.
 
 ![img](docs/examplepdf.gif?raw=true)
 
@@ -112,7 +112,7 @@ The first one searches orphans in the folder next to the active note, while the 
 
 Starting from version 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
 
-This means you can place an attachement file anywhere within your vault, replace the absolute path in a tag with the file name and Obsidian will still show it in your note.
+This means you can place an attachment file anywhere within your vault, replace the absolute path in a tag with the file name and Obsidian will still show it in your note.
  
 
 
