@@ -4,8 +4,8 @@ Add: Option to process html tags
 Add: Templates
 
 0.15.9
-Fix: Compatibililty with some plugins (local REST API etc)
-Add: Option to not create attachements folder (for compatibility reasons)
+Fix: Compatibility with some plugins (local REST API etc)
+Add: Option to not create attachments folder (for compatibility reasons)
  
 0.15.8
 Fix: Broken canvas support
@@ -40,7 +40,7 @@ Add: Option to move/rename attachment folder when associated note is moved/renam
 
 0.15.2
 Fix: Content parsing issues on some sites.
-Add: Option to retry download attempts several times on each attachement.
+Add: Option to retry download attempts several times on each attachment.
 Add: A modal window to confirm all notes processing.
 Add: Support for base64 encoded data.
 Add: Command to rename a note according to the first found # header. 
@@ -56,7 +56,7 @@ Add: Menu command.
 Fix: Unable to copy URI encoded file:// protocol links. 
      Now it is possible to use URI in file links. e.g. ')' as %29, '('  as %28 etc.
 Fix: Asynchronous access to files.
-Add: Assign paths for attachements in a more versatile way with temlpates (${date} and ${notename}). 
+Add: Assign paths for attachments in a more versatile way with templates (${date} and ${notename}). 
 Add: Option to handle all new created (cloud-synced etc) markdown files.
 Add: Canvas support.
 Add: Option to process clipboard events.  
@@ -72,7 +72,7 @@ Add: Option to preserve original link captions.
 - Fix: Rolled back a change in the code made in 0.14.7 which leaded to unability to download images on some webpages.
        e.g. https://www.zdnet.com might return "Processed, but nothing was changed".
 - Add: Option to select relative/absolute path in tags.
-- Add: Option to select preffix/suffix for media subfolder. 
+- Add: Option to select prefix/suffix for media subfolder. 
 
 0.14.7
 - Fix: URL pattern issue
@@ -82,18 +82,18 @@ Add: Option to preserve original link captions.
 0.14.6
 - Fix: Regex issues and better parsing.
 - Fix: Improved error handling. 
-       For example the plugin now shows warning when some attachements were not downloaded due to errors (network, etc.).
+       For example the plugin now shows warning when some attachments were not downloaded due to errors (network, etc.).
        In this case a note content will be partially changed. 
 - Add: The option "add **original filename**" was replaced with "add  [[original filename]]" as more useful in my opinion.
-- Add: Dropdown menu to select an attachements destination folder.
+- Add: Dropdown menu to select an attachments destination folder.
 
 0.14.5
 - Fix: Some file:// links with '()' and '[]' in path cannot be processed.
-- Fix: Better regex parcing.
+- Fix: Better regex parsing.
 - Fix: Duplicates when mass processing.
 - Fix: Filenames are now generated according to MD5 by their 10k signatures. 
 - Add: Option to add original filename before replaced tag (only for file:// protocol).
-- Add: Option to store all attachements in folder next to a markdown note.
+- Add: Option to store all attachments in folder next to a markdown note.
 
 0.14.4
 - Fix: Empty note exception when launching command.

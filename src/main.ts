@@ -332,7 +332,7 @@ export default class LocalImagesPlugin extends Plugin {
         this.newfCreatedByDownloader.push(element)
       })
 
-      showBalloon(`Attachements for "${file.path}" were processed.`, this.settings.showNotifications)
+      showBalloon(`Attachments for "${file.path}" were processed.`, this.settings.showNotifications)
 
     }
 
@@ -345,7 +345,7 @@ export default class LocalImagesPlugin extends Plugin {
         this.newfCreatedByDownloader.push(element)
       })
 
-      showBalloon(`WARNING!\r\nAttachements for "${file.path}" were processed, but some attachements were not downloaded/replaced...`, this.settings.showNotifications)
+      showBalloon(`WARNING!\r\nAttachments for "${file.path}" were processed, but some attachments were not downloaded/replaced...`, this.settings.showNotifications)
     }
     else {
       if (this.settings.showNotifications) {
@@ -897,7 +897,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
         if (itemcount > 0) {
           await this.app.vault.modify(note, filedata)
-          showBalloon(itemcount + " attachements for note " + note.path + " were processed.", this.settings.showNotifications)
+          showBalloon(itemcount + " attachments for note " + note.path + " were processed.", this.settings.showNotifications)
           itemcount = 0
         }
       }
