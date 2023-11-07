@@ -332,7 +332,7 @@ export default class LocalImagesPlugin extends Plugin {
         this.newfCreatedByDownloader.push(element)
       })
 
-      showBalloon(`attachments for "${file.path}" were processed.`, this.settings.showNotifications)
+      showBalloon(`Attachments for "${file.path}" were processed.`, this.settings.showNotifications)
 
     }
 
