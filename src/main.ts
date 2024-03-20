@@ -546,7 +546,7 @@ export default class LocalImagesPlugin extends Plugin {
         let orphanedAttachments = []
         let allAttachmentsLinks = []
 
-
+//app.workspace.getLeavesOfType('canvas')[0].view.canvas.nodes
         if (allFiles) {
 
           for (const file of allFiles) {

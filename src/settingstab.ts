@@ -15,8 +15,9 @@ import {
 } from "./config"
 
 import LocalImagesPlugin from "./main"
-
 import safeRegex from "safe-regex"
+
+
 
 
 export default class SettingTab extends PluginSettingTab {
@@ -344,6 +345,7 @@ export default class SettingTab extends PluginSettingTab {
 
 
 
+
         new Setting(containerEl)
             .setName("Include")
             .setDesc(
@@ -392,6 +394,31 @@ export default class SettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
                     })
             )
+           
+           
+           
+            new Setting(containerEl)
+            .setName("Date format")
+            .setDesc(
+                "Date format for ${date} variable. E.g. \
+                 | MMMM Do YYYY, h:mm:ss a (March 20th 2024, 10:54:46 am) \
+                 | dddd  (Wednesday)\
+                 | MMM Do YY  (Mar 20th 24)"
+            )
+            .addText((text) =>
+                text.setValue(this.plugin.settings.DateFormat).onChange(async (value) => {
+                    if (value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g) !== null) {
+                        displayError(
+                            "Unsafe folder name! Some chars are forbidden in some filesystems."
+                        )
+                        return
+                    }
+                    this.plugin.settings.DateFormat = value
+                    await this.plugin.saveSettings()
+                })
+            )
+
+
 
         new Setting(containerEl)
             .setName("Folder to save new attachments")

@@ -31,7 +31,7 @@ import{
 
 
 import AsyncLock from "async-lock";
- 
+import moment from "moment";
 
 export function imageTagProcessor(app: Plugin,
                                   noteFile: TFile,
@@ -247,7 +247,7 @@ export async function getMDir(app: App,
 
     const notePath = noteFile.parent.path;
     const date = new Date();
-    const current_date = date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
+    const current_date = moment().format(settings.DateFormat); 
     const obsmediadir = app.vault.getConfig("attachmentFolderPath");
     const mediadir = settings.mediaRootDir;
     var attdir = settings.saveAttE;
