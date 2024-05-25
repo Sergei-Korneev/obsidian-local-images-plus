@@ -20,7 +20,9 @@ import {
   base64ToBuff,
   md5Sig,
   getFileExt,
-  pngToJpeg
+  pngToJpeg,
+  SimpleDateFormat,
+  formatStrPath
 } from "./utils";
 
 import{
@@ -247,6 +249,7 @@ export async function getMDir(app: App,
 
     const notePath = noteFile.parent.path;
     const date = new Date();
+    const reg = /\$\{date,(.+?)\}/gi;
     const current_date = date.getDate() + "." + (date.getMonth()+1) + "." + date.getFullYear();
     const obsmediadir = app.vault.getConfig("attachmentFolderPath");
     const mediadir = settings.mediaRootDir;
@@ -264,6 +267,7 @@ export async function getMDir(app: App,
                .replace("${notename}", noteFile.basename)
                .replace("${unique}", unique)
                .replace("${date}", current_date);
+               root = formatStrPath(root,reg,date);
               break;
 
             case 'nextToNoteS':
@@ -271,6 +275,7 @@ export async function getMDir(app: App,
                .replace("${notename}", noteFile.basename)
                .replace("${unique}", unique)
                .replace("${date}", current_date);
+               root = formatStrPath(root,reg,date);
               break;
 
             default:

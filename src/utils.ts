@@ -391,3 +391,72 @@ export function encObsURI(e: string) {
   }
   ))
 }
+
+export interface DateFormat {
+  pattern: string;
+  parse(source: string): Date | null;
+  format(date: Date | string | number): string;
+}
+
+export function SimpleDateFormat(pattern: string): DateFormat {
+  const fmt: DateFormat = {
+    pattern,
+    parse(source: string): Date | null {
+      try {
+        return new Date(source);
+      } catch (e) {
+        console.log("string to date error: " + source);
+        return null;
+      }
+    },
+    format(date: Date | string | number): string {
+      if (typeof date === "undefined" || date === null || date === "") {
+        return "";
+      }
+      
+      let dateObj: Date;
+      try {
+        dateObj = new Date(date);
+      } catch (e) {
+        console.log("date format error: " + date);
+        return "";
+      }
+      
+      let strTime = this.pattern;
+      const o = {
+        "M+": dateObj.getMonth() + 1,
+        "d+": dateObj.getDate(),
+        "H+": dateObj.getHours(),
+        "m+": dateObj.getMinutes(),
+        "s+": dateObj.getSeconds(),
+        "q+": Math.floor((dateObj.getMonth() + 3) / 3),
+        "S": dateObj.getMilliseconds()
+      };
+      
+      if (/(y+)/.test(strTime)) {
+        strTime = strTime.replace(RegExp.$1, (dateObj.getFullYear() + "").substr(4 - RegExp.$1.length));
+      }
+      
+      for (const k in o) {
+        if (new RegExp("(" + k + ")").test(strTime)) {
+          strTime = strTime.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        }
+      }
+      
+      return strTime;
+    }
+  };
+  
+  return fmt;
+}
+
+export function formatStrPath(root: string, reg: RegExp, date: Date | string | number): string {
+  const res = reg.exec(root);
+  if (res === null) {
+    return root;
+  }
+  const formatStr = res[1];
+  const fmt = SimpleDateFormat(formatStr);
+  const dataStr = fmt.format(date);
+  return root.replaceAll(reg, dataStr);
+}
