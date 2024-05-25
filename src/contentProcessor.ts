@@ -21,7 +21,6 @@ import {
   md5Sig,
   getFileExt,
   pngToJpeg,
-  SimpleDateFormat,
   formatStrPath
 } from "./utils";
 

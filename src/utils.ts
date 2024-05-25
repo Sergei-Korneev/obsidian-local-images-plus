@@ -451,12 +451,20 @@ export function SimpleDateFormat(pattern: string): DateFormat {
 }
 
 export function formatStrPath(root: string, reg: RegExp, date: Date | string | number): string {
-  const res = reg.exec(root);
-  if (res === null) {
-    return root;
+  let res: RegExpExecArray | null;
+  let flag = false;
+  let resStr = root;
+  const tempReg = new RegExp(reg.source, "i"); 
+
+  while (res = reg.exec(root)) {
+    if (!flag) {
+      flag = true;
+    }
+
+    const formatStr = res[1];
+    const fmt = SimpleDateFormat(formatStr);
+    const dataStr = fmt.format(date);
+    resStr = resStr.replace(tempReg, dataStr);
   }
-  const formatStr = res[1];
-  const fmt = SimpleDateFormat(formatStr);
-  const dataStr = fmt.format(date);
-  return root.replaceAll(reg, dataStr);
+  return flag ? resStr : root;
 }
