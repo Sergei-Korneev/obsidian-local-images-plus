@@ -441,15 +441,10 @@ export default class LocalImagesPlugin extends Plugin {
 
       }
 
-
-
-
     } catch (e) {
       showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
       return
     }
-
-
 
   }
 
@@ -785,7 +780,7 @@ export default class LocalImagesPlugin extends Plugin {
 
               let newBinData: Buffer | null = null
               let newMD5: string | null = null
-              const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]), 5000)
+              const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]))
               const oldMD5 = md5Sig(oldBinData)
               const fileExt = await getFileExt(oldBinData, oldpath)
 
@@ -826,7 +821,7 @@ export default class LocalImagesPlugin extends Plugin {
                 if (newBinData != null) {
                   newFMD5 = md5Sig(await this.app.vault.adapter.readBinary(newpath))
                 } else {
-                  newFMD5 = md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath]), 5000))
+                  newFMD5 = md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath])))
                 }
 
 

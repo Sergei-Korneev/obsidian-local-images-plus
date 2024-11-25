@@ -3,7 +3,10 @@ import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
 import Jimp from "jimp";
-import md5 from "crypto-js/md5";
+import SparkMD5 from 'spark-md5';
+// import md5File from 'md5-file';
+// import md5 from "crypto-js/md5";
+// import CryptoJS from 'crypto-js';
 const fs2 = require('fs').promises;
 import fs from "fs";
  
@@ -88,7 +91,7 @@ export async function logError(str: any, isObj: boolean = false) {
   }
 };
 
-export function md5Sig(contentData: ArrayBuffer = undefined) {
+/* export function md5Sig(contentData: ArrayBuffer = undefined) {
 
   try {
 
@@ -110,8 +113,31 @@ export function md5Sig(contentData: ArrayBuffer = undefined) {
     return null;
   }
 
-}
+} */
+  export function md5Sig(contentData: ArrayBuffer): string {
 
+    try {
+      // 创建 SparkMD5 实例
+      const spark = new SparkMD5.ArrayBuffer();
+      
+      // 直接传入 ArrayBuffer 计算
+      spark.append(contentData);
+      
+      // 获取 md5 值
+      const signature = spark.end();
+      
+      return signature + "_MD5";
+    } catch (e) {
+      logError("Cannot generate md5: " + e, false);
+      return null;
+    }
+  }
+
+   /*  export function md5Sig(fileName: string): string {
+      console.log("===============",fileName)
+      const hash = md5File.sync(fileName);
+      return hash;
+    } */
 
 export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any) {
 
@@ -263,25 +289,26 @@ export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   }
 }
 
-export async function readFromDiskB(file: string, count: number = undefined): Promise<Buffer> {
+export async function readFromDiskB(file: string): Promise<ArrayBuffer> {
 
   try {
-
-    const buffer = Buffer.alloc(count);
+    // count = 50000000000
+    /* const buffer = Buffer.alloc(count);
     const fd: number = fs.openSync(file, "r+")
     fs.readSync(fd, buffer, 0, buffer.length, 0)
     logError(buffer)
     fs.closeSync(fd)
-    return buffer
+    return buffer */
+    return await readFromDisk(file);
 
   } catch (e) {
     logError("Cannot read the file: " + e, false);
     return null
   }
 
-
-
 }
+
+  
 
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
