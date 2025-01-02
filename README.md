@@ -81,7 +81,6 @@ This plugin also handles all attachments (screenshots/drag-and-drop for files/au
 Use it in the command/menu mode or in automatic mode (toggle "Automatic processing" option in the settings):
 
 
-
 ![img](docs/commands.png?raw=true)
 
 

@@ -51,7 +51,7 @@ export const ANY_URL_PATTERN =
 /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
 export const ATT_SIZE_ACHOR = 
-/(?<attdesc>.{0,})\|(?<attsize>[0-9]{1,})/gm
+/(?<attdesc>.{0,}\|){0,1}(?<attsize>[0-9]{1,})/gm
 
 
 
