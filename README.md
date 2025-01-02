@@ -5,7 +5,7 @@
 
 **Notes for 0.16.0**
 
-**First off, I'd like to say a huge thank you to everyone who donated a few bucks. Thank you guys.**
+**First off, I'd like to say a huge thank you to everyone who donated a few bucks. Thank you!**
 
 **And secondly, as far as I know Obsidian version 1.8 supports some features of this plugin out of the box. So the future need for this plugin is questionable.**
  
