@@ -26,12 +26,17 @@ export const HTML_EMBED =
 //html embedded image
 /(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
 
-export const MD_SEARCH_PATTERN=
+export const ANCHOR_S = /(?<anchor>.+)\|(?<size>[0-9]+)/g
+
+export const MD_SEARCH_PATTERN =
 [
 //file link
 /\!\[(?<anchor>(.{0}|(?!^file\:\/)+?))\]\((?<link>((file\:\/)[^\!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
 //hypertext link
-/\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+///\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+ 
+/\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+
 //Base64 encoded data
 /\!\[[^\[](?<anchor>(.{0}|[^\[]+?))\]\((?<link>((data\:.+?base64\,).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
 /\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}|(data\:.+?base64\,)).+?\)))/gm
@@ -44,6 +49,11 @@ export const MD_LINK =
 
 export const ANY_URL_PATTERN =
 /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
+
+export const ATT_SIZE_ACHOR = 
+/(?<attdesc>.{0,})\|(?<attsize>[0-9]{1,})/gm
+
+
 
 // Looks like timeouts in Obsidian API are set in milliseconds
 export const NOTICE_TIMEOUT = 5 * 1000;
@@ -64,7 +74,8 @@ export interface ISettings {
   realTimeUpdateInterval: number;
   addNameOfFile: boolean;
   showNotifications: boolean;
-  include: string;
+  includeps: string;
+  includepattern: string;
   mediaRootDir: string;
   disAddCom: boolean;
   useMD5ForNewAtt: boolean;
@@ -91,7 +102,8 @@ export const DEFAULT_SETTINGS: ISettings = {
   realTimeUpdateInterval: 5,
   addNameOfFile: true,
   showNotifications: true,
-  include: ".*\\.md",
+  includeps: "md|canvas",
+  includepattern: "(?<md>.*\\.md)|(?<canvas>.*\\.canvas)",
   mediaRootDir: "_resources/${notename}",
   disAddCom: false,
   useMD5ForNewAtt: true,

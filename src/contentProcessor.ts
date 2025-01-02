@@ -20,11 +20,10 @@ import {
   base64ToBuff,
   md5Sig,
   getFileExt,
-  pngToJpeg
+  blobToJpegArrayBuffer
 } from "./utils";
 
 import{
-
   ISettings,
   SUPPORTED_OS
 } from "./config";
@@ -44,7 +43,8 @@ export function imageTagProcessor(app: Plugin,
   async function processImageTag(match: string,
                                  anchor: string,
                                  link: string,
-                                 caption: string) {
+                                 caption: string,
+                                 imgsize: string) {
 
 
    logError("processImageTag: "+match) 
@@ -90,7 +90,7 @@ export function imageTagProcessor(app: Plugin,
             }
         }
          if ( fileData  === null ){
-            logError("Cannot get an attachment content!", fileDatafalse);
+            logError("Cannot get an attachment content!", false);
             return null;
          }
 
@@ -111,8 +111,12 @@ export function imageTagProcessor(app: Plugin,
     let fileExt = await getFileExt(fileData, parsedUrl.pathname);
    
 
-    if (fileExt == "png" && settings.PngToJpeg ) {
-      fileData = await pngToJpeg(fileData, settings.JpegQuality);
+ 
+    if (fileExt == "png" && settings.PngToJpeg) {
+ 
+      const blob = new Blob([new Uint8Array(fileData)]);
+      fileData = await blobToJpegArrayBuffer(blob, settings.JpegQuality*0.01)
+
       logError("arbuf: ")
       logError(fileData)
     }
@@ -160,7 +164,13 @@ export function imageTagProcessor(app: Plugin,
                 }
 
               if (!app.app.vault.getConfig("useMarkdownLinks")){
+                
+                // image caption
                 (!settings.useCaptions || !caption.length) ? caption="" : caption="\|"+caption;
+                
+                // image size has higher priority
+                (!settings.useCaptions || !imgsize.length) ? caption="" : caption="\|"+imgsize;
+
                  return  [match, `![[${pathWiki}${caption}]]`, `${shortName}`];
               }
               

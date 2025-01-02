@@ -2,27 +2,11 @@ import path, { resolve } from "path";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import filenamify from "filenamify";
-import Jimp from "jimp";
 import md5 from "crypto-js/md5";
 const fs2 = require('fs').promises;
 import fs from "fs";
  
-
-// Jimp buffer package fix
-// https://github.com/Sergei-Korneev/obsidian-local-images-plus/issues/47
-
-
-Buffer.isBuffer = (e) => {
-  
-  return (
-    (e != null  && e != undefined) && ( 
-      (Object.getPrototypeOf(e) instanceof Uint8Array && typeof e.constructor.isBuffer == "function" )  
-    )
-    
-    )
-
-}
-
+ 
  
 
 import {
@@ -31,8 +15,8 @@ import {
   USER_AGENT,
   NOTICE_TIMEOUT,
   APP_TITLE,
-  VERBOSE
-
+  VERBOSE,
+  ATT_SIZE_ACHOR
 } from "./config";
 
 import {
@@ -52,7 +36,6 @@ import {
 /*
 https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
-
 */
 
 
@@ -101,7 +84,7 @@ export function md5Sig(contentData: ArrayBuffer = undefined) {
       contentData.slice(-chunk)
     ].map(x => dec.decode(x)).join()
     ).toString();
-
+ 
     return signature + "_MD5";
   }
   catch (e) {
@@ -126,16 +109,27 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   let replp: any;
   let caption = "";
   let filesArr: Array<string> = [];
+  let AttSize = "";
 
   regex.forEach((element) => {
     logError("cur regex:  " + element);
     const matches = str.matchAll(element);
 
     for (const match of matches) {
-      logError("match: ")
-      logError(match)
+      logError("match: " + match)
+    
+      anchor = trimAny(match.groups.anchor, [")", "(", "]", "[", " "]); 
+      
+      
+      
+      const AttSizeMatch = anchor.matchAll(ATT_SIZE_ACHOR);
+       
+      for (const match of AttSizeMatch) {
+         AttSize = trimAny(match.groups.attsize, [")", "(", "]", "[", " "]); 
+         logError("match size " + AttSize)
+        }
+         
 
-      anchor = match.groups.anchor;
       link = (match.groups.link.match(MD_LINK) ?? [match.groups.link])[0];
       caption = trimAny((match.groups.link.match(MD_LINK) !== null ?
         (match.groups.link.split(link).length > 1 ?
@@ -144,19 +138,20 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
       link = trimAny(link, [")", "(", "]", "[", " "]);
       replp = trimAny(match[0], ["[", "(", "]"]);
 
-      logError("repl: " + replp +
+      logError(
+        "repl: " + replp +
         "\r\nahc: " + anchor +
         "\r\nlink: " + link +
         "\r\ncaption: " + caption);
 
-      dictPatt[replp] = [anchor, link, caption];
+      dictPatt[replp] = [anchor, link, caption, AttSize];
 
     };
 
   })
 
   for (var key in dictPatt) {
-    const promise = asyncFn(key, dictPatt[key][0], dictPatt[key][1], dictPatt[key][2]);
+    const promise = asyncFn(key, dictPatt[key][0], dictPatt[key][1], dictPatt[key][2], dictPatt[key][3]);
     logError(promise, true);
     promises.push(promise);
   }
@@ -199,9 +194,6 @@ export function isUrl(link: string) {
 
 
 
-
-
-
 export async function copyFromDisk(src: string, dest: string): Promise<null> {
   logError("copyFromDisk: " + src + " to " + dest, false);
   try {
@@ -219,35 +211,7 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
 }
 
 
-
-export async function pngToJpeg(buffer: ArrayBuffer, quality: number = 100): Promise<Buffer | null> {
-
-  let buf: Buffer | void
-  buf = await Jimp.read(Buffer.from(buffer, 0, buffer.byteLength))
-    .then(async (image) => {
-
-      image
-        .quality(quality) // set JPEG quality
-      //return buffer;
-      buf = (await image.getBufferAsync(Jimp.MIME_JPEG)); // save
-      return buf
-    })
-    .catch((e) => {
-      // Handle an exception.
-      logError("Cannot convert to jpeg: " + e, false);
-      return null
-    });
-
-  if (buf instanceof Buffer) {
-    return buf;
-
-  } else {
-    return null
-  };
-
-}
-
-
+ 
 
 export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   logError("base64ToBuff: \r\n", false);
@@ -391,3 +355,55 @@ export function encObsURI(e: string) {
   }
   ))
 }
+
+
+
+
+/**
+ * https://github.com/mnaoumov/obsidian-dev-utils
+ * 
+ * Converts a Blob object to a JPEG ArrayBuffer with the specified quality.
+ *
+ * @param blob - The Blob object to convert.
+ * @param jpegQuality - The quality of the JPEG image (0 to 1).
+ * @returns A promise that resolves to an ArrayBuffer.
+ */
+export async function blobToJpegArrayBuffer(blob: Blob, jpegQuality: number): Promise<ArrayBuffer> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = (): void => {
+      const image = new Image();
+      image.onload = (): void => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        if (!context) {
+          throw new Error('Could not get 2D context.');
+        }
+        const imageWidth = image.width;
+        const imageHeight = image.height;
+        let data = '';
+
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
+
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, imageWidth, imageHeight);
+        context.save();
+
+        context.translate(imageWidth / 2, imageHeight / 2);
+        context.drawImage(image, 0, 0, imageWidth, imageHeight, -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
+        context.restore();
+
+        data = canvas.toDataURL('image/jpeg', jpegQuality);
+
+        const arrayBuffer =  base64ToBuff(data);
+        resolve(arrayBuffer);
+      };
+
+      image.src = reader.result as string;
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+ 

@@ -26,7 +26,7 @@ import {
   displayError,
   encObsURI,
   pathJoin,
-  pngToJpeg,
+  blobToJpegArrayBuffer,
   getFileExt,
   readFromDiskB
 } from "./utils"
@@ -45,6 +45,11 @@ import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
 import { ModalW1 } from "./modal"
 const fs = require('fs').promises;
+
+
+
+
+
 
 //import { count, log } from "console"
 
@@ -127,11 +132,14 @@ export default class LocalImagesPlugin extends Plugin {
     // Some file has been created
 
     this.app.vault.on('create', async (file: TFile) => {
-      logError("New file created: ")
-      logError(file.path)
+      
+      logError("New file created: " + file.path)
 
-      this.onMdCreateFunc(file)
-      this.onFCreateFunc(file)
+      if (this.ExemplaryOfMD(file.path)){
+        this.onMdCreateFunc(file)
+      } else{
+        this.onFCreateFunc(file)
+      }
 
     })
 
@@ -139,10 +147,10 @@ export default class LocalImagesPlugin extends Plugin {
     // Some file has been deleted
 
     this.app.vault.on('delete', async (file: TFile) => {
-      const includeRegex = new RegExp(this.settings.include, "i")
+ 
       if (!file ||
         !(file instanceof TFile) ||
-        !(file.path.match(includeRegex)) ||
+        !(this.ExemplaryOfMD(file.path)) ||
         !this.settings.removeMediaFolder ||
         this.settings.saveAttE != "nextToNoteS") {
         return
@@ -151,7 +159,7 @@ export default class LocalImagesPlugin extends Plugin {
 
       let rootdir = this.settings.mediaRootDir
       const useSysTrash = (this.app.vault.getConfig("trashOption") === "system")
-      logError(useSysTrash)
+    
       if (this.settings.saveAttE !== "obsFolder" &&
         path.basename(rootdir).includes("${notename}") &&
         !rootdir.includes("${date}")) {
@@ -177,10 +185,10 @@ export default class LocalImagesPlugin extends Plugin {
 
 
     this.app.vault.on('rename', async (file: TFile, oldPath: string) => {
-      const includeRegex = new RegExp(this.settings.include, "i")
+     
       if (!file ||
         !(file instanceof TFile) ||
-        !(file.path.match(includeRegex)) ||
+        !(this.ExemplaryOfMD(file.path)) ||
         !this.settings.removeMediaFolder ||
         this.settings.saveAttE != "nextToNoteS" ||
         this.settings.pathInTags != "onlyRelative") {
@@ -229,13 +237,11 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.vault.on('modify', async (file: TFile) => {
       if (!this.newfMoveReq)
         return
-      logError("File modified: \r\n")
-      logError(file.path + "\r\n", false)
-
-      const includeRegex = new RegExp(this.settings.include, "i")
+      logError("File modified: " + file.path , false)
+ 
       if (!file ||
         !(file instanceof TFile) ||
-        !(file.path.match(includeRegex))) {
+        !(this.ExemplaryOfMD(file.path))) {
         return
       } else {
         if (this.settings.processAll) {
@@ -304,12 +310,14 @@ export default class LocalImagesPlugin extends Plugin {
 
 
   private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
+    
+ 
+    if (file == null ) {return null}
 
-    if (file == null) {
-      return null
-    }
+    const content = await this.app.vault.cachedRead(file)
+    if (content.length == 0) {return null}
+      
 
-    const content = await this.app.vault.cachedRead(file);
     const fixedContent = await replaceAsync(
       content,
       MD_SEARCH_PATTERN,
@@ -357,7 +365,7 @@ export default class LocalImagesPlugin extends Plugin {
   // using arrow syntax for callbacks to correctly pass this context
 
   processActivePage = (defaultdir: boolean = false) => async () => {
-    logError("processactive")
+    logError("processActivePage")
     try {
       const activeFile = this.getCurrentNote()
       await this.processPage(activeFile, defaultdir)
@@ -369,13 +377,11 @@ export default class LocalImagesPlugin extends Plugin {
 
   processAllPages = async () => {
     const files = this.app.vault.getMarkdownFiles()
-
-
-    const includeRegex = new RegExp(this.settings.include, "i")
-
+ 
     const pagesCount = files.length
 
     const notice = this.settings.showNotifications
+
       ? new Notice(
         APP_TITLE + `\nStart processing. Total ${pagesCount} pages. `,
         TIMEOUT_LIKE_INFINITY
@@ -383,7 +389,7 @@ export default class LocalImagesPlugin extends Plugin {
       : null
 
     for (const [index, file] of files.entries()) {
-      if (file.path.match(includeRegex)) {
+      if (this.ExemplaryOfMD(file.path)) {
         if (notice) {
           //setMessage() is undeclared but factically existing, so ignore the TS error  //@ts-expect-error
           notice.setMessage(
@@ -416,18 +422,26 @@ export default class LocalImagesPlugin extends Plugin {
       const activeFile = this.getCurrentNote()
       const fItems = evt.clipboardData.files
       const tItems = evt.clipboardData.items
-
+ 
+      if (fItems.length != 0) { return }
+      
       for (const key in tItems) {
 
         // Check if it was a text/html
         if (tItems[key].kind == "string") {
-
+          
           if (this.settings.realTimeUpdate) {
+            
             const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) +
-              htmlToMarkdown(evt.clipboardData.getData("text"))
+            
+            htmlToMarkdown(evt.clipboardData.getData("text"))
+            
+
+
+
             for (const reg_p of MD_SEARCH_PATTERN) {
               if (reg_p.test(cont)) {
-
+                logError("content: " + cont)
                 showBalloon("Media links were found, processing...", this.settings.showNotifications)
 
                 this.enqueueActivePage(activeFile)
@@ -462,7 +476,6 @@ export default class LocalImagesPlugin extends Plugin {
 
       const obsmediadir = app.vault.getConfig("attachmentFolderPath")
       const allFiles = this.app.vault.getFiles()
-      const includeRegex = new RegExp(this.settings.include, "i")
       let oldRootdir = this.settings.mediaRootDir
 
       if (type == "plugin") {
@@ -474,7 +487,7 @@ export default class LocalImagesPlugin extends Plugin {
           showBalloon("This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n", this.settings.showNotifications)
           return
         }
-        logError(noteFile, true)
+         
         if (!noteFile) {
           noteFile = this.getCurrentNote()
           if (!noteFile) {
@@ -485,7 +498,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
 
 
-        if (noteFile.path.match(includeRegex)) {
+        if (this.ExemplaryOfMD(noteFile.path)) {
 
           oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
           oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
@@ -545,17 +558,71 @@ export default class LocalImagesPlugin extends Plugin {
         const allAttachments = this.app.vault.getAbstractFileByPath(obsmediadir)?.children
         let orphanedAttachments = []
         let allAttachmentsLinks = []
-
-//app.workspace.getLeavesOfType('canvas')[0].view.canvas.nodes
+        
+        
+ 
         if (allFiles) {
 
           for (const file of allFiles) {
+            
+            //Fix for canvas files
+            if (file !== null && this.ExemplaryOfCANVAS(file.path)){
+             logError(file) 
+              
+             logError(this.app.metadataCache.getCache(file.path))
+              
+   
+              let canvasData
+              try {
+                canvasData = JSON.parse(await app.vault.cachedRead(file))
+              } catch (e) {
+                logError("Parse canvas data error")  
+                continue
+              }
+               
+              if (canvasData.nodes && canvasData.nodes.length > 0) {
+                for (const node of canvasData.nodes) {
+                  
+                  logError(node)
+                    
+                  if (node.type === "file") {
+                    
+                    logError("file json")
+                    
+                    allAttachmentsLinks.push(path.basename(node.file))
+                    
+                  } else if (node.type == "text") {
+                    
+                    logError("text json")
+                   
+                    //https://github.com/Fevol/obsidian-typings
+                    //Undocumented API may be altered in the future
+                    const AllNodeLinks = (await this.app.internalPlugins.plugins.canvas.instance.index.parseText(node.text))?.links;
+ 
+                    logError(AllNodeLinks)
+ 
+                    if (AllNodeLinks === undefined){continue}
 
-            if (file.path.match(includeRegex)) {
+                    for (const Nodelink of AllNodeLinks) {
+                      allAttachmentsLinks.push(path.basename(Nodelink.link))
+                    }
+                  }
+                }
+              }
+            
+      
 
+            }
+
+          if (file !== null && this.ExemplaryOfMD(file.path)){
+
+    
               const metaCache = this.app.metadataCache.getCache(file.path)
               const embeds = metaCache?.embeds
               const links = metaCache?.links
+              logError(embeds)
+              logError(links)
+
 
               if (embeds) {
                 for (const embed of embeds) {
@@ -567,12 +634,15 @@ export default class LocalImagesPlugin extends Plugin {
                   allAttachmentsLinks.push(path.basename(link.link))
                 }
               }
-            }
+            
 
           }
+        }
 
           for (const attach of allAttachments) {
             if (!allAttachmentsLinks.includes(attach.name)) {
+              logError(allAttachmentsLinks)
+              logError(attach.name)
               logError("orph: " + attach.basename)
               orphanedAttachments.push(attach)
             }
@@ -640,19 +710,18 @@ export default class LocalImagesPlugin extends Plugin {
     mod.callbackFunc = this.processAllPages
     mod.open()
   }
-
-
+ 
 
 
 
   private async onMdCreateFunc(file: TFile) {
 
-    const includeRegex = new RegExp(this.settings.include, "i")
-
+ 
     if (!file ||
       !(file instanceof TFile) ||
       !(this.settings.processCreated) ||
-      !(file.path.match(includeRegex)))
+      !this.ExemplaryOfMD(file.path)
+       )
       return
 
 
@@ -661,28 +730,27 @@ export default class LocalImagesPlugin extends Plugin {
     if (timeGapMs > 1000)
       return
 
-    logError("func onMdCreateFunc: ")
-    logError(file.path, false)
+    logError("func onMdCreateFunc: " + file.path)
+    logError(file,true)
+ 
 
-    const cont = await this.app.vault.cachedRead(file)
-    for (const reg_p of MD_SEARCH_PATTERN) {
-      if (reg_p.test(cont)) {
-        //    this.processPage(file)
-
+    var cont = await this.app.vault.cachedRead(file)
+ 
+    logError(cont)
+  
         this.enqueueActivePage(file)
         this.setupQueueInterval()
         this.setupNewMdFilesProcInterval()
-        break
-      }
-    }
+ 
+    
   }
 
   private async onFCreateFunc(file: TFile) {
-
-    const includeRegex = new RegExp(this.settings.include, "i")
+ 
     if (!file ||
       !(file instanceof TFile) ||
-      file.path.match(includeRegex) ||
+      this.ExemplaryOfMD(file.path)||
+      this.ExemplaryOfCANVAS(file.path)||
       !(this.settings.processAll))
       return
 
@@ -701,8 +769,16 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
 
+  private ExemplaryOfMD(pat: string){
+    const includeRegex = new RegExp(this.settings.includepattern, "i")
+    return (pat.match(includeRegex)?.groups?.md != undefined)
+  }
 
 
+  private ExemplaryOfCANVAS(pat: string){
+    const includeRegex = new RegExp(this.settings.includepattern, "i")
+    return (pat.match(includeRegex)?.groups?.canvas != undefined)
+  }
 
   private processMdFilesOnTimer = async () => {
 
@@ -734,6 +810,18 @@ export default class LocalImagesPlugin extends Plugin {
 
         const metaCache = this.app.metadataCache.getFileCache(note)
         let filedata = await this.app.vault.cachedRead(note)
+        
+
+        let pr = false
+        for (const reg_p of MD_SEARCH_PATTERN) {
+          if (reg_p.test(filedata)) {
+            pr = true
+            break
+          }
+        }
+
+ 
+
         const mdir = await getMDir(this.app, note, this.settings)
         const obsmdir = await getMDir(this.app, note, this.settings, true)
         let embeds = metaCache?.embeds
@@ -751,11 +839,10 @@ export default class LocalImagesPlugin extends Plugin {
 
 
 
-        if (embeds) {
+        if (embeds || pr) {
 
 
           await this.ensureFolderExists(mdir)
-
 
           for (let el of embeds) {
 
@@ -768,6 +855,7 @@ export default class LocalImagesPlugin extends Plugin {
 
 
             logError(this.newfCreated)
+            
             if ((this.newfCreated.indexOf(el.link) != -1 || (obsmdir != "" && (this.newfCreated.includes(oldpath) || this.newfCreated.includes(el.link)))) &&
               !this.newfCreatedByDownloader.includes(oldtag)) {
 
@@ -783,20 +871,23 @@ export default class LocalImagesPlugin extends Plugin {
 
               logError(el.link)
 
-              let newBinData: Buffer | null = null
+              //let newBinData: Buffer | null = null
+
+              let newBinData: ArrayBuffer | null = null
               let newMD5: string | null = null
               const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]), 5000)
               const oldMD5 = md5Sig(oldBinData)
               const fileExt = await getFileExt(oldBinData, oldpath)
 
-              logError("oldbindata")
-              logError(oldBinData)
-              logError("oldext")
-              logError(fileExt)
-
+              logError("oldbindata: " + oldBinData)
+              logError("oldext: " + fileExt)
+           
               if (this.settings.PngToJpegLocal && fileExt == "png") {
                 logError("converting to Jpeg")
-                newBinData = await pngToJpeg(await this.app.vault.adapter.readBinary(oldpath), this.settings.JpegQuality)
+
+                const blob = new Blob([new Uint8Array(await this.app.vault.adapter.readBinary(oldpath))]);
+                newBinData = await blobToJpegArrayBuffer(blob, this.settings.JpegQuality*0.01)
+                
                 newMD5 = md5Sig(newBinData)
                 logError(newBinData)
                 if (newBinData != null) {
@@ -992,9 +1083,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.off("editor-drop", null)
     this.app.workspace.off("editor-paste", null)
     this.app.workspace.off('file-menu', null)
-
-
-    //         this.app.vault.off("create",  null)
+    //this.app.vault.off("create",  null)
     logError(" unloaded.")
   }
 

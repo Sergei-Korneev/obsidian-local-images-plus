@@ -6,6 +6,8 @@ import {
 
 import {
     displayError,
+    logError,
+    trimAny
 } from "./utils"
 
 import {
@@ -54,7 +56,7 @@ export default class SettingTab extends PluginSettingTab {
         containerEl.createEl("h1", { text: APP_TITLE })
 
         const donheader = containerEl.createEl("div")
-        donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" })
+       // donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" })
 
         containerEl.createEl("h3", { text: "Interface settings" })
 
@@ -186,7 +188,7 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Use MD5 for new attachments")
+            .setName("Use MD5 for new attachments (Pasted Images)")
             .setDesc("The plugin will use MD5 when renaming all new attachments.")
             .addToggle((toggle) =>
                 toggle
@@ -245,11 +247,11 @@ export default class SettingTab extends PluginSettingTab {
                         if (
                             isNaN(numberValue) ||
                             !Number.isInteger(numberValue) ||
-                            numberValue < 30 ||
+                            numberValue < 10 ||
                             numberValue > 100
                         ) {
                             displayError(
-                                "The value should be a positive integer number between 30 and 100!"
+                                "The value should be a positive integer number between 10 and 100!"
                             )
                             return
                         }
@@ -347,20 +349,29 @@ export default class SettingTab extends PluginSettingTab {
 
 
         new Setting(containerEl)
-            .setName("Include")
+            .setName("includepattern")
             .setDesc(
-                "Include only files matching this regex pattern when running on all notes."
+                "Include only files with extensions only matching this pattern. Example: md|canvas"
             )
             .addText((text) =>
-                text.setValue(this.plugin.settings.include).onChange(async (value) => {
+                text.setValue(this.plugin.settings.includeps).onChange(async (value) => {
+                  
+                    //Transform string to regex
+                    let ExtArray = value.split("|")
+                    if (ExtArray.length >= 1){
+                       let regexconverted = trimAny(ExtArray.map((extension) => {if (trimAny(extension, [" ","|"]) !== "" ) {return  "(?<" + trimAny(extension, [" ","|"]) + ">.*\\." + trimAny(extension, [" ","|"]) + ")" }}).join("|"), [" ","|"]) 
+                   
+
                     if (!safeRegex(value)) {
                         displayError(
                             "Unsafe regex! https://www.npmjs.com/package/safe-regex"
                         )
                         return
                     }
-                    this.plugin.settings.include = value
+                    this.plugin.settings.includepattern = regexconverted
+                    logError(regexconverted)
                     await this.plugin.saveSettings()
+                }
                 })
             )
 

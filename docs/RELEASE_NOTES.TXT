@@ -1,7 +1,16 @@
-
-0.16.0
+0.16.1
 Add: Option to process html tags 
 Add: Templates
+Fix: Full Canvas support
+
+0.16.0
+Fix: Support for Obsidian Web Clipper 
+Fix: Bug. Some canvas attached files might be moved as orphans.
+Fix: Removed Jimp library
+Fix: The image size in the link anchor in markdown is converted to the image size in wikilink  (The option "Preserve link captions" should be enabled)
+Add: Date formatting
+
+
 
 0.15.9
 Fix: Compatibility with some plugins (local REST API etc)

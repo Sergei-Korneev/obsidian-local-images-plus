@@ -1,5 +1,18 @@
 # Obsidian Local Images Plus
 
+
+***
+
+**Notes for 0.16.0**
+
+**First off, I'd like to say a huge thank you to everyone who donated a few bucks. Thank you guys.**
+
+**And secondly, as far as I know Obsidian version 1.8 supports some features of this plugin out of the box. So the future need for this plugin is questionable.**
+ 
+**All the best to you in the new year.**
+
+**Sergei Korneev**
+
 ***
 
 **By using this software, you accept all terms and agree to the [license agreement](https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/LICENSE).**
@@ -7,6 +20,9 @@
 **The author of this software is not obligated to provide any form of support and assumes no liability.**
 
 ***
+
+
+
 
 
 Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) 
@@ -55,7 +71,7 @@ This plugin has known compatibility issues with the following plugins:
 
 Just copy any web content, Word/Open Office content and paste it into your regular note or a note in canvas.
 
-Starting from version 0.15.0 the plugin also handles all attachments (screenshots/drag-and-drop for files/audio records).
+This plugin also handles all attachments (screenshots/drag-and-drop for files/audio records).
 
 
 
@@ -99,7 +115,7 @@ Files will be copied or downloaded to your attachments folder.
 
 **NOTE: I would not recommend to use this plugin for copying really big files, since buffered reading from disk not implemented yet.**
 
-Starting from version 0.15.6 the plugin also allows you to remove unused attachments by running commands:
+This plugin also allows you to remove unused attachments by running commands:
 
 ```Remove all orphaned attachments (Plugin folder)```
 
@@ -110,7 +126,7 @@ and
 The first one searches orphans in the folder next to the active note, while the second one searches all unused attachments for all your notes. (this requires you to set some root subfolder in Obsidian settings)
 
 
-Starting from version 0.14.5 attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
+All attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
 
 This means you can place an attachment file anywhere within your vault, replace the absolute path in a tag with the file name and Obsidian will still show it in your note.
  
