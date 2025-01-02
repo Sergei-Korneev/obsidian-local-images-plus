@@ -1,6 +1,6 @@
 0.16.0
 Fix: Support for Obsidian Web Clipper 
-Fix: Bug. Some canvas attached files might be moved as orphans.
+Fix: Some canvas attached files might be moved as orphans.
 Fix: Removed Jimp library
 Fix: The image size in the link anchor in markdown is converted to the image size in wikilink  (The option "Preserve link captions" should be enabled)
 Add: Date formatting
