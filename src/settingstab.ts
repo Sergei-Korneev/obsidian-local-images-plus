@@ -188,7 +188,7 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Use MD5 for new attachments (Pasted Images)")
+            .setName("Use MD5 for new attachments (Pasted images and files)")
             .setDesc("The plugin will use MD5 when renaming all new attachments.")
             .addToggle((toggle) =>
                 toggle
@@ -349,7 +349,7 @@ export default class SettingTab extends PluginSettingTab {
 
 
         new Setting(containerEl)
-            .setName("includepattern")
+            .setName("Include pattern")
             .setDesc(
                 "Include only files with extensions only matching this pattern. Example: md|canvas"
             )

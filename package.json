@@ -1,6 +1,6 @@
 {
   "name": "obsidian-local-images-plus",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "This is a plugin for Obsidian (https://obsidian.md) that downloads media files from external links and save in local vault.",
   "main": "build/main.js",
   "scripts": {
