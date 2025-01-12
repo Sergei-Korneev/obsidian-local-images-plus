@@ -120,13 +120,14 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
     
       anchor = trimAny(match.groups.anchor, [")", "(", "]", "[", " "]); 
       
-      
-      
+       
       const AttSizeMatch = anchor.matchAll(ATT_SIZE_ACHOR);
        
       for (const match of AttSizeMatch) {
-         AttSize = trimAny(match.groups.attsize, [")", "(", "]", "[", " "]); 
-         logError("match size " + AttSize)
+ 
+         AttSize = (match.groups.attsize !== undefined) ?  trimAny(match.groups.attsize, [")", "(", "]", "[", " "] ): 
+                   (match.groups.attsize2 !== undefined) ?  trimAny(match.groups.attsize2, [")", "(", "]", "[", " "] ): 
+         ""; 
         }
          
 
@@ -142,7 +143,8 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
         "repl: " + replp +
         "\r\nahc: " + anchor +
         "\r\nlink: " + link +
-        "\r\ncaption: " + caption);
+        "\r\ncaption: " + caption + 
+        "\r\nAttSize: " + AttSize);
 
       dictPatt[replp] = [anchor, link, caption, AttSize];
 
