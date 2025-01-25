@@ -1,3 +1,10 @@
+
+0.16.2 
+Fix: Unable to download any filetypes from web
+
+0.16.1
+Fix: Bug with image size conversion
+
 0.16.0
 Fix: Support for Obsidian Web Clipper 
 Fix: Some canvas attached files might be moved as orphans.

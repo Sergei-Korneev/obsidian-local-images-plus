@@ -295,12 +295,16 @@ export async function getFileExt(content: ArrayBuffer, link: string) {
     if (isSvg(buffer)) return "svg";
   }
 
-  if (fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer?.length > 0) {
+
+  logError("fileExtByBuffer"+fileExtByBuffer)
+
+  if (fileExtByBuffer != undefined && fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer?.length > 0) {
     return fileExtByBuffer;
   }
 
-
-  if (fileExtByLink && fileExtByLink.length <= 5 && fileExtByBuffer?.length > 0) {
+  logError("fileExtByLink  " +fileExtByLink)
+  
+  if (fileExtByLink != undefined  && fileExtByLink.length <= 5 && fileExtByLink?.length > 0) {
     return fileExtByLink;
   }
 
