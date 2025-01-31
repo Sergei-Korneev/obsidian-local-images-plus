@@ -523,7 +523,7 @@ export default class LocalImagesPlugin extends Plugin {
           }
           if (allAttachments) {
             for (const attach of allAttachments) {
-              if (!allAttachmentsLinks.includes(attach.name)) {
+              if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined ) {
                 logError("orph: " + attach.basename)
                 orphanedAttachments.push(attach)
               }
@@ -640,10 +640,10 @@ export default class LocalImagesPlugin extends Plugin {
         }
 
           for (const attach of allAttachments) {
-            if (!allAttachmentsLinks.includes(attach.name)) {
+            if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined ) {
               logError(allAttachmentsLinks)
               logError(attach.name)
-              logError("orph: " + attach.basename)
+              logError("orph: " + attach.name)
               orphanedAttachments.push(attach)
             }
           }
