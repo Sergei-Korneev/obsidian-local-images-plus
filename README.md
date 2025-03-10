@@ -1,29 +1,13 @@
 # Obsidian Local Images Plus
 
 
-***
-
-**Notes for 0.16.0**
-
-**First off, I'd like to say a huge thank you to everyone who donated a few bucks. Thank you!**
-
-**And secondly, as far as I know Obsidian version 1.8 supports some features of this plugin out of the box. So the future need for this plugin is questionable.**
- 
-**All the best to you in the new year.**
-
-**Sergei Korneev**
-
-***
-
 **By using this software, you accept all terms and agree to the [license agreement](https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/LICENSE).**
 
 **The author of this software is not obligated to provide any form of support and assumes no liability.**
 
 ***
 
-
-
-
+ 
 
 Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) 
 
@@ -31,7 +15,7 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 
 - Downloading media files from copied/pasted content of web pages
 - Localizing media files from copied/pasted content of word / Open Office documents
-- Download any filetypes from web
+- Downloading any filetypes from web
 - Saving attachments next to note in folder named after  note
 - Downloading files embedded in markdown tags from web to vault 
 - Saving base64 embedded images to vault
@@ -136,7 +120,6 @@ This means you can place an attachment file anywhere within your vault, replace 
 ## Donations
 
 Share your  wishes and ideas about this software or buy me a coffee (or hot chocolate)
-
 
 
 <a href="https://www.buymeacoffee.com/sergeikorneev"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=sergeikorneev&button_colour=5F7FFF&font_colour=ffffff&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00"></a>
