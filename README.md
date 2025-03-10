@@ -1,5 +1,8 @@
 # Obsidian Local Images Plus
 
+Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) 
+
+***
 
 **By using this software, you accept all terms and agree to the [license agreement](https://github.com/Sergei-Korneev/obsidian-local-images-plus/blob/main/LICENSE).**
 
@@ -8,8 +11,6 @@
 ***
 
  
-
-Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) 
 
 ## Main features of the plugin include:
 
