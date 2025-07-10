@@ -85,7 +85,8 @@ export interface ISettings {
   PngToJpegLocal: boolean;
   JpegQuality: number;
   DoNotCreateObsFolder: boolean;
-  DateFormat: string
+  DateFormat: string;
+  ImgCompressionType:string
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -113,5 +114,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   PngToJpegLocal: true,
   JpegQuality: 80,
   DoNotCreateObsFolder: false,
-  DateFormat: "YYYY MM DD"
+  DateFormat: "YYYY MM DD",
+  ImgCompressionType: "image/jpeg"
 };

@@ -883,19 +883,29 @@ export default class LocalImagesPlugin extends Plugin {
               logError("oldext: " + fileExt)
            
               if (this.settings.PngToJpegLocal && fileExt == "png") {
-                logError("converting to Jpeg")
+
+
+                let compType = "image/jpg";
+                let compExt = ".jpg";
+
+                if (this.settings.ImgCompressionType == "image/webp") {
+                   compType = "image/webp";
+                   compExt = ".webp";
+                }
+
+                logError("Compressing image to ")
 
                 const blob = new Blob([new Uint8Array(await this.app.vault.adapter.readBinary(oldpath))]);
-                newBinData = await blobToJpegArrayBuffer(blob, this.settings.JpegQuality*0.01)
+                newBinData = await blobToJpegArrayBuffer(blob, this.settings.JpegQuality*0.01, compType)
                 
                 newMD5 = md5Sig(newBinData)
                 logError(newBinData)
                 if (newBinData != null) {
 
                   if (this.settings.useMD5ForNewAtt) {
-                    newpath = pathJoin([mdir, newMD5 + ".jpeg"])
+                    newpath = pathJoin([mdir, newMD5 + compExt])
                   } else {
-                    newpath = pathJoin([mdir, cFileName(path.parse(el.link)?.name + ".jpeg")])
+                    newpath = pathJoin([mdir, cFileName(path.parse(el.link)?.name + compExt)])
                   }
                   newlink = await getRDir(note, this.settings, newpath)
                 }

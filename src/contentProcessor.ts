@@ -114,8 +114,15 @@ export function imageTagProcessor(app: Plugin,
  
     if (fileExt == "png" && settings.PngToJpeg) {
  
+
+      let compType = "image/jpeg";
+   
+      if (settings.ImgCompressionType == "image/webp") {
+         compType = "image/webp";
+      }
+
       const blob = new Blob([new Uint8Array(fileData)]);
-      fileData = await blobToJpegArrayBuffer(blob, settings.JpegQuality*0.01)
+      fileData = await blobToJpegArrayBuffer(blob, settings.JpegQuality*0.01, compType)
 
       logError("arbuf: ")
       logError(fileData)

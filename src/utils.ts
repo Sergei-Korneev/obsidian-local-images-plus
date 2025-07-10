@@ -366,15 +366,12 @@ export function encObsURI(e: string) {
 
 
 /**
- * https://github.com/mnaoumov/obsidian-dev-utils
- * 
- * Converts a Blob object to a JPEG ArrayBuffer with the specified quality.
- *
+ * https://github.com/mnaoumov/obsidian-dev-utils (modified)
  * @param blob - The Blob object to convert.
- * @param jpegQuality - The quality of the JPEG image (0 to 1).
+ * @param imgQuality - The quality of the image (0 to 1).
  * @returns A promise that resolves to an ArrayBuffer.
  */
-export async function blobToJpegArrayBuffer(blob: Blob, jpegQuality: number): Promise<ArrayBuffer> {
+export async function blobToJpegArrayBuffer(blob: Blob, imgQuality: number, imgType: string = "image/jpeg" ): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = (): void => {
@@ -400,7 +397,7 @@ export async function blobToJpegArrayBuffer(blob: Blob, jpegQuality: number): Pr
         context.drawImage(image, 0, 0, imageWidth, imageHeight, -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
         context.restore();
 
-        data = canvas.toDataURL('image/jpeg', jpegQuality);
+        data = canvas.toDataURL(imgType, imgQuality);
 
         const arrayBuffer =  base64ToBuff(data);
         resolve(arrayBuffer);

@@ -211,8 +211,8 @@ export default class SettingTab extends PluginSettingTab {
                     })
             )
             new Setting(containerEl)
-            .setName("Convert PNG to JPEG (Web Images)")
-            .setDesc("Convert all downloaded PNG files to JPEG. May reduce file size by several times, but can also affect performance.")
+            .setName("Compress images (Web Images)")
+            .setDesc("Compress all downloaded images. May reduce file size by several times, but can also affect performance.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.PngToJpeg)
@@ -223,8 +223,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
             new Setting(containerEl)
-            .setName("Convert PNG to JPEG (Pasted Images)")
-            .setDesc("Convert all pasted PNG files to JPEG. May reduce file size by several times, but can also affect performance.")
+            .setName("Compress images (Pasted Images)")
+            .setDesc("Compress all pasted images. May reduce file size by several times, but can also affect performance.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.PngToJpegLocal)
@@ -235,9 +235,24 @@ export default class SettingTab extends PluginSettingTab {
             )
 
 
+
+       new Setting(containerEl)
+      .setName("Compression type")
+      .setDesc("Select image compression type.")
+      .addDropdown(dropdown => {
+        dropdown
+          .addOption("image/webp", "WebP")
+          .addOption("image/jpeg", "JPEG")
+          .setValue(this.plugin.settings.ImgCompressionType)
+          .onChange(async (value) => {
+            this.plugin.settings.ImgCompressionType = value;
+            await this.plugin.saveSettings();
+          });
+      });
+
             new Setting(containerEl)
-            .setName("Jpeg Quality")
-            .setDesc("Jpeg quality selection (30 to 100).")
+            .setName("Image Quality")
+            .setDesc("Image quality selection (30 to 100).")
             .addText((text) =>
                 text
                     .setValue(String(this.plugin.settings.JpegQuality))
