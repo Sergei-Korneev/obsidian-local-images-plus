@@ -301,18 +301,7 @@ export async function getMDir(app: App,
           }
 
 return trimAny(root,["/","\\"]);
-
-
 }
-
-
-
-
-
-
-
-
-
 
 async function chooseFileName(
   adapter: DataAdapter,
@@ -337,25 +326,36 @@ async function chooseFileName(
     return { fileName: "", needWrite: false };
   }
 
-
- 
-  
-  const baseName =  md5Sig(contentData);
+  // Use MD5 only if the setting is enabled, otherwise use original filename
+  let baseName: string;
+  if (settings.useMD5ForNewAtt) {
+    baseName = md5Sig(contentData);
+  } else {
+    // Extract original filename from URL, clean it, and remove extension
+    const originalName = path.basename(parsedUrl.pathname);
+    const nameWithoutExt = path.parse(originalName).name || 'attachment';
+    baseName = cleanFileName(nameWithoutExt);
+  }
 
   let needWrite = true;
   let fileName = "";
   const suggestedName = pathJoin([dir, cleanFileName(`${baseName}`+`.${fileExt}`)]);
     if (await adapter.exists(suggestedName, false)) {
       const fileData = await adapter.readBinary(suggestedName);
-            const existing_file_md5 = md5Sig(fileData);
-            if (existing_file_md5 === baseName){
-              fileName = suggestedName;
-              needWrite = false;
-            }
-            else{
-              fileName =  pathJoin([dir, cleanFileName( Math.random().toString(9).slice(2,) +`.${fileExt}`)]);
-            }
-
+      const existing_file_md5 = md5Sig(fileData);
+      const current_file_md5 = md5Sig(contentData);
+      
+      if (existing_file_md5 === current_file_md5) {
+        fileName = suggestedName;
+        needWrite = false;
+      } else {
+        // File exists but content is different, generate unique name
+        if (settings.useMD5ForNewAtt) {
+          fileName = pathJoin([dir, cleanFileName(Math.random().toString(9).slice(2,) +`.${fileExt}`)]);
+        } else {
+          fileName = pathJoin([dir, cleanFileName(`${baseName}_${Math.random().toString(9).slice(2,)}.${fileExt}`)]);
+        }
+      }
     } else {
       fileName = suggestedName;
     }
@@ -365,7 +365,5 @@ async function chooseFileName(
     throw new Error("Failed to generate file name for media file.");
   }
 
-  //linkHashes.ensureHashGenerated(link, contentData);
-
   return { fileName, needWrite };
-}
+}}
