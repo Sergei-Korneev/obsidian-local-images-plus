@@ -786,8 +786,8 @@ export default class LocalImagesPlugin extends Plugin {
   private ThePathExcluded(pat: string){
     const includeRegex = new RegExp(this.settings.ExcludedFoldersListRegexp, "i")
     logError(pat.match(includeRegex))
-    if (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0){
-       showBalloon("The path " + pat + " is excluded in your settings. ", true)}
+    // if (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0){
+    //    showBalloon("The path " + pat + " is excluded in your settings. ", true)}
     return (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0)
   }
 
