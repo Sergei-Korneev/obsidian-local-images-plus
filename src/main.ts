@@ -135,7 +135,7 @@ export default class LocalImagesPlugin extends Plugin {
       
       logError("New file created: " + file.path)
 
-      if (this.ExemplaryOfMD(file.path)){
+      if (this.ExemplaryOfMD(file.path) && !this.ThePathExcluded(String(file.parent?.path))){
         this.onMdCreateFunc(file)
       } else{
         this.onFCreateFunc(file)
@@ -188,7 +188,8 @@ export default class LocalImagesPlugin extends Plugin {
      
       if (!file ||
         !(file instanceof TFile) ||
-        !(this.ExemplaryOfMD(file.path)) ||
+        !this.ExemplaryOfMD(file.path) ||
+        this.ThePathExcluded(String(file.parent?.path)) ||
         !this.settings.removeMediaFolder ||
         this.settings.saveAttE != "nextToNoteS" ||
         this.settings.pathInTags != "onlyRelative") {
@@ -241,7 +242,8 @@ export default class LocalImagesPlugin extends Plugin {
  
       if (!file ||
         !(file instanceof TFile) ||
-        !(this.ExemplaryOfMD(file.path))) {
+        this.ThePathExcluded(String(file.parent?.path)) ||
+        !this.ExemplaryOfMD(file.path)) {
         return
       } else {
         if (this.settings.processAll) {
@@ -423,7 +425,7 @@ export default class LocalImagesPlugin extends Plugin {
       const fItems = evt.clipboardData.files
       const tItems = evt.clipboardData.items
  
-      if (fItems.length != 0) { return }
+      if (fItems.length != 0 || this.ThePathExcluded(String(activeFile.parent?.path))) { return }
       
       for (const key in tItems) {
 
@@ -778,6 +780,15 @@ export default class LocalImagesPlugin extends Plugin {
   private ExemplaryOfCANVAS(pat: string){
     const includeRegex = new RegExp(this.settings.includepattern, "i")
     return (pat.match(includeRegex)?.groups?.canvas != undefined)
+  }
+
+
+  private ThePathExcluded(pat: string){
+    const includeRegex = new RegExp(this.settings.ExcludedFoldersListRegexp, "i")
+    logError(pat.match(includeRegex))
+    if (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0){
+       showBalloon("The path " + pat + " is excluded in your settings. ", true)}
+    return (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0)
   }
 
   private processMdFilesOnTimer = async () => {

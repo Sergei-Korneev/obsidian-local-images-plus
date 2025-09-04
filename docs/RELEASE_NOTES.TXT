@@ -1,3 +1,7 @@
+0.16.4 
+Add: Excluded folders
+Add: WEPB compression
+
 0.16.3 
 Fix: The plugin can delete subfolders in attachment folders as orphans (bug)
 

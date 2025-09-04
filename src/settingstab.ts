@@ -56,7 +56,7 @@ export default class SettingTab extends PluginSettingTab {
         containerEl.createEl("h1", { text: APP_TITLE })
 
         const donheader = containerEl.createEl("div")
-       // donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" })
+        // donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" })
 
         containerEl.createEl("h3", { text: "Interface settings" })
 
@@ -210,7 +210,7 @@ export default class SettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
                     })
             )
-            new Setting(containerEl)
+        new Setting(containerEl)
             .setName("Compress images (Web Images)")
             .setDesc("Compress all downloaded images. May reduce file size by several times, but can also affect performance.")
             .addToggle((toggle) =>
@@ -222,7 +222,7 @@ export default class SettingTab extends PluginSettingTab {
                     })
             )
 
-            new Setting(containerEl)
+        new Setting(containerEl)
             .setName("Compress images (Pasted Images)")
             .setDesc("Compress all pasted images. May reduce file size by several times, but can also affect performance.")
             .addToggle((toggle) =>
@@ -236,21 +236,46 @@ export default class SettingTab extends PluginSettingTab {
 
 
 
-       new Setting(containerEl)
-      .setName("Compression type")
-      .setDesc("Select image compression type.")
-      .addDropdown(dropdown => {
-        dropdown
-          .addOption("image/webp", "WebP")
-          .addOption("image/jpeg", "JPEG")
-          .setValue(this.plugin.settings.ImgCompressionType)
-          .onChange(async (value) => {
-            this.plugin.settings.ImgCompressionType = value;
-            await this.plugin.saveSettings();
-          });
-      });
+        new Setting(containerEl)
+            .setName("Compression type")
+            .setDesc("Select image compression type. Keep in mind that webp format has image size limitations.")
+            .addDropdown(dropdown => {
+                dropdown
+                    .addOption("image/webp", "WebP")
+                    .addOption("image/jpeg", "JPEG")
+                    .setValue(this.plugin.settings.ImgCompressionType)
+                    .onChange(async (value) => {
+                        this.plugin.settings.ImgCompressionType = value;
+                        await this.plugin.saveSettings();
+                    });
+            });
 
-            new Setting(containerEl)
+        new Setting(containerEl)
+            .setName("Excluded folders")
+            .setDesc("Excluded folders. New files in these folders will not be processed automatically.")
+            .addTextArea(text => {
+                text
+                    .setPlaceholder("Enter the full path in new lines, e.g. RootFolder/Subfolder.")
+                    .setValue(this.plugin.settings.ExcludedFoldersList)
+                    .onChange(async (value) => {
+
+                    let FoldersArray = value.split(/\r?\n|\r|\n/g)
+                    if (FoldersArray.length >= 1) {
+
+                        let regexconverted = trimAny(FoldersArray.map((path) => { if (trimAny(path, [" ", "|", "/", "\\"]) !== "") { return "(^" + trimAny(path, [" ", "|", "/", "\\"]) + "$)" } }).join("|").replace('\\','/'), [" ", "|", "/", "\\"])
+                        this.plugin.settings.ExcludedFoldersList = value;
+                        this.plugin.settings.ExcludedFoldersListRegexp = regexconverted;
+                        await this.plugin.saveSettings();
+                        console.log("Excluded folders regex:", regexconverted);
+                    }
+            
+                    });
+
+                text.inputEl.rows = 4;        
+                text.inputEl.style.width = "100%";  
+            });
+
+        new Setting(containerEl)
             .setName("Image Quality")
             .setDesc("Image quality selection (30 to 100).")
             .addText((text) =>
@@ -320,7 +345,7 @@ export default class SettingTab extends PluginSettingTab {
             )
 
 
-            new Setting(containerEl)
+        new Setting(containerEl)
             .setName("Do not create Obsidian attachment folder (For compatibility with other plugins)")
             .setDesc("The plugin will not create an Obsidian attachments folder. This may cause the plugin to behave incorrectly. ")
             .addToggle((toggle) =>
@@ -370,23 +395,23 @@ export default class SettingTab extends PluginSettingTab {
             )
             .addText((text) =>
                 text.setValue(this.plugin.settings.includeps).onChange(async (value) => {
-                  
+
                     //Transform string to regex
                     let ExtArray = value.split("|")
-                    if (ExtArray.length >= 1){
-                       let regexconverted = trimAny(ExtArray.map((extension) => {if (trimAny(extension, [" ","|"]) !== "" ) {return  "(?<" + trimAny(extension, [" ","|"]) + ">.*\\." + trimAny(extension, [" ","|"]) + ")" }}).join("|"), [" ","|"]) 
-                   
+                    if (ExtArray.length >= 1) {
+                        let regexconverted = trimAny(ExtArray.map((extension) => { if (trimAny(extension, [" ", "|"]) !== "") { return "(?<" + trimAny(extension, [" ", "|"]) + ">.*\\." + trimAny(extension, [" ", "|"]) + ")" } }).join("|"), [" ", "|"])
 
-                    if (!safeRegex(value)) {
-                        displayError(
-                            "Unsafe regex! https://www.npmjs.com/package/safe-regex"
-                        )
-                        return
+
+                        if (!safeRegex(value)) {
+                            displayError(
+                                "Unsafe regex! https://www.npmjs.com/package/safe-regex"
+                            )
+                            return
+                        }
+                        this.plugin.settings.includepattern = regexconverted
+                        logError(regexconverted)
+                        await this.plugin.saveSettings()
                     }
-                    this.plugin.settings.includepattern = regexconverted
-                    logError(regexconverted)
-                    await this.plugin.saveSettings()
-                }
                 })
             )
 
@@ -420,10 +445,10 @@ export default class SettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
                     })
             )
-           
-           
-           
-            new Setting(containerEl)
+
+
+
+        new Setting(containerEl)
             .setName("Date format")
             .setDesc(
                 "Date format for ${date} variable. E.g. \
@@ -505,8 +530,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
 
-            containerEl.createEl("h3", { text: "Troubleshooting" })
-            new Setting(containerEl)
+        containerEl.createEl("h3", { text: "Troubleshooting" })
+        new Setting(containerEl)
             .setName("Debug")
             .setDesc("Enable debug output to console.")
             .addToggle((toggle) =>

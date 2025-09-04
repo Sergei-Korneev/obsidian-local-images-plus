@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.16.3";
+export const APP_TITLE = "Local Images Plus  0.16.4";
 
 
 
@@ -86,7 +86,9 @@ export interface ISettings {
   JpegQuality: number;
   DoNotCreateObsFolder: boolean;
   DateFormat: string;
-  ImgCompressionType:string
+  ImgCompressionType:string;
+  ExcludedFoldersList:string;
+  ExcludedFoldersListRegexp: string
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -115,5 +117,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   JpegQuality: 80,
   DoNotCreateObsFolder: false,
   DateFormat: "YYYY MM DD",
-  ImgCompressionType: "image/jpeg"
+  ImgCompressionType: "image/jpeg",
+  ExcludedFoldersList: "",
+  ExcludedFoldersListRegexp: ""
 };
