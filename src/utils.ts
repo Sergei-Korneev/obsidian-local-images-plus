@@ -4,16 +4,13 @@ import isSvg from "is-svg";
 import md5 from "crypto-js/md5";
 const fs2 = require('fs').promises;
 import fs from "fs";
- 
- 
+
+
 import {
-  FORBIDDEN_SYMBOLS_FILENAME_PATTERN,
-  MD_LINK,
   USER_AGENT,
   NOTICE_TIMEOUT,
   APP_TITLE,
-  VERBOSE,
-  ATT_SIZE_ACHOR
+  VERBOSE
 } from "./config";
 
 import {
@@ -21,7 +18,10 @@ import {
   Notice,
   TFile
 } from "obsidian";
- 
+
+import {
+  MarkdownLinkParser
+} from "./contentProcessor"
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
@@ -38,7 +38,6 @@ export async function showBalloon(str: string, show: boolean = true, timeout = N
     new Notice(APP_TITLE + "\r\n" + str, timeout);
   };
 }
-
 
 export function displayError(error: Error | string, file?: TFile): void {
   if (file) {
@@ -65,7 +64,7 @@ export async function logError(str: any, isObj: boolean = false) {
   }
 };
 
-export function md5Sig(contentData: ArrayBuffer = undefined) {
+export function md5Sig(contentData: ArrayBuffer|Buffer = undefined) {
 
   try {
 
@@ -78,7 +77,7 @@ export function md5Sig(contentData: ArrayBuffer = undefined) {
       contentData.slice(-chunk)
     ].map(x => dec.decode(x)).join()
     ).toString();
- 
+
     return signature + "_MD5";
   }
   catch (e) {
@@ -97,60 +96,22 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
 
   let errorflag = false;
   const promises: Promise<any>[] = [];
-  let dictPatt: Array<any>[] = [];
-  let link;
-  let anchor;
-  let replp: any;
-  let caption = "";
   let filesArr: Array<string> = [];
-  let AttSize = "";
 
-  regex.forEach((element) => {
-    logError("cur regex:  " + element);
-    const matches = str.matchAll(element);
 
+  regex.forEach((regex_pattern) => {
+    const matches = str.matchAll(regex_pattern);
     for (const match of matches) {
-      logError("match: " + match)
-    
-      anchor = trimAny(match.groups.anchor, [")", "(", "]", "[", " "]); 
-      
-       
-      const AttSizeMatch = anchor.matchAll(ATT_SIZE_ACHOR);
-       
-      for (const match of AttSizeMatch) {
- 
-         AttSize = (match.groups.attsize !== undefined) ?  trimAny(match.groups.attsize, [")", "(", "]", "[", " "] ): 
-                   (match.groups.attsize2 !== undefined) ?  trimAny(match.groups.attsize2, [")", "(", "]", "[", " "] ): 
-         ""; 
-        }
-         
+      const ReplaceObj = MarkdownLinkParser(match);
+      logError(ReplaceObj);
+      const promise = asyncFn(ReplaceObj);
+      logError(promise, true);
+      promises.push(promise);
+    }
 
-      link = (match.groups.link.match(MD_LINK) ?? [match.groups.link])[0];
-      caption = trimAny((match.groups.link.match(MD_LINK) !== null ?
-        (match.groups.link.split(link).length > 1 ?
-          match.groups.link.split(link)[1] : "") :
-        ""), [")", "]", "(", "[", " "]);
-      link = trimAny(link, [")", "(", "]", "[", " "]);
-      replp = trimAny(match[0], ["[", "(", "]"]);
-
-      logError(
-        "repl: " + replp +
-        "\r\nahc: " + anchor +
-        "\r\nlink: " + link +
-        "\r\ncaption: " + caption + 
-        "\r\nAttSize: " + AttSize);
-
-      dictPatt[replp] = [anchor, link, caption, AttSize];
-
-    };
-
-  })
-
-  for (var key in dictPatt) {
-    const promise = asyncFn(key, dictPatt[key][0], dictPatt[key][1], dictPatt[key][2], dictPatt[key][3]);
-    logError(promise, true);
-    promises.push(promise);
   }
+  )
+
 
   const data = await Promise.all(promises);
   logError("Promises: ");
@@ -160,21 +121,24 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   data.forEach((element) => {
 
     if (element !== null) {
-
-      logError("el: " + element[0] + "  el2: " + element[1] + element[2]);
+      logError("Replacing " + element[0] + " to " + element[1] + element[2]);
       str = str.replaceAll(element[0], element[1] + element[2]);
       filesArr.push(element[1]);
     }
     else {
       errorflag = true;
     }
+  }
 
-  });
+  );
 
   return [str, errorflag, filesArr];
 
   //  return str.replace( () => data.shift());
 }
+
+
+
 
 export function isUrl(link: string) {
   logError("IsUrl: " + link, false);
@@ -184,11 +148,6 @@ export function isUrl(link: string) {
     return false;
   }
 }
-
-
-
-
-
 
 export async function copyFromDisk(src: string, dest: string): Promise<null> {
   logError("copyFromDisk: " + src + " to " + dest, false);
@@ -206,15 +165,13 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
   }
 }
 
-
- 
-
 export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   logError("base64ToBuff: \r\n", false);
   try {
     const BufferData = Buffer.from(data.split("base64,")[1], 'base64');
     logError(BufferData);
-    return BufferData;
+    return bufferToArrayBuffer(BufferData);
+     
   }
   catch (e) {
 
@@ -223,7 +180,7 @@ export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
   }
 }
 
-export async function readFromDiskB(file: string, count: number = undefined): Promise<Buffer> {
+export async function readFromDiskB(file: string, count: number = undefined): Promise<ArrayBuffer> {
 
   try {
     const buffer = Buffer.alloc(count);
@@ -231,7 +188,7 @@ export async function readFromDiskB(file: string, count: number = undefined): Pr
     fs.readSync(fd, buffer, 0, buffer.length, 0)
     logError(buffer)
     fs.closeSync(fd)
-    return buffer
+    return bufferToArrayBuffer(buffer)
 
   } catch (e) {
     logError("Cannot read the file: " + e, false);
@@ -242,13 +199,12 @@ export async function readFromDiskB(file: string, count: number = undefined): Pr
 
 }
 
-
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
   logError("readFromDisk: " + file, false);
 
   try {
     const data = await fs2.readFile(file, null);
-    return Buffer.from(data);
+    return bufferToArrayBuffer(Buffer.from(data));
   }
   catch (e) {
 
@@ -257,12 +213,13 @@ export async function readFromDisk(file: string): Promise<ArrayBuffer> {
   }
 }
 
-export async function downloadImage(url: string): Promise<ArrayBuffer> {
+export async function downloadImage(url: string, referer: string = ""): Promise<ArrayBuffer> {
 
   logError("Downloading: " + url, false);
   const headers = {
     'method': 'GET',
-    'User-Agent': USER_AGENT
+    'User-Agent': USER_AGENT,
+    'Referer': referer
   }
 
   try {
@@ -276,6 +233,11 @@ export async function downloadImage(url: string): Promise<ArrayBuffer> {
   }
 }
 
+function bufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+}
+
+
 export async function getFileExt(content: ArrayBuffer, link: string) {
 
   const fileExtByLink = path.extname(link).replace("\.", "");
@@ -288,15 +250,15 @@ export async function getFileExt(content: ArrayBuffer, link: string) {
   }
 
 
-  logError("fileExtByBuffer"+fileExtByBuffer)
+  logError("fileExtByBuffer" + fileExtByBuffer)
 
   if (fileExtByBuffer != undefined && fileExtByBuffer && fileExtByBuffer.length <= 5 && fileExtByBuffer?.length > 0) {
     return fileExtByBuffer;
   }
 
-  logError("fileExtByLink  " +fileExtByLink)
-  
-  if (fileExtByLink != undefined  && fileExtByLink.length <= 5 && fileExtByLink?.length > 0) {
+  logError("fileExtByLink  " + fileExtByLink)
+
+  if (fileExtByLink != undefined && fileExtByLink.length <= 5 && fileExtByLink?.length > 0) {
     return fileExtByLink;
   }
 
@@ -320,14 +282,26 @@ export function trimAny(str: string, chars: Array<string>) {
 }
 
 
-export function cFileName(name: string, sep:string = " ") {
+export function CtagsBrcks(str: string) {
+  return trimAny(str, [")", "(", "]", "[", " "]);
+}
+
+export function CtagsWhS(str: string) {
+  return trimAny(str, [" "]);
+}
+
+export function cFileName(name: string, sep: string = " ") {
   const cleanedName = name.replace(
     /(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g,
     sep
   );
   return cleanedName;
 }
- 
+
+export function trimTags(link: string){
+  return link.split(/[#?&\s]+/)[0];
+}
+
 export function pathJoin(parts: Array<string>): string {
   const result = path.join(...parts);
   // it seems that obsidian do not understand paths with backslashes in Windows, so turn them into forward slashes
@@ -354,7 +328,11 @@ export function encObsURI(e: string) {
  * @param imgQuality - The quality of the image (0 to 1).
  * @returns A promise that resolves to an ArrayBuffer.
  */
-export async function blobToJpegArrayBuffer(blob: Blob, imgQuality: number, imgType: string = "image/jpeg" ): Promise<ArrayBuffer> {
+export async function blobToJpegArrayBuffer(Data: ArrayBuffer, imgQuality: number, imgType: string): Promise<ArrayBuffer> {
+ 
+ try {
+  const blob = new Blob([new Uint8Array(Data)]);
+  imgType = (imgType.length == 0) ? "image/jpeg": imgType;
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = (): void => {
@@ -382,7 +360,7 @@ export async function blobToJpegArrayBuffer(blob: Blob, imgQuality: number, imgT
 
         data = canvas.toDataURL(imgType, imgQuality);
 
-        const arrayBuffer =  base64ToBuff(data);
+        const arrayBuffer = base64ToBuff(data);
         resolve(arrayBuffer);
       };
 
@@ -390,6 +368,11 @@ export async function blobToJpegArrayBuffer(blob: Blob, imgQuality: number, imgT
     };
     reader.readAsDataURL(blob);
   });
+
+    }
+  catch (e) {
+    logError("Cannot compress: " + e, false);
+    return null;
+  }
 }
 
- 

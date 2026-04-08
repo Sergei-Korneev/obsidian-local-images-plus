@@ -29,24 +29,27 @@ export const MD_SEARCH_PATTERN =
 [
 //file link
 /\!\[(?<anchor>(.{0}|(?!^file\:\/)+?))\]\((?<link>((file\:\/)[^\!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
+
 //hypertext link
-///\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
- 
-/\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+//\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+/\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}\:).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[|\/[^(]+?\))))/gm,
 
 //Base64 encoded data
 /\!\[[^\[](?<anchor>(.{0}|[^\[]+?))\]\((?<link>((data\:.+?base64\,).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
-/\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}|(data\:.+?base64\,)).+?\)))/gm
+/\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}|(data\:.+?base64\,)).+?\)))/gm,
+
 ]
 
 
 export const FRONTMATTER_SEARCH_PATTERN =
 [
-///\[\[(?<link>((http(s){0,1}).+?(\) |\..{3,4}|\]\]|\]\]$|\]\]\n)))/gm,
-/\[{2}(?<loclink>(.+?(\) |\..{3,4}\]{2}|\]{2}|\]{2}$|\]{2}\n)))/i,
+/\[{2}(?<urllink>((http(s){0,1}).+?(\) |\..{3,4}\]{2}|\]{2}|\]{2}$|\]{2}\n)))/g,
+/\[{2}(?<loclink>(.+?(\) |\..{3,4}\]{2}|\]{2}|\]{2}$|\]{2}\n)))/g,
 ]
 
 export const MD_LINK = /\http(s){0,1}.+?( {1}|\)\n)/g;
+
+export const URL_PATTERN = /http(s){0,1}\:\/\/.+/g;
 
 export const ANY_URL_PATTERN = /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
@@ -57,8 +60,7 @@ export const TIME_DIFF = 500;
 // Looks like timeouts in Obsidian API are set in milliseconds
 export const NOTICE_TIMEOUT = 5 * 1000;
 export const TIMEOUT_LIKE_INFINITY = 24 * 60 * 60 * 1000;
-export const FORBIDDEN_SYMBOLS_FILENAME_PATTERN = /\s+/g;
-
+ 
 export interface ISettings {
   processCreated: boolean,
   ignoredExt: string,

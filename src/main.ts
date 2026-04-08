@@ -29,6 +29,7 @@ import {
   pathJoin,
   blobToJpegArrayBuffer,
   getFileExt,
+  trimTags,
   readFromDiskB
 } from "./utils"
 
@@ -46,11 +47,7 @@ import {
 import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
 import { ModalW1 } from "./modal"
-import { isNull } from "util"
-const fs = require('fs').promises;
-
-
-
+const fs = require('fs').promises
 
 
 
@@ -89,7 +86,7 @@ export default class LocalImagesPlugin extends Plugin {
 
       this.addRibbonIcon("dice", APP_TITLE + "\r\nLocalize attachments (plugin folder)", () => {
         this.processActivePage(false)()
-      });
+      })
 
       this.addCommand({
         id: "set-title-as-name",
@@ -135,12 +132,12 @@ export default class LocalImagesPlugin extends Plugin {
     // Some file has been created
 
     this.app.vault.on('create', async (file: TFile) => {
-      
+
       logError("New file created: " + file.path)
 
-      if (this.ExemplaryOfMD(file.path) && !this.ThePathExcluded(String(file.parent?.path))){
+      if (this.ExemplaryOfMD(file.path) && !this.ThePathExcluded(String(file.parent?.path))) {
         this.onMdCreateFunc(file)
-      } else{
+      } else {
         this.onFCreateFunc(file)
       }
 
@@ -150,7 +147,7 @@ export default class LocalImagesPlugin extends Plugin {
     // Some file has been deleted
 
     this.app.vault.on('delete', async (file: TFile) => {
- 
+
       if (!file ||
         !(file instanceof TFile) ||
         !(this.ExemplaryOfMD(file.path)) ||
@@ -162,7 +159,7 @@ export default class LocalImagesPlugin extends Plugin {
 
       let rootdir = this.settings.mediaRootDir
       const useSysTrash = (this.app.vault.getConfig("trashOption") === "system")
-    
+
       if (this.settings.saveAttE !== "obsFolder" &&
         path.basename(rootdir).includes("${notename}") &&
         !rootdir.includes("${date}")) {
@@ -188,7 +185,7 @@ export default class LocalImagesPlugin extends Plugin {
 
 
     this.app.vault.on('rename', async (file: TFile, oldPath: string) => {
-     
+
       if (!file ||
         !(file instanceof TFile) ||
         !this.ExemplaryOfMD(file.path) ||
@@ -241,8 +238,8 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.vault.on('modify', async (file: TFile) => {
       if (!this.newfMoveReq)
         return
-      logError("File modified: " + file.path , false)
- 
+      logError("File modified: " + file.path, false)
+
       if (!file ||
         !(file instanceof TFile) ||
         this.ThePathExcluded(String(file.parent?.path)) ||
@@ -278,10 +275,6 @@ export default class LocalImagesPlugin extends Plugin {
 
   }
 
-
-
-
-
   setupQueueInterval() {
     if (this.intervalId) {
       const intervalId = this.intervalId
@@ -300,7 +293,6 @@ export default class LocalImagesPlugin extends Plugin {
     }
   }
 
-
   private getCurrentNote(): TFile | null {
     try {
       const noteFile = app.workspace.activeEditor.file
@@ -315,13 +307,13 @@ export default class LocalImagesPlugin extends Plugin {
 
 
   private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
-    
- 
-    if (file == null ) {return null}
+
+
+    if (file == null) { return null }
 
     const content = await this.app.vault.cachedRead(file)
-    if (content.length == 0) {return null}
-      
+
+    if (content.length == 0) { return null }
 
     const fixedContent = await replaceAsync(
       content,
@@ -382,7 +374,7 @@ export default class LocalImagesPlugin extends Plugin {
 
   processAllPages = async () => {
     const files = this.app.vault.getMarkdownFiles()
- 
+
     const pagesCount = files.length
 
     const notice = this.settings.showNotifications
@@ -414,9 +406,6 @@ export default class LocalImagesPlugin extends Plugin {
     }
   }
 
-
-
-
   private async onPasteFunc(evt: ClipboardEvent = undefined, editor: Editor = undefined, info: MarkdownView = undefined) {
 
     if (evt === undefined) { return }
@@ -427,20 +416,20 @@ export default class LocalImagesPlugin extends Plugin {
       const activeFile = this.getCurrentNote()
       const fItems = evt.clipboardData.files
       const tItems = evt.clipboardData.items
- 
+
       if (fItems.length != 0 || this.ThePathExcluded(String(activeFile.parent?.path))) { return }
-      
+
       for (const key in tItems) {
 
         // Check if it was a text/html
         if (tItems[key].kind == "string") {
-          
+
           if (this.settings.realTimeUpdate) {
-            
+
             const cont = htmlToMarkdown(evt.clipboardData.getData("text/html")) +
-            
-            htmlToMarkdown(evt.clipboardData.getData("text"))
-            
+
+              htmlToMarkdown(evt.clipboardData.getData("text"))
+
 
 
 
@@ -472,202 +461,78 @@ export default class LocalImagesPlugin extends Plugin {
 
   }
 
-
-
-
   private removeOrphans = (type: string = undefined, filesToRemove: Array<TFile> = undefined, noteFile: TFile = undefined) => async () => {
 
-      const obsmediadir = app.vault.getConfig("attachmentFolderPath")
-      const allFiles = this.app.vault.getFiles()
-      let oldRootdir = this.settings.mediaRootDir
+    const obsmediadir = app.vault.getConfig("attachmentFolderPath")
+    const allFiles = this.app.vault.getFiles()
+    let oldRootdir = this.settings.mediaRootDir
 
-      if (type == "plugin") {
-        let orphanedAttachments = []
-        let allAttachmentsLinks = []
-        if (this.settings.saveAttE != "nextToNoteS" ||
-          !path.basename(oldRootdir).endsWith("${notename}") ||
-          oldRootdir.includes("${date}")) {
-          showBalloon("This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n", this.settings.showNotifications)
+    if (type == "plugin") {
+      let orphanedAttachments = []
+      let allAttachmentsLinks = []
+      if (this.settings.saveAttE != "nextToNoteS" ||
+        !path.basename(oldRootdir).endsWith("${notename}") ||
+        oldRootdir.includes("${date}")) {
+        showBalloon("This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n", this.settings.showNotifications)
+        return
+      }
+
+      if (!noteFile) {
+        noteFile = this.getCurrentNote()
+        if (!noteFile) {
+          showBalloon("Please, select a note or click inside a note in canvas!", this.settings.showNotifications)
           return
         }
-         
-        if (!noteFile) {
-          noteFile = this.getCurrentNote()
-          if (!noteFile) {
-            showBalloon("Please, select a note or click inside a note in canvas!", this.settings.showNotifications)
-            return
-          }
-
-        }
-
-
-        if (this.ExemplaryOfMD(noteFile.path)) {
-
-          oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
-          oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
-          if (! await this.app.vault.exists(oldRootdir)) {
-            showBalloon("The attachment folder " + oldRootdir + " does not exist!", this.settings.showNotifications)
-            return
-          }
-          const allAttachments = await this.app.vault.getAbstractFileByPath(oldRootdir)?.children
-          const metaCache = this.app.metadataCache.getFileCache(noteFile)
-          const embeds = metaCache?.embeds
-          const links = metaCache?.links
-          const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN);
- 
- 
-          if (frembeds.files?.length > 0) {
-            for (const frembed of frembeds.files) {
-              allAttachmentsLinks.push(frembed.link);
-              console.log(frembed.link);
-            }
-          }
-          if (embeds) {
-            for (const embed of embeds) {
-              allAttachmentsLinks.push(path.basename(embed.link))
-            }
-          }
-          if (links) {
-            for (const link of links) {
-              allAttachmentsLinks.push(path.basename(link.link))
-            }
-          }
-          if (allAttachments) {
-            for (const attach of allAttachments) {
-              if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined ) {
-                logError("orph: " + attach.basename)
-                orphanedAttachments.push(attach)
-              }
-            }
-          }
-
-
-          if (orphanedAttachments.length > 0) {
-            const mod = new ModalW1(this.app)
-            mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + oldRootdir + "'\r\n\r\n      "
-            mod.plugin = this
-            mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
-            mod.open()
-          } else {
-            showBalloon("No orphaned files found!", this.settings.showNotifications)
-          }
-
-        }
-
 
       }
 
 
+      if (this.ExemplaryOfMD(noteFile.path)) {
 
-      if (type == "obsidian") {
-
-        if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
-          showBalloon("This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n", this.settings.showNotifications)
+        oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
+        oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
+        if (! await this.app.vault.exists(oldRootdir)) {
+          showBalloon("The attachment folder " + oldRootdir + " does not exist!", this.settings.showNotifications)
           return
         }
+        const allAttachments = await this.app.vault.getAbstractFileByPath(oldRootdir)?.children
+        const metaCache = this.app.metadataCache.getFileCache(noteFile)
+        const embeds = metaCache?.embeds
+        const links = metaCache?.links
+        const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN)
+logError(embeds)
+logError(links)
 
-        const allAttachments = this.app.vault.getAbstractFileByPath(obsmediadir)?.children
-        let orphanedAttachments = []
-        let allAttachmentsLinks = []
-        
-        
- 
-        if (allFiles) {
-
-          for (const file of allFiles) {
-            
-            //Fix for canvas files
-            if (file !== null && this.ExemplaryOfCANVAS(file.path)){
-             logError(file) 
-              
-             logError(this.app.metadataCache.getCache(file.path))
-              
-   
-              let canvasData
-              try {
-                canvasData = JSON.parse(await app.vault.cachedRead(file))
-              } catch (e) {
-                logError("Parse canvas data error")  
-                continue
-              }
-               
-              if (canvasData.nodes && canvasData.nodes.length > 0) {
-                for (const node of canvasData.nodes) {
-                  
-                  logError(node)
-                    
-                  if (node.type === "file") {
-                    
-                    logError("file json")
-                    
-                    allAttachmentsLinks.push(path.basename(node.file))
-                    
-                  } else if (node.type == "text") {
-                    
-                    logError("text json")
-                   
-                    //https://github.com/Fevol/obsidian-typings
-                    //Undocumented API, may be altered in the future
-                    const AllNodeLinks = (await this.app.internalPlugins.plugins.canvas.instance.index.parseText(node.text))?.links;
- 
-                    logError(AllNodeLinks)
- 
-                    if (AllNodeLinks === undefined){continue}
-
-                    for (const Nodelink of AllNodeLinks) {
-                      allAttachmentsLinks.push(path.basename(Nodelink.link))
-                    }
-                  }
-                }
-              }
-            
-      
-
-            }
-
-          if (file !== null && this.ExemplaryOfMD(file.path)){
-
-    
-              const metaCache = this.app.metadataCache.getCache(file.path)
-              const embeds = metaCache?.embeds
-              const links = metaCache?.links
-              logError(embeds)
-              logError(links)
-
-
-              if (embeds) {
-                for (const embed of embeds) {
-                  allAttachmentsLinks.push(path.basename(embed.link))
-                }
-              }
-              if (links) {
-                for (const link of links) {
-                  allAttachmentsLinks.push(path.basename(link.link))
-                }
-              }
-            
-
+        if (frembeds.files?.length > 0) {
+          for (const frembed of frembeds.files) {
+            allAttachmentsLinks.push(frembed.link)
           }
         }
-
+        if (embeds) {
+          for (const embed of embeds) {
+            allAttachmentsLinks.push(path.parse(embed.link).name + trimTags(path.parse(embed.link).ext))
+            logError(path.basename(embed.link))
+          }
+        }
+        if (links) {
+          for (const link of links) {
+            allAttachmentsLinks.push(path.parse(link.link).name + trimTags(path.parse(link.link).ext))
+             logError(path.basename(link.link))
+          }
+        }
+        if (allAttachments) {
           for (const attach of allAttachments) {
-            if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined ) {
-              logError(allAttachmentsLinks)
-              logError(attach.name)
-              logError("orph: " + attach.name)
+            if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined) {
+              logError("An orphan: " + attach.name)
               orphanedAttachments.push(attach)
             }
           }
-
         }
+logError(allAttachments)
 
-
-        logError("Orphaned: ")
-        logError(orphanedAttachments, true)
         if (orphanedAttachments.length > 0) {
           const mod = new ModalW1(this.app)
-          mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + obsmediadir + "  '\r\n \
-          NOTE: Be careful when running this command on Obsidian attachments folder, since some html-linked files may also be moved.\r\n      "
+          mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + oldRootdir + "'\r\n\r\n      "
           mod.plugin = this
           mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
           mod.open()
@@ -675,44 +540,176 @@ export default class LocalImagesPlugin extends Plugin {
           showBalloon("No orphaned files found!", this.settings.showNotifications)
         }
 
-
-
-
       }
 
-
-      if (type == "execremove") {
-        const useSysTrash = (this.app.vault.getConfig("trashOption") === "system")
-        const remcompl = this.settings.removeOrphansCompl
-        let msg = "";
-
-        if (filesToRemove) {
-
-          filesToRemove.forEach((el: TFile) => {
-
-            if (remcompl) {
-              msg = "were deleted completely."
-              this.app.vault.delete(el, true)
-            } else {
-              if (useSysTrash) {
-                msg = "were moved to the system garbage can."
-              } else {
-                msg = "were moved to the Obsidian garbage can."
-              }
-              this.app.vault.trash(el, useSysTrash)
-            }
-
-          })
-        }
-
-        showBalloon(filesToRemove.length + " file(s) " + msg, this.settings.showNotifications)
-
-      }
 
     }
 
 
 
+    if (type == "obsidian") {
+
+      if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
+        showBalloon("This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n", this.settings.showNotifications)
+        return
+      }
+
+      const allAttachments = this.app.vault.getAbstractFileByPath(obsmediadir)?.children
+      let orphanedAttachments = []
+      let allAttachmentsLinks = []
+
+
+
+      if (allFiles) {
+
+        for (const file of allFiles) {
+
+          //Fix for canvas files
+          if (file !== null && this.ExemplaryOfCANVAS(file.path)) {
+            logError(file)
+
+            logError(this.app.metadataCache.getCache(file.path))
+
+
+            let canvasData
+            try {
+              canvasData = JSON.parse(await app.vault.cachedRead(file))
+            } catch (e) {
+              logError("Parse canvas data error")
+              continue
+            }
+
+            if (canvasData.nodes && canvasData.nodes.length > 0) {
+              for (const node of canvasData.nodes) {
+
+                logError(node)
+
+                if (node.type === "file") {
+
+                  logError("file json")
+
+                  allAttachmentsLinks.push(path.basename(node.file))
+
+                } else if (node.type == "text") {
+
+                  logError("text json")
+
+                  //https://github.com/Fevol/obsidian-typings
+                  //Undocumented API, may be altered in the future
+                  const AllNodeLinks = (await this.app.internalPlugins.plugins.canvas.instance.index.parseText(node.text))?.links
+
+                  logError(AllNodeLinks)
+
+                  if (AllNodeLinks === undefined) { continue }
+
+                  for (const Nodelink of AllNodeLinks) {
+                    allAttachmentsLinks.push(path.basename(Nodelink.link))
+                  }
+                }
+              }
+            }
+
+
+
+          }
+
+          if (file !== null && this.ExemplaryOfMD(file.path)) {
+
+
+            const metaCache = this.app.metadataCache.getCache(file.path)
+            const embeds = metaCache?.embeds
+            const links = metaCache?.links
+            const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN)
+
+
+
+            logError(embeds)
+            logError(links)
+
+            if (frembeds.files?.length > 0) {
+              for (const frembed of frembeds.files) {
+                allAttachmentsLinks.push(frembed.link)
+              }
+            }
+            if (embeds) {
+              for (const embed of embeds) {
+                const parsedPath = path.parse(embed.link)
+                allAttachmentsLinks.push(parsedPath.name + trimTags(parsedPath.ext))
+              }
+            }
+            if (links) {
+              for (const link of links) {
+                const parsedPath = path.parse(link.link)
+                allAttachmentsLinks.push(parsedPath.name + trimTags(parsedPath.ext))
+              }
+            }
+
+
+          }
+        }
+
+        logError(allAttachments)
+
+        for (const attach of allAttachments) {
+          if (!allAttachmentsLinks.includes(attach.name) && attach.children == undefined) {
+            logError(allAttachmentsLinks)
+            logError(attach.name)
+            logError("orph: " + attach.name)
+            orphanedAttachments.push(attach)
+          }
+        }
+
+      }
+
+
+      logError("Orphaned: ")
+      logError(orphanedAttachments, true)
+      if (orphanedAttachments.length > 0) {
+        const mod = new ModalW1(this.app)
+        mod.messg = "Confirm remove " + orphanedAttachments.length + " orphan(s) from '" + obsmediadir + "  '\r\n \
+          NOTE: Be careful when running this command on Obsidian attachments folder, since some html-linked files may also be moved.\r\n      "
+        mod.plugin = this
+        mod.callbackFunc = this.removeOrphans("execremove", orphanedAttachments)
+        mod.open()
+      } else {
+        showBalloon("No orphaned files found!", this.settings.showNotifications)
+      }
+
+
+
+
+    }
+
+
+    if (type == "execremove") {
+      const useSysTrash = (this.app.vault.getConfig("trashOption") === "system")
+      const remcompl = this.settings.removeOrphansCompl
+      let msg = ""
+
+      if (filesToRemove) {
+
+        filesToRemove.forEach((el: TFile) => {
+
+          if (remcompl) {
+            msg = "were deleted completely."
+            this.app.vault.delete(el, true)
+          } else {
+            if (useSysTrash) {
+              msg = "were moved to the system garbage can."
+            } else {
+              msg = "were moved to the Obsidian garbage can."
+            }
+            this.app.vault.trash(el, useSysTrash)
+          }
+
+        })
+      }
+
+      showBalloon(filesToRemove.length + " file(s) " + msg, this.settings.showNotifications)
+
+    }
+
+  }
 
   private openProcessAllModal = () => {
     const mod = new ModalW1(this.app)
@@ -721,18 +718,15 @@ export default class LocalImagesPlugin extends Plugin {
     mod.callbackFunc = this.processAllPages
     mod.open()
   }
- 
-
-
 
   private async onMdCreateFunc(file: TFile) {
 
- 
+
     if (!file ||
       !(file instanceof TFile) ||
       !(this.settings.processCreated) ||
       !this.ExemplaryOfMD(file.path)
-       )
+    )
       return
 
 
@@ -742,26 +736,26 @@ export default class LocalImagesPlugin extends Plugin {
       return
 
     logError("func onMdCreateFunc: " + file.path)
-    logError(file,true)
- 
+    logError(file, true)
+
 
     var cont = await this.app.vault.cachedRead(file)
- 
+
     logError(cont)
-  
-        this.enqueueActivePage(file)
-        this.setupQueueInterval()
-        this.setupNewMdFilesProcInterval()
- 
-    
+
+    this.enqueueActivePage(file)
+    this.setupQueueInterval()
+    this.setupNewMdFilesProcInterval()
+
+
   }
 
   private async onFCreateFunc(file: TFile) {
- 
+
     if (!file ||
       !(file instanceof TFile) ||
-      this.ExemplaryOfMD(file.path)||
-      this.ExemplaryOfCANVAS(file.path)||
+      this.ExemplaryOfMD(file.path) ||
+      this.ExemplaryOfCANVAS(file.path) ||
       !(this.settings.processAll))
       return
 
@@ -780,86 +774,69 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
 
-  private ExemplaryOfMD(pat: string){
+  private ExemplaryOfMD(pat: string) {
     const includeRegex = new RegExp(this.settings.includepattern, "i")
     return (pat.match(includeRegex)?.groups?.md != undefined)
   }
 
 
-  private ExemplaryOfCANVAS(pat: string){
+  private ExemplaryOfCANVAS(pat: string) {
     const includeRegex = new RegExp(this.settings.includepattern, "i")
     return (pat.match(includeRegex)?.groups?.canvas != undefined)
   }
 
 
-  private ThePathExcluded(pat: string){
+  private ThePathExcluded(pat: string) {
     const includeRegex = new RegExp(this.settings.ExcludedFoldersListRegexp, "i")
     logError(pat.match(includeRegex))
-    // if (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0){
-    //    showBalloon("The path " + pat + " is excluded in your settings. ", true)}
     return (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0)
   }
 
   private processMdFilesOnTimer = async () => {
 
-    const th = this
     function onRet() {
-      th.newfCreated = []
-      th.newfCreatedByDownloader = []
-      th.noteModified = []
-      th.newfMoveReq = false
-      window.clearInterval(th.newfProcInt)
-      th.newfProcInt = 0
+      logError("onret")
+      logError("noteModified")
+     
+      this.newfCreated = []
+      this.newfCreatedByDownloader = []
+      this.noteModified = []
+      this.newfMoveReq = false
+      window.clearInterval(this.newfProcInt)
+      this.newfProcInt = 0
     }
 
-    logError("func processMdFilesOnTimer:\r\n")
-    logError(this.noteModified, true)
+    logError("processMdFilesOnTimer: \r\nNote:\r\n")
+ 
 
     try {
-
 
       window.clearInterval(this.newfProcInt)
       this.newfProcInt = 0
       this.newfMoveReq = false
       let itemcount = 0
-      const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
 
-
-
-      for (let note of this.noteModified) {
+      for (const note of this.noteModified) {
 
         const metaCache = this.app.metadataCache.getFileCache(note)
         let filedata = await this.app.vault.cachedRead(note)
-        
-
-        let pr = false
-        for (const reg_p of MD_SEARCH_PATTERN) {
-          if (reg_p.test(filedata)) {
-            pr = true
-            break
-          }
-        }
-
- 
-
         const mdir = await getMDir(this.app, note, this.settings)
         const obsmdir = await getMDir(this.app, note, this.settings, true)
-        let embeds = metaCache?.embeds
+        const embeds = metaCache?.embeds
 
 
 
         if (obsmdir != "" && ! await this.app.vault.adapter.exists(obsmdir)) {
-         if ( ! this.settings.DoNotCreateObsFolder){
-          this.ensureFolderExists(obsmdir)
-          showBalloon("You obsidian media folder set to '" + obsmdir + "', and has been created by the plugin. Please, try again. ", this.settings.showNotifications)
-          onRet()
-        }
+          if (!this.settings.DoNotCreateObsFolder) {
+            this.ensureFolderExists(obsmdir)
+            showBalloon(`You obsidian media folder set to ${obsmdir}, and has been created by the plugin. Please, try again. `, this.settings.showNotifications)
+            onRet()
+          }
           return
         }
 
 
-
-        if (embeds || pr) {
+        if (embeds || MD_SEARCH_PATTERN.some(reg_p => reg_p.test(filedata))) {
 
 
           await this.ensureFolderExists(mdir)
@@ -868,88 +845,71 @@ export default class LocalImagesPlugin extends Plugin {
 
             logError(el)
 
-            let oldpath = pathJoin([obsmdir, path.basename(el.link)])
-            let oldtag = el["original"];
-            logError(useMdLinks)
 
+            const elBaseName = path.basename(el.link)
+            let oldpath = pathJoin([obsmdir, elBaseName])
+            let oldtag = el.original
 
 
             logError(this.newfCreated)
-            
-            if ((this.newfCreated.indexOf(el.link) != -1 || (obsmdir != "" && (this.newfCreated.includes(oldpath) || this.newfCreated.includes(el.link)))) &&
-              !this.newfCreatedByDownloader.includes(oldtag)) {
+
+            if ((this.newfCreated.indexOf(el.link) != -1 || (obsmdir != "" && (this.newfCreated.includes(oldpath) || this.newfCreated.includes(el.link)))) && !this.newfCreatedByDownloader.includes(oldtag)) {
 
 
               if (! await this.app.vault.adapter.exists(oldpath)) {
-                logError("Cannot find " + el.link + " skipping...")
+                logError(`Cannot find ${el.link} skipping...`)
                 continue
               }
 
 
-              let newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
-              let newlink: Array<string> = await getRDir(note, this.settings, newpath)
-
-              logError(el.link)
-
-              //let newBinData: Buffer | null = null
-
+              let newpath = pathJoin([mdir, cFileName(elBaseName)])
+              let { pathWiki, pathMd } = await getRDir(note, this.settings, newpath)
               let newBinData: ArrayBuffer | null = null
               let newMD5: string | null = null
               const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]), 5000)
               const oldMD5 = md5Sig(oldBinData)
               const fileExt = await getFileExt(oldBinData, oldpath)
 
-              logError("oldbindata: " + oldBinData)
+              logError("oldbindata: ")
+              logError(oldBinData)
               logError("oldext: " + fileExt)
-           
+
               if (this.settings.PngToJpegLocal && fileExt == "png") {
+                const compExt = (this.settings.ImgCompressionType == "image/webp") ? ".webp" : ".jpeg"
+                logError("Compressing image to " + compExt)
 
+                newBinData = await blobToJpegArrayBuffer(await this.app.vault.adapter.readBinary(oldpath), this.settings.JpegQuality * 0.01, this.settings.ImgCompressionType)
 
-                let compType = "image/jpg";
-                let compExt = ".jpg";
-
-                if (this.settings.ImgCompressionType == "image/webp") {
-                   compType = "image/webp";
-                   compExt = ".webp";
-                }
-
-                logError("Compressing image to ")
-
-                const blob = new Blob([new Uint8Array(await this.app.vault.adapter.readBinary(oldpath))]);
-                newBinData = await blobToJpegArrayBuffer(blob, this.settings.JpegQuality*0.01, compType)
-                
                 newMD5 = md5Sig(newBinData)
+                logError("newBinData: ")
                 logError(newBinData)
-                if (newBinData != null) {
 
-                  if (this.settings.useMD5ForNewAtt) {
-                    newpath = pathJoin([mdir, newMD5 + compExt])
-                  } else {
-                    newpath = pathJoin([mdir, cFileName(path.parse(el.link)?.name + compExt)])
-                  }
-                  newlink = await getRDir(note, this.settings, newpath)
+
+
+                if (newBinData != null) {
+                  newpath =
+                    (this.settings.useMD5ForNewAtt) ? pathJoin([mdir, newMD5 + compExt]) : pathJoin([mdir, cFileName(path.parse(el.link)?.name + compExt)]);
+                  ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
                 }
+
+
 
               } else if (this.settings.useMD5ForNewAtt) {
-                newpath = pathJoin([mdir, oldMD5 + path.extname(el.link)])
-                newlink = await getRDir(note, this.settings, newpath)
+                newpath = pathJoin([mdir, oldMD5 + path.extname(el.link)]);
+                ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
+
 
               } else if (!this.settings.useMD5ForNewAtt) {
-                newpath = pathJoin([mdir, cFileName(path.basename(el.link))])
-                newlink = await getRDir(note, this.settings, newpath)
+                newpath = pathJoin([mdir, cFileName(elBaseName)]);
+                ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
               }
-
-
 
               if (await this.app.vault.adapter.exists(newpath)) {
 
-                let newFMD5
-                if (newBinData != null) {
-                  newFMD5 = md5Sig(await this.app.vault.adapter.readBinary(newpath))
-                } else {
-                  newFMD5 = md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath]), 5000))
-                }
 
+                const newFMD5 = (newBinData != null) ?
+                  md5Sig(await this.app.vault.adapter.readBinary(newpath)) :
+                  md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath]), 5000))
 
                 if (newMD5 === newFMD5 || (oldMD5 === newFMD5 && oldpath != newpath)) {
 
@@ -962,11 +922,11 @@ export default class LocalImagesPlugin extends Plugin {
                   logError("Renaming existing: " + oldpath)
                   let inc = 1
                   while (await this.app.vault.adapter.exists(newpath)) {
-                    newpath = pathJoin([mdir, `(${inc}) ` + cFileName(path.basename(el.link))])
+                    newpath = pathJoin([mdir, cFileName(elBaseName) + ` (${inc})`])
                     inc++
                   }
 
-                  newlink = await getRDir(note, this.settings, newpath)
+                  ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
                   await this.app.vault.adapter.rename(oldpath, newpath)
                 }
 
@@ -978,7 +938,6 @@ export default class LocalImagesPlugin extends Plugin {
                     ); {
                       await this.app.vault.adapter.remove(oldpath)
                     }
-
                   } else {
                     await this.app.vault.adapter.rename(oldpath, newpath)
                   }
@@ -990,22 +949,28 @@ export default class LocalImagesPlugin extends Plugin {
 
               }
 
-
-              let addName = "";
-              if (this.settings.addNameOfFile) {
-                if (useMdLinks) {
-                  addName = `[Open: ${path.basename(el.link)}](${newlink[1]})\r\n`
-                } else {
-                  addName = `[[${newlink[0]}|Open: ${path.basename(el.link)}]]\r\n`
-                }
-
+              const TagsParams = {
+                OldTag: oldtag,
+                pathMd: pathMd,
+                pathWiki: pathWiki
               }
 
 
-              let newtag = addName + oldtag.replace(el.link, newlink[0])
+
+
+             // const vvv = MarkdownLinkParser(el.link);
+              const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
+
+
+
+              const addName = (this.settings.addNameOfFile) ?
+                ((useMdLinks) ? `[Open: ${elBaseName}](${pathMd})\r\n` : `[[${pathWiki}|Open: ${elBaseName}]]\r\n`) : ""
+
+
+              let newtag = addName + oldtag.replace(el.link, pathWiki)
 
               if (useMdLinks) {
-                newtag = addName + oldtag.replace(encObsURI(el.link), newlink[1])
+                newtag = addName + oldtag.replace(encObsURI(el.link), pathMd)
               }
 
 
@@ -1029,9 +994,6 @@ export default class LocalImagesPlugin extends Plugin {
     onRet()
 
   }
-
-
-
 
 
   private setTitleAsName = async () => {
@@ -1063,10 +1025,6 @@ export default class LocalImagesPlugin extends Plugin {
     }
   }
 
-
-
-
-
   setupNewMdFilesProcInterval() {
     logError("func setupNewFilesProcInterval: \r\n")
     window.clearInterval(this.newfProcInt)
@@ -1086,14 +1044,12 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.activeEditor.editor.replaceSelection(htmlToMarkdown(await this.app.workspace.activeEditor.getSelection()))
   }
 
-
-
   processModifiedQueue = async () => {
-    const iteration = this.modifiedQueue.iterationQueue();
+    const iteration = this.modifiedQueue.iterationQueue()
     for (const page of iteration) {
-      this.processPage(page, false);
+      this.processPage(page, false)
     }
-  };
+  }
 
   enqueueActivePage(activeFile: TFile) {
     this.modifiedQueue.push(
@@ -1106,9 +1062,6 @@ export default class LocalImagesPlugin extends Plugin {
 
 
   // ------------  Load / Save settings -----------------
-
-
-
   async onunload() {
     this.app.workspace.off("editor-drop", null)
     this.app.workspace.off("editor-paste", null)
