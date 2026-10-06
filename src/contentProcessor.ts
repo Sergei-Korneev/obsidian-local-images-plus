@@ -458,19 +458,20 @@ export async function FrontMatterParser(app: Plugin, noteFile: TFile, SearchPatt
       for (const reg_p of SearchPattern) {
         //a /g regex keeps lastIndex after .test() and would miss the next value
         reg_p.lastIndex = 0;
-        if (reg_p.test(String(value))) {
+        const m = reg_p.exec(String(value));
+        if (m !== null) {
 
-          const LocLinkfound = String(value).match(reg_p)?.groups?.loclink;
-          const UrlLinkfound = String(value).match(reg_p)?.groups?.urllink;
+          const LocLinkfound = m.groups?.loclink;
+          const UrlLinkfound = m.groups?.urllink;
 
           if (LocLinkfound != undefined) {
             const FileBaseName = CtagsBrcks(LocLinkfound);
-            const MDMatch = CtagsWhS(String(value).match(reg_p)[0]);
+            const MDMatch = CtagsWhS(m[0]);
             FrontMatterEmbeds.files.push({ "key": key, "match": MDMatch, "link": FileBaseName });
           }
           if (UrlLinkfound != undefined) {
             const FileBaseName = CtagsBrcks(UrlLinkfound);
-            const MDMatch = CtagsWhS(String(value).match(reg_p)[0]);
+            const MDMatch = CtagsWhS(m[0]);
             FrontMatterEmbeds.urls.push({ "key": key, "match": MDMatch, "link": FileBaseName });
           }
         }
