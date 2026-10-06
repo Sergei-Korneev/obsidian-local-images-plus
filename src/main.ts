@@ -6,6 +6,8 @@ import {
   htmlToMarkdown,
   MarkdownView,
   TFolder,
+  Menu,
+  MenuItem,
 } from "obsidian"
 
 import SettingTab from "./settingstab"
@@ -65,6 +67,9 @@ export default class LocalImagesPlugin extends Plugin {
   noteModified: Array<TFile> = []
   newfMoveReq: boolean = true
   newfCreatedByDownloader: Array<string> = []
+  ctxMenuImageSrc: string = ""
+  ctxMenuImageFile: TFile | null = null
+  origMenuShow: ((evt?: MouseEvent) => any) | null = null
 
 
 
@@ -126,6 +131,44 @@ export default class LocalImagesPlugin extends Plugin {
         name: "Remove all orphaned attachments (Plugin folder)",
         callback: () => { this.removeOrphans("plugin")() },
       })
+    }
+
+    //the image widget builds its own context menu and never triggers workspace "editor-menu",
+    //so remember the clicked remote image here and inject the item when the menu is about to show
+    this.registerDomEvent(document, "contextmenu", (evt: MouseEvent) => {
+      this.ctxMenuImageSrc = ""
+      this.ctxMenuImageFile = null
+      if (!this.settings.contextMenuDownload) { return }
+      const target = evt.target
+      if (!(target instanceof HTMLImageElement)) { return }
+      try {
+        const proto = new URL(target.src).protocol
+        if (proto === "http:" || proto === "https:" || proto === "data:") {
+          this.ctxMenuImageSrc = target.src
+          const view = this.app.workspace.getActiveViewOfType(MarkdownView)
+          this.ctxMenuImageFile = view?.file ?? null
+        }
+      } catch (e) {
+        logError("contextmenu: not an absolute url: " + target.src)
+      }
+    }, true)
+
+    const plugin = this
+    this.origMenuShow = Menu.prototype.showAtMouseEvent
+    Menu.prototype.showAtMouseEvent = function (evt?: MouseEvent) {
+      const src = plugin.ctxMenuImageSrc
+      const file = plugin.ctxMenuImageFile
+      plugin.ctxMenuImageSrc = ""
+      plugin.ctxMenuImageFile = null
+      if (src && file && plugin.settings.contextMenuDownload) {
+        this.addItem((item: MenuItem) => {
+          item.setTitle("Download this image")
+            .setSection("image")
+            .setIcon("download")
+            .onClick(() => { plugin.downloadSingleImage(file, src) })
+        })
+      }
+      return plugin.origMenuShow.call(this, evt)
     }
 
 
@@ -309,18 +352,17 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
 
-  private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
+  private normalizeRemoteUrl(link: string): string {
+    const value = String(link ?? "").trim()
+    try {
+      return decodeURI(value)
+    } catch (e) {
+      return value
+    }
+  }
 
-
-    if (file == null) { return null }
-
-    const content = await this.app.vault.cachedRead(file)
-
-    if (content.length == 0) { return null }
-
-    const [fmPart, bodyPart] = splitFrontmatter(content)
-
-    //frontmatter 'source' is used as the second referer when downloading
+  //frontmatter 'source' is used as the second referer when downloading
+  private noteSource(file: TFile, fmPart: string): string {
     let source = ""
     const cachedFm = this.app.metadataCache.getFileCache(file)?.frontmatter
     if (cachedFm) {
@@ -332,6 +374,69 @@ export default class LocalImagesPlugin extends Plugin {
       }
     }
     if (!source) { source = getFrontmatterSource(fmPart) }
+    return source
+  }
+
+  //issue #125: download only the image the user right-clicked, keep the rest of the note untouched
+  private async downloadSingleImage(file: TFile, targetUrl: string) {
+
+    if (file == null) { return }
+
+    try {
+      const content = await this.app.vault.cachedRead(file)
+      if (content.length == 0) { return }
+
+      const [fmPart, bodyPart] = splitFrontmatter(content)
+      const source = this.noteSource(file, fmPart)
+      const processor = imageTagProcessor(this, file, this.settings, false, source)
+      const target = this.normalizeRemoteUrl(targetUrl)
+
+      const onlyTarget = (replPattern: any) => {
+        if (this.normalizeRemoteUrl(String(replPattern.link ?? "")) !== target) {
+          return replPattern.replp
+        }
+        return processor(replPattern)
+      }
+
+      let newFm = fmPart
+      let failed = false
+
+      if (this.settings.processFrontmatter) {
+        const fmFixed = await replaceAsync(fmPart, FRONTMATTER_DOWNLOAD_PATTERN, onlyTarget)
+        newFm = fmFixed[0]
+        failed = failed || fmFixed[1]
+      }
+
+      const bodyFixed = await replaceAsync(bodyPart, MD_SEARCH_PATTERN, onlyTarget)
+      failed = failed || bodyFixed[1]
+      const newContent = newFm + bodyFixed[0]
+
+      if (newContent !== content) {
+        await this.app.vault.modify(file, newContent)
+        showBalloon(`Image downloaded and linked in "${file.path}".`, this.settings.showNotifications)
+      }
+      else if (!failed) {
+        showBalloon(`Remote image not found in "${file.path}" or it is already local.`, this.settings.showNotifications)
+      }
+
+    } catch (e) {
+      logError("Single image download failed: " + e, false)
+      showBalloon("Single image download failed: " + e.message, this.settings.showNotifications)
+    }
+  }
+
+  private async processPage(file: TFile, defaultdir: boolean = false): Promise<any> {
+
+
+    if (file == null) { return null }
+
+    const content = await this.app.vault.cachedRead(file)
+
+    if (content.length == 0) { return null }
+
+    const [fmPart, bodyPart] = splitFrontmatter(content)
+
+    const source = this.noteSource(file, fmPart)
 
     const processor = imageTagProcessor(this,
       file,
@@ -1008,16 +1113,10 @@ logError(allAttachments)
              // const vvv = MarkdownLinkParser(el.link);
               const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
 
-
-
-              const addName = (this.settings.addNameOfFile) ?
-                ((useMdLinks) ? `[Open: ${elBaseName}](${pathMd})\r\n` : `[[${pathWiki}|Open: ${elBaseName}]]\r\n`) : ""
-
-
-              let newtag = addName + oldtag.replace(el.link, pathWiki)
+              let newtag = oldtag.replace(el.link, pathWiki)
 
               if (useMdLinks) {
-                newtag = addName + oldtag.replace(encObsURI(el.link), pathMd)
+                newtag = oldtag.replace(encObsURI(el.link), pathMd)
               }
 
 
@@ -1110,6 +1209,10 @@ logError(allAttachments)
 
   // ------------  Load / Save settings -----------------
   async onunload() {
+    if (this.origMenuShow) {
+      Menu.prototype.showAtMouseEvent = this.origMenuShow
+      this.origMenuShow = null
+    }
     this.app.workspace.off("editor-drop", null)
     this.app.workspace.off("editor-paste", null)
     this.app.workspace.off('file-menu', null)

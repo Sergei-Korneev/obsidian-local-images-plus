@@ -150,29 +150,7 @@ export function imageTagProcessor(app: Plugin,
 
         if (fileName) {
 
-          let shortName = "";
-
-          let { pathWiki, pathMd, parsedPathE } = await getRDir(noteFile, settings, fileName, link);
-
-
-
-          if (settings.addNameOfFile && protocol == "file:") {
-
-            if (!app.app.vault.getConfig("useMarkdownLinks")) {
-
-              shortName = "\r\n[[" +
-                fileName +
-                "\|" +
-                parsedPathE["lnkurid"] + "]]\r\n";
-            }
-            else {
-              shortName = "\r\n[" +
-                parsedPathE["lnkurid"] +
-                "](" +
-                parsedPathE["pathuri"] +
-                ")\r\n";
-            }
-          }
+          let { pathWiki, pathMd } = await getRDir(noteFile, settings, fileName, link);
 
           let imageTag = "";
 
@@ -204,7 +182,7 @@ export function imageTagProcessor(app: Plugin,
             imageTag = keypart + quote + imageTag + quote;
           }
 
-          return [replp, imageTag, `${shortName}`, bareImageTag];
+          return [replp, imageTag, bareImageTag];
 
 
 
@@ -379,48 +357,6 @@ async function chooseFileName(
 }
 
 export function NoteContentReplacer(NoteData: string, Patterns: Object) {
-
-}
-
-export function MarkdownLinkParser(match: RegExp | string): any {
-
-  let link: string, anchor: string, replp: any, caption = "", AttSize = "";
-  const keypart = match.groups?.keypart;
-  const q1 = match.groups?.q1;
-  const q2 = match.groups?.q2;
-  const isWikiEmbed = match[0].includes("![[");
-
-  logError("Match: " + match)
-
-  anchor = CtagsBrcks(match.groups?.anchor ?? "");
-
-
-  for (const attmatch of anchor.matchAll(ATT_SIZE_ACHOR)) {
-    AttSize = (attmatch.groups.attsize !== undefined) ? CtagsBrcks(attmatch.groups.attsize) :
-      (attmatch.groups.attsize2 !== undefined) ? CtagsBrcks(attmatch.groups.attsize2) :
-        "";
-  }
-
-  //a wikilink embed carries no alt text: the anchor must stay empty in markdown output mode
-  if (isWikiEmbed) { anchor = ""; }
-
-  link = CtagsBrcks(match.groups.link.match(MD_LINK)?.[0] ?? match.groups.link)
-  const protocol = link.slice(0, 5)
-  caption = CtagsBrcks(MD_LINK.test(match.groups.link) ? (match.groups.link.split(link)[1] ?? "") : "");
-  //keep the exact match text for frontmatter keys and wiki brackets: replaceAll searches for it literally
-  replp = (keypart !== undefined || isWikiEmbed) ? match[0] : trimAny(match[0], ["[", "(", "]"])
-
-  if (protocol == "file:") {
-    SUPPORTED_OS.win.includes(process.platform) ? link.replace("file:///", "") :
-      SUPPORTED_OS.unix.includes(process.platform) ? link.replace("file://", "") :
-        link.replace("file://", "")
-    const parsedPath = path.parse(link)
-    link = parsedPath.dir + "/" + parsedPath.name + trimTags(parsedPath.ext)
-  }
-
-  logError({ replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart }, true);
-
-  return { replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart, q1: q1, q2: q2 };
 
 }
 

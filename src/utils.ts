@@ -10,7 +10,10 @@ import {
   USER_AGENT,
   NOTICE_TIMEOUT,
   APP_TITLE,
-  VERBOSE
+  VERBOSE,
+  SUPPORTED_OS,
+  ATT_SIZE_ACHOR,
+  MD_LINK
 } from "./config";
 
 import {
@@ -18,10 +21,6 @@ import {
   Notice,
   TFile
 } from "obsidian";
-
-import {
-  MarkdownLinkParser
-} from "./contentProcessor"
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
@@ -89,6 +88,49 @@ export function md5Sig(contentData: ArrayBuffer|Buffer = undefined) {
 }
 
 
+export function MarkdownLinkParser(match: RegExp | string): any {
+
+  let link: string, anchor: string, replp: any, caption = "", AttSize = "";
+  const keypart = match.groups?.keypart;
+  const q1 = match.groups?.q1;
+  const q2 = match.groups?.q2;
+  const isWikiEmbed = match[0].includes("![[");
+
+  logError("Match: " + match)
+
+  anchor = CtagsBrcks(match.groups?.anchor ?? "");
+
+
+  for (const attmatch of anchor.matchAll(ATT_SIZE_ACHOR)) {
+    AttSize = (attmatch.groups.attsize !== undefined) ? CtagsBrcks(attmatch.groups.attsize) :
+      (attmatch.groups.attsize2 !== undefined) ? CtagsBrcks(attmatch.groups.attsize2) :
+        "";
+  }
+
+  //a wikilink embed carries no alt text: the anchor must stay empty in markdown output mode
+  if (isWikiEmbed) { anchor = ""; }
+
+  link = CtagsBrcks(match.groups.link.match(MD_LINK)?.[0] ?? match.groups.link)
+  const protocol = link.slice(0, 5)
+  caption = CtagsBrcks(MD_LINK.test(match.groups.link) ? (match.groups.link.split(link)[1] ?? "") : "");
+  //keep the exact match text for frontmatter keys and wiki brackets: replaceAll searches for it literally
+  replp = (keypart !== undefined || isWikiEmbed) ? match[0] : trimAny(match[0], ["[", "(", "]"])
+
+  if (protocol == "file:") {
+    SUPPORTED_OS.win.includes(process.platform) ? link.replace("file:///", "") :
+      SUPPORTED_OS.unix.includes(process.platform) ? link.replace("file://", "") :
+        link.replace("file://", "")
+    const parsedPath = path.parse(link)
+    link = parsedPath.dir + "/" + parsedPath.name + trimTags(parsedPath.ext)
+  }
+
+  logError({ replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart }, true);
+
+  return { replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart, q1: q1, q2: q2 };
+
+}
+
+
 export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any) {
 
   logError("replaceAsync: \r\nstr: " + str + "\r\nregex: ")
@@ -130,10 +172,10 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
     if (Array.isArray(element)) {
       if (replaced.has(element[0])) { return; }
       replaced.add(element[0]);
-      logError("Replacing " + element[0] + " to " + element[1] + element[2]);
-      str = str.replaceAll(element[0], element[1] + element[2]);
+      logError("Replacing " + element[0] + " to " + element[1]);
+      str = str.replaceAll(element[0], element[1]);
       //the bare tag is what the metadata cache reports as an embed (no frontmatter key)
-      filesArr.push((element[3] !== undefined && element[3] !== "") ? element[3] : element[1]);
+      filesArr.push((element[2] !== undefined && element[2] !== "") ? element[2] : element[1]);
     }
     else if (element === null) {
       errorflag = true;

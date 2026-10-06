@@ -104,8 +104,8 @@ export interface ISettings {
   filesizeLimit: number,
   tryCount: number,
   realTimeUpdateInterval: number;
-  addNameOfFile: boolean;
   showNotifications: boolean;
+  contextMenuDownload: boolean;
   includeps: string;
   includepattern: string;
   mediaRootDir: string;
@@ -136,8 +136,8 @@ export const DEFAULT_SETTINGS: ISettings = {
   filesizeLimit: 0,
   tryCount: 2,
   realTimeUpdateInterval: 5,
-  addNameOfFile: true,
   showNotifications: true,
+  contextMenuDownload: true,
   includeps: "md|canvas",
   includepattern: "(?<md>.*\\.md)|(?<canvas>.*\\.canvas)",
   mediaRootDir: "_resources/${notename}",

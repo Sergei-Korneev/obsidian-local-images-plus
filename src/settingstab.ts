@@ -73,6 +73,18 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
+            .setName("Context menu: download single image")
+            .setDesc("Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.contextMenuDownload)
+                    .onChange(async (value) => {
+                        this.plugin.settings.contextMenuDownload = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
+        new Setting(containerEl)
             .setName("Disable additional commands")
             .setDesc("Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).")
             .addToggle((toggle) =>
@@ -380,19 +392,6 @@ export default class SettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.useCaptions)
                     .onChange(async (value) => {
                         this.plugin.settings.useCaptions = value
-                        await this.plugin.saveSettings()
-                    })
-            )
-
-
-        new Setting(containerEl)
-            .setName("Add original filename or 'Open file' tag")
-            .setDesc("Add [[original filename]] or [original filename](link to attachment) after replaced tag (only for file:// protocol or dropped/pasted files ).")
-            .addToggle((toggle) =>
-                toggle
-                    .setValue(this.plugin.settings.addNameOfFile)
-                    .onChange(async (value) => {
-                        this.plugin.settings.addNameOfFile = value
                         await this.plugin.saveSettings()
                     })
             )
