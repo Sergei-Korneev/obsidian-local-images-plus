@@ -103,6 +103,18 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
+            .setName("Process images in frontmatter")
+            .setDesc("Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.processFrontmatter)
+                    .onChange(async (value) => {
+                        this.plugin.settings.processFrontmatter = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
+        new Setting(containerEl)
             .setName("Automatic processing interval")
             .setDesc("Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.")
             .addText((text) =>

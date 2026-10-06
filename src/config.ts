@@ -25,7 +25,7 @@ export const HTML_EMBED = /(?<htmlem>\[{0,1}\<img.+?(?<src>src=.+?)\>)/gm
 
 export const ANCHOR_S = /(?<anchor>.+)\|(?<size>[0-9]+)/g
 
-export const MD_SEARCH_PATTERN =
+const MD_CORE_SEARCH_PATTERN =
 [
 //file link
 /\!\[(?<anchor>(.{0}|(?!^file\:\/)+?))\]\((?<link>((file\:\/)[^\!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
@@ -40,6 +40,36 @@ export const MD_SEARCH_PATTERN =
 
 ]
 
+//wikilink embed with remote url: ![[https://host/path.png]] or ![[https://host/path.png|300]]
+const WIKILINK_SEARCH_PATTERN =
+/\!\[\[(?<anchor>(?<link>https?:\/\/[^\]\|]+)(?:\|[^\]\|]*)?)\]\]/gm
+
+const SOURCE_KEY_EXCLUSION = "(?!(?:[sS][oO][uU][rR][cC][eE])[ \\t]*:)"
+
+//frontmatter value that is an embed: cover: ![[https://...]] or cover: "![[https://...]]"
+const FM_EMBED_SEARCH_PATTERN =
+new RegExp(
+  "^(?<keypart>[ \\t]*" + SOURCE_KEY_EXCLUSION + "[^\\s:#'\"][^:\\r\\n]*?[ \\t]*:[ \\t]*)" +
+  "(?<q1>['\"]?)!\\[\\[(?<anchor>(?<link>https?:\\/\\/[^\\]\\|]+)(?:\\|[^\\]\\|]*)?)\\]\\](?<q2>['\"]?)",
+  "gm"
+)
+
+//frontmatter value that is a bare url with a media extension: hero: "https://host/img.jpg"
+const FM_BARE_URL_SEARCH_PATTERN =
+new RegExp(
+  "^(?<keypart>[ \\t]*" + SOURCE_KEY_EXCLUSION + "[^\\s:#'\"][^:\\r\\n]*?[ \\t]*:[ \\t]*)" +
+  "(?<anchor>)(?<q1>['\"]?)" +
+  "(?<link>https?:\\/\\/[^\\s'\"]+\\.(?:png|jpe?g|gif|webp|svg|avif|bmp|tiff?|ico|pdf|epub|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip)(?:[?#][^\\s'\"]*)?)" +
+  "(?<q2>['\"]?)",
+  "gm"
+)
+
+export const MD_SEARCH_PATTERN = [...MD_CORE_SEARCH_PATTERN, WIKILINK_SEARCH_PATTERN]
+
+//patterns for the frontmatter part of a note (local links stay untouched)
+export const FRONTMATTER_DOWNLOAD_PATTERN =
+[FM_EMBED_SEARCH_PATTERN, FM_BARE_URL_SEARCH_PATTERN, ...MD_CORE_SEARCH_PATTERN]
+
 
 export const FRONTMATTER_SEARCH_PATTERN =
 [
@@ -49,7 +79,7 @@ export const FRONTMATTER_SEARCH_PATTERN =
 
 export const MD_LINK = /\http(s){0,1}.+?( {1}|\)\n)/g;
 
-export const URL_PATTERN = /http(s){0,1}\:\/\/.+/g;
+export const URL_PATTERN = /^(https?:\/\/)?[^\/]+/g;
 
 export const ANY_URL_PATTERN = /[a-zA-Z\d]+:\/\/(\w+:\w+@)?([a-zA-Z\d.-]+\.[A-Za-z]{2,4})(:\d+)?(\/.*)?/i;
 
@@ -65,6 +95,7 @@ export interface ISettings {
   processCreated: boolean,
   ignoredExt: string,
   processAll: boolean,
+  processFrontmatter: boolean,
   useCaptions: boolean,
   pathInTags: string,
   downUnknown: boolean,
@@ -96,6 +127,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   processCreated: true,
   ignoredExt: "cnt|php|htm|html",
   processAll: true,
+  processFrontmatter: true,
   useCaptions: true,
   pathInTags: "fullDirPath",
   downUnknown: false,

@@ -97,13 +97,19 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   let errorflag = false;
   const promises: Promise<any>[] = [];
   let filesArr: Array<string> = [];
+  const seen = new Set<string>();
 
 
   regex.forEach((regex_pattern) => {
+    //a shared /g regex may keep lastIndex from an earlier .test() call
+    regex_pattern.lastIndex = 0;
     const matches = str.matchAll(regex_pattern);
     for (const match of matches) {
       const ReplaceObj = MarkdownLinkParser(match);
       logError(ReplaceObj);
+      //the same match text can be produced by several patterns: download it only once
+      if (seen.has(ReplaceObj.replp)) { continue; }
+      seen.add(ReplaceObj.replp);
       const promise = asyncFn(ReplaceObj);
       logError(promise, true);
       promises.push(promise);
@@ -118,14 +124,18 @@ export async function replaceAsync(str: any, regex: Array<RegExp>, asyncFn: any)
   logError(data, true);
   //  return str.replace((reg: RegExp, str: String) => { 
 
+  const replaced = new Set<string>();
   data.forEach((element) => {
 
-    if (element !== null) {
+    if (Array.isArray(element)) {
+      if (replaced.has(element[0])) { return; }
+      replaced.add(element[0]);
       logError("Replacing " + element[0] + " to " + element[1] + element[2]);
       str = str.replaceAll(element[0], element[1] + element[2]);
-      filesArr.push(element[1]);
+      //the bare tag is what the metadata cache reports as an embed (no frontmatter key)
+      filesArr.push((element[3] !== undefined && element[3] !== "") ? element[3] : element[1]);
     }
-    else {
+    else if (element === null) {
       errorflag = true;
     }
   }
@@ -215,7 +225,7 @@ export async function readFromDisk(file: string): Promise<ArrayBuffer> {
 
 export async function downloadImage(url: string, referer: string = ""): Promise<ArrayBuffer> {
 
-  logError("Downloading: " + url, false);
+  logError("Downloading: " + url + " referer: " + referer, false);
   const headers = {
     'method': 'GET',
     'User-Agent': USER_AGENT,
@@ -225,6 +235,14 @@ export async function downloadImage(url: string, referer: string = ""): Promise<
   try {
     const res = await requestUrl({ url: url, headers })
     logError(res, true);
+    //requestUrl may resolve instead of throwing on 4xx/5xx: never treat an error page as an image
+    if (!(res.status >= 200 && res.status < 300)) {
+      logError("HTTP status " + res.status + " for " + url, false);
+      return null;
+    }
+    if (res.arrayBuffer == null || res.arrayBuffer.byteLength == 0) {
+      return null;
+    }
     return res.arrayBuffer;
   }
   catch (e) {

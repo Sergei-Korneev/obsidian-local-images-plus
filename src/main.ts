@@ -15,6 +15,8 @@ import {
   getMDir,
   getRDir,
   FrontMatterParser,
+  splitFrontmatter,
+  getFrontmatterSource,
 } from "./contentProcessor"
 
 import {
@@ -38,6 +40,7 @@ import {
   ISettings,
   DEFAULT_SETTINGS,
   MD_SEARCH_PATTERN,
+  FRONTMATTER_DOWNLOAD_PATTERN,
   NOTICE_TIMEOUT,
   TIMEOUT_LIKE_INFINITY,
   FRONTMATTER_SEARCH_PATTERN,
@@ -57,7 +60,7 @@ export default class LocalImagesPlugin extends Plugin {
   settings: ISettings
   modifiedQueue = new UniqueQueue<TFile>()
   intervalId = 0
-  newfProcInt: number
+  newfProcInt: number = 0
   newfCreated: Array<string> = []
   noteModified: Array<TFile> = []
   newfMoveReq: boolean = true
@@ -315,15 +318,48 @@ export default class LocalImagesPlugin extends Plugin {
 
     if (content.length == 0) { return null }
 
-    const fixedContent = await replaceAsync(
-      content,
-      MD_SEARCH_PATTERN,
-      imageTagProcessor(this,
-        file,
-        this.settings,
-        defaultdir
-      )
+    const [fmPart, bodyPart] = splitFrontmatter(content)
+
+    //frontmatter 'source' is used as the second referer when downloading
+    let source = ""
+    const cachedFm = this.app.metadataCache.getFileCache(file)?.frontmatter
+    if (cachedFm) {
+      for (const key of Object.keys(cachedFm)) {
+        if (key.toLowerCase() === "source" && typeof cachedFm[key] === "string") {
+          source = String(cachedFm[key]).trim()
+          break
+        }
+      }
+    }
+    if (!source) { source = getFrontmatterSource(fmPart) }
+
+    const processor = imageTagProcessor(this,
+      file,
+      this.settings,
+      defaultdir,
+      source
     )
+
+    //the frontmatter is processed first: a bare url match inside the body must not touch the yaml header
+    const fmFixed: any = (this.settings.processFrontmatter) ?
+      await replaceAsync(
+        fmPart,
+        FRONTMATTER_DOWNLOAD_PATTERN,
+        processor
+      ) :
+      [fmPart, false, []]
+
+    const bodyFixed = await replaceAsync(
+      bodyPart,
+      MD_SEARCH_PATTERN,
+      processor
+    )
+
+    const fixedContent: [string, boolean, Array<string>] = [
+      fmFixed[0] + bodyFixed[0],
+      fmFixed[1] || bodyFixed[1],
+      [...fmFixed[2], ...bodyFixed[2]]
+    ]
 
 
 
@@ -499,7 +535,13 @@ export default class LocalImagesPlugin extends Plugin {
         const metaCache = this.app.metadataCache.getFileCache(noteFile)
         const embeds = metaCache?.embeds
         const links = metaCache?.links
-        const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN)
+        let frembeds: { files: any[], urls: any[] } = { files: [], urls: [] };
+        try {
+          frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN)
+        } catch (e) {
+          logError("Frontmatter of " + noteFile.path + " skipped: " + e)
+          showBalloon("Frontmatter of '" + noteFile.path + "' skipped (parse error)", this.settings.showNotifications)
+        }
 logError(embeds)
 logError(links)
 
@@ -619,7 +661,13 @@ logError(allAttachments)
             const metaCache = this.app.metadataCache.getCache(file.path)
             const embeds = metaCache?.embeds
             const links = metaCache?.links
-            const frembeds = await FrontMatterParser(this, noteFile, FRONTMATTER_SEARCH_PATTERN)
+            let frembeds: { files: any[], urls: any[] } = { files: [], urls: [] };
+            try {
+              frembeds = await FrontMatterParser(this, file, FRONTMATTER_SEARCH_PATTERN)
+            } catch (e) {
+              logError("Frontmatter of " + file.path + " skipped: " + e)
+              showBalloon("Frontmatter of '" + file.path + "' skipped (parse error)", this.settings.showNotifications)
+            }
 
 
 
@@ -792,9 +840,7 @@ logError(allAttachments)
     return (pat.match(includeRegex) != null && trimAny(this.settings.ExcludedFoldersList, [" "]).length != 0)
   }
 
-  private processMdFilesOnTimer = async () => {
-
-    function onRet() {
+  private  onRet() {
       logError("onret")
       logError("noteModified")
      
@@ -806,9 +852,10 @@ logError(allAttachments)
       this.newfProcInt = 0
     }
 
+  private processMdFilesOnTimer = async () => {
+
     logError("processMdFilesOnTimer: \r\nNote:\r\n")
  
-
     try {
 
       window.clearInterval(this.newfProcInt)
@@ -830,7 +877,7 @@ logError(allAttachments)
           if (!this.settings.DoNotCreateObsFolder) {
             this.ensureFolderExists(obsmdir)
             showBalloon(`You obsidian media folder set to ${obsmdir}, and has been created by the plugin. Please, try again. `, this.settings.showNotifications)
-            onRet()
+            this.onRet()
           }
           return
         }
@@ -841,7 +888,7 @@ logError(allAttachments)
 
           await this.ensureFolderExists(mdir)
 
-          for (let el of embeds) {
+          for (let el of embeds ?? []) {
 
             logError(el)
 
@@ -989,9 +1036,9 @@ logError(allAttachments)
       }
     } catch (e) {
       logError(e)
-      onRet()
+      this.onRet()
     }
-    onRet()
+    this.onRet()
 
   }
 

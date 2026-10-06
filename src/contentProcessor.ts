@@ -23,7 +23,8 @@ import {
   md5Sig,
   getFileExt,
   blobToJpegArrayBuffer,
-  trimTags
+  trimTags,
+  showBalloon
 } from "./utils";
 
 import {
@@ -31,7 +32,8 @@ import {
   SUPPORTED_OS,
   ATT_SIZE_ACHOR,
   MD_LINK,
-  URL_PATTERN
+  URL_PATTERN,
+  NOTICE_TIMEOUT
 } from "./config";
 
 
@@ -41,16 +43,18 @@ import moment from "moment";
 export function imageTagProcessor(app: Plugin,
   noteFile: TFile,
   settings: ISettings,
-  defaultdir: boolean
+  defaultdir: boolean,
+  source: string = ""
 ) {
 
 
   //////////??????????????????????????????
   const unique = Math.random().toString(16).slice(2,);
+  const lock = new AsyncLock();
 
   async function processImageTag(replPattern: any) {
 
-    let { replp, anchor, link, protocol, caption, AttSize } = replPattern;
+    let { replp, anchor, link, protocol, caption, AttSize, keypart, q1, q2 } = replPattern;
 
 
 
@@ -62,7 +66,6 @@ export function imageTagProcessor(app: Plugin,
 
     try {
 
-      var lock = new AsyncLock();
       let fpath =  link.replace(protocol, "");
       let fileData: ArrayBuffer;
 
@@ -80,18 +83,27 @@ export function imageTagProcessor(app: Plugin,
         }
       }
       else {
-        //Try to download several times
+        //Try to download several times, rotating the referer: origin first, then frontmatter 'source'
+        const origin = link.match(URL_PATTERN) ? link.match(URL_PATTERN)[0] : "";
+        const referers: Array<string> = [];
+        for (const candidate of [origin, source]) {
+          const value = String(candidate ?? "").trim();
+          if (value.length != 0 && !referers.includes(value)) {
+            referers.push(value);
+          }
+        }
         let trycount = 0;
-        const referer = link.match(URL_PATTERN) ? link.match(URL_PATTERN)[0] : "";
         while (trycount < settings.tryCount) {
-          fileData = await downloadImage(link);
-          logError("\r\n\nDownloading (try): " + trycount + "\r\n\n");
+          const referer = (referers.length != 0) ? referers[trycount % referers.length] : "";
+          fileData = await downloadImage(link, referer);
+          logError("\r\n\nDownloading (try): " + trycount + " referer: " + referer + "\r\n\n");
           if (fileData !== null) { break; }
           trycount++;
         }
       }
       if (fileData === null) {
-        logError("Cannot copy/download an attachment!", false);
+        logError("Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.", false);
+        showBalloon("Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.", settings.showNotifications, NOTICE_TIMEOUT);
         return null;
       }
 
@@ -105,7 +117,7 @@ export function imageTagProcessor(app: Plugin,
 
         const mediaDir = await getMDir(app.app, noteFile, settings, defaultdir, unique);
 
-        const { fileName, needWrite } = await lock.acquire(replp, async function () {
+        const { fileName, needWrite } = await lock.acquire(link, async function () {
 
 
           const parsedUrl = new URL(link);
@@ -125,15 +137,16 @@ export function imageTagProcessor(app: Plugin,
             fileData,
             settings
           );
+
+          if (needWrite && fileName) {
+            await app.ensureFolderExists(mediaDir);
+            await app.app.vault.createBinary(fileName, fileData);
+          }
+
           return { fileName, needWrite };
         });
 
 
-
-        if (needWrite && fileName) {
-          await app.ensureFolderExists(mediaDir);
-          await app.app.vault.createBinary(fileName, fileData);
-        }
 
         if (fileName) {
 
@@ -161,21 +174,37 @@ export function imageTagProcessor(app: Plugin,
             }
           }
 
+          let imageTag = "";
+
           if (!app.app.vault.getConfig("useMarkdownLinks")) {
 
-            // image caption
-            caption = (!settings.useCaptions || !caption.length) ? "" : "\|" + caption;
+            // image size has higher priority, otherwise the caption is kept
+            if (!settings.useCaptions) {
+              caption = "";
+            } else if (AttSize.length) {
+              caption = "\|" + AttSize;
+            } else {
+              caption = caption.length ? "\|" + caption : "";
+            }
 
-            // image size has higher priority
-            caption = (!settings.useCaptions || !AttSize.length) ? "" : "\|" + AttSize;
-
-            return [replp, `![[${pathWiki}${caption}]]`, `${shortName}`];
+            imageTag = `![[${pathWiki}${caption}]]`;
           }
 
           else {
             (!settings.useCaptions || !caption.length) ? caption = "" : caption = " " + caption;
-            return [replp, `![${anchor}](${pathMd}${caption})`, `${shortName}`];
+            imageTag = `![${anchor}](${pathMd}${caption})`;
           }
+
+          //the tag without the frontmatter key: what the metadata cache reports as the embed
+          const bareImageTag = imageTag;
+
+          //frontmatter values must stay a valid yaml scalar: restore the key and the quotes
+          if (keypart !== undefined && keypart !== "") {
+            const quote = (q1 || q2) || `"`;
+            imageTag = keypart + quote + imageTag + quote;
+          }
+
+          return [replp, imageTag, `${shortName}`, bareImageTag];
 
 
 
@@ -353,26 +382,33 @@ export function NoteContentReplacer(NoteData: string, Patterns: Object) {
 
 }
 
-export function MarkdownLinkParser(match: RegExp | string): Object {
+export function MarkdownLinkParser(match: RegExp | string): any {
 
   let link: string, anchor: string, replp: any, caption = "", AttSize = "";
+  const keypart = match.groups?.keypart;
+  const q1 = match.groups?.q1;
+  const q2 = match.groups?.q2;
+  const isWikiEmbed = match[0].includes("![[");
 
   logError("Match: " + match)
 
-  anchor = CtagsBrcks(match.groups?.anchor);
+  anchor = CtagsBrcks(match.groups?.anchor ?? "");
 
 
-  for (const match of anchor.matchAll(ATT_SIZE_ACHOR)) {
-    AttSize = (match.groups.attsize !== undefined) ? CtagsBrcks(match.groups.attsize) :
-      (match.groups.attsize2 !== undefined) ? CtagsBrcks(match.groups.attsize2) :
+  for (const attmatch of anchor.matchAll(ATT_SIZE_ACHOR)) {
+    AttSize = (attmatch.groups.attsize !== undefined) ? CtagsBrcks(attmatch.groups.attsize) :
+      (attmatch.groups.attsize2 !== undefined) ? CtagsBrcks(attmatch.groups.attsize2) :
         "";
   }
 
+  //a wikilink embed carries no alt text: the anchor must stay empty in markdown output mode
+  if (isWikiEmbed) { anchor = ""; }
 
   link = CtagsBrcks(match.groups.link.match(MD_LINK)?.[0] ?? match.groups.link)
   const protocol = link.slice(0, 5)
   caption = CtagsBrcks(MD_LINK.test(match.groups.link) ? (match.groups.link.split(link)[1] ?? "") : "");
-  replp = trimAny(match[0], ["[", "(", "]"])
+  //keep the exact match text for frontmatter keys and wiki brackets: replaceAll searches for it literally
+  replp = (keypart !== undefined || isWikiEmbed) ? match[0] : trimAny(match[0], ["[", "(", "]"])
 
   if (protocol == "file:") {
     SUPPORTED_OS.win.includes(process.platform) ? link.replace("file:///", "") :
@@ -382,10 +418,27 @@ export function MarkdownLinkParser(match: RegExp | string): Object {
     link = parsedPath.dir + "/" + parsedPath.name + trimTags(parsedPath.ext)
   }
 
-  logError({ replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize }, true);
+  logError({ replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart }, true);
 
-  return { replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize };
+  return { replp: replp, anchor: anchor, link: link, protocol: protocol, caption: caption, AttSize: AttSize, keypart: keypart, q1: q1, q2: q2 };
 
+}
+
+
+//frontmatter block only: from the leading "---" line up to and including the closing "---" line
+const FRONTMATTER_SPLIT_PATTERN = /^---[ \t]*\r?\n(?:[\s\S]*?\r?\n)?---[ \t]*(?:\r?\n|$)/;
+
+export function splitFrontmatter(content: string): [string, string] {
+  const match = content.match(FRONTMATTER_SPLIT_PATTERN);
+  if (!match) { return ["", content]; }
+  return [content.slice(0, match[0].length), content.slice(match[0].length)];
+}
+
+export function getFrontmatterSource(fmPart: string): string {
+  if (!fmPart) { return ""; }
+  const match = fmPart.match(/^[ \t]*source[ \t]*:[ \t]*(.*)$/im);
+  if (!match) { return ""; }
+  return match[1].trim().replace(/^['"](.*)['"]$/, "$1").trim();
 }
 
 
@@ -403,6 +456,8 @@ export async function FrontMatterParser(app: Plugin, noteFile: TFile, SearchPatt
     Object.entries(frontmatter).forEach(([key, value]) => {
 
       for (const reg_p of SearchPattern) {
+        //a /g regex keeps lastIndex after .test() and would miss the next value
+        reg_p.lastIndex = 0;
         if (reg_p.test(String(value))) {
 
           const LocLinkfound = String(value).match(reg_p)?.groups?.loclink;
