@@ -312,11 +312,16 @@ export default class LocalImagesPlugin extends Plugin {
 
 
     this.app.workspace.on(
-
       "editor-paste",
       (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
         this.onPasteFunc(evt, editor, info)
+      }
+    )
 
+    this.app.workspace.on(
+      "editor-drop",
+      (evt: DragEvent, editor: Editor, info: MarkdownView) => {
+        this.onPasteFunc(evt as any, editor, info)
       }
     )
 
