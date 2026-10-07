@@ -19,9 +19,11 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 - Downloading any filetypes from web
 - Saving attachments next to note in folder named after  note
 - Downloading files embedded in markdown tags from web to vault 
+- Downloading individual remote images via context menu (right-click → Download this image)
 - Saving base64 embedded images to vault
+- Flexible file naming with templates (${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique})
 - Converting PNG images to JPEG images with various quality
-- Attachments de-dulication by using MD5 hashing algorithm
+- Attachments de-duplication by using MD5 hashing algorithm
 - Removing orphaned attachments from vault
 
 
