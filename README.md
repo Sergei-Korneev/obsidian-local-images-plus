@@ -32,6 +32,8 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 
 ## Installation
 
+**IMPORTANT: BEFORE INSTALLING THE NEW VERSION, DELETE ALL PREVIOUS VERSIONS OF THIS PLUGIN FROM `MYVAULT/.obsidian/plugins/`**
+
 - Download the latest version from [GitHub](https://github.com/Sergei-Korneev/obsidian-local-images-plus) / [GitHub page](https://sergei-korneev.github.io/obsidian-local-images-plus). [Read release notes](https://github.com/Sergei-Korneev/obsidian-local-images-plus/releases).
 - Remove obsidian-local-images plugin to avoid any conflicts.
 - Extract the archive into your Obsidian vault (e.g. Myvault/.obsidian/plugins)
@@ -126,7 +128,7 @@ This means you can place an attachment file anywhere within your vault, replace 
 
 Share your  wishes and ideas about this software or buy me a coffee (or hot chocolate)
 
-<a href="https://www.buymeacoffee.com/sergeikorneev" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;"></a>
+<a href="https://www.buymeacoffee.com/sergeikorneev" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" width="217"></a>
 
 ## Credits
 
