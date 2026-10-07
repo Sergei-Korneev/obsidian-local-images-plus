@@ -56,7 +56,7 @@ export default class SettingTab extends PluginSettingTab {
         containerEl.createEl("h1", { text: APP_TITLE })
 
         const donheader = containerEl.createEl("div")
-        // donheader.createEl("a", { text: "Support the project! ", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt" })
+        donheader.createEl("a", { text: "Support the project on Buy Me a Coffee", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt", target: "_blank" })
 
         containerEl.createEl("h3", { text: "Interface settings" })
 
@@ -212,16 +212,24 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Use MD5 for new attachments (Pasted images and files)")
-            .setDesc("The plugin will use MD5 when renaming all new attachments.")
-            .addToggle((toggle) =>
-                toggle
-                    .setValue(this.plugin.settings.useMD5ForNewAtt)
+            .setName("File name template")
+            .setDesc("Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use 'Folder to save new attachments' for subfolders.")
+            .addText((text) =>
+                text
+                    .setPlaceholder("${md5}_MD5")
+                    .setValue(this.plugin.settings.FileNameTemplate)
                     .onChange(async (value) => {
-                        this.plugin.settings.useMD5ForNewAtt = value
+                        if (value.includes("/") || value.includes("\\")) {
+                            displayError(
+                                "File name template cannot contain path separators. Use 'Folder to save new attachments' to set subfolders."
+                            )
+                            return
+                        }
+                        this.plugin.settings.FileNameTemplate = value
                         await this.plugin.saveSettings()
                     })
             )
+            .setDesc("Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.")
 
         new Setting(containerEl)
             .setName("Download unknown filetypes")

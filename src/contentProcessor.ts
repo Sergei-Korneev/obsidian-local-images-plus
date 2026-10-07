@@ -24,7 +24,10 @@ import {
   getFileExt,
   blobToJpegArrayBuffer,
   trimTags,
-  showBalloon
+  showBalloon,
+  renderNameTemplate,
+  resolveUniqueName,
+  FileNameCtx
 } from "./utils";
 
 import {
@@ -135,7 +138,11 @@ export function imageTagProcessor(app: Plugin,
             mediaDir,
             link,
             fileData,
-            settings
+            settings,
+            {
+              notename: noteFile.basename,
+              date: moment().format(settings.DateFormat)
+            }
           );
 
           if (needWrite && fileName) {
@@ -268,21 +275,20 @@ export async function getMDir(
   var attdir = settings.saveAttE;
   if (defaultdir) { attdir = "" };
   let root = "/";
+  const pathCtx: FileNameCtx = {
+    notename: noteFile.basename,
+    unique: unique,
+    date: current_date
+  };
 
   switch (attdir) {
 
     case 'inFolderBelow':
-      root = mediadir
-        .replace("${notename}", noteFile.basename)
-        .replace("${unique}", unique)
-        .replace("${date}", current_date);
+      root = renderNameTemplate(mediadir, pathCtx, "path");
       break;
 
     case 'nextToNoteS':
-      root = (pathJoin([noteFile.parent.path, mediadir]))
-        .replace("${notename}", noteFile.basename)
-        .replace("${unique}", unique)
-        .replace("${date}", current_date);
+      root = pathJoin([noteFile.parent.path, renderNameTemplate(mediadir, pathCtx, "path")]);
       break;
 
     default:
@@ -305,7 +311,8 @@ async function chooseFileName(
   dir: string,
   link: string,
   contentData: ArrayBuffer,
-  settings: ISettings
+  settings: ISettings,
+  ctx: FileNameCtx = {}
 ): Promise<{ fileName: string; needWrite: boolean }> {
   const parsedUrl = new URL(link);
   const ignoredExt = settings.ignoredExt.split("|");
@@ -324,34 +331,33 @@ async function chooseFileName(
   }
 
 
+  let rawName = parsedUrl.pathname;
+  try {
+    rawName = decodeURI(parsedUrl.pathname);
+  } catch (e) { }
+  const originalname = rawName.endsWith("/") ? "" : path.parse(rawName).name;
 
+  const nameCtx: FileNameCtx = {
+    ...ctx,
+    md5: md5Sig(contentData),
+    originalname: originalname,
+    unique: Math.random().toString(16).slice(2,)
+  };
 
-  const baseName = md5Sig(contentData);
+  const baseName = renderNameTemplate(settings.FileNameTemplate, nameCtx, "file");
 
-  let needWrite = true;
-  let fileName = "";
-  const suggestedName = pathJoin([dir, cFileName(`${baseName}` + `.${fileExt}`)]);
-  if (await adapter.exists(suggestedName, false)) {
-    const fileData = await adapter.readBinary(suggestedName);
-    const existing_file_md5 = md5Sig(fileData);
-    if (existing_file_md5 === baseName) {
-      fileName = suggestedName;
-      needWrite = false;
-    }
-    else {
-      fileName = pathJoin([dir, cFileName(Math.random().toString(9).slice(2,) + `.${fileExt}`)]);
-    }
-
-  } else {
-    fileName = suggestedName;
-  }
+  const { fileName, needWrite } = await resolveUniqueName(
+    adapter,
+    dir,
+    baseName,
+    fileExt,
+    nameCtx.md5
+  );
 
   logError("File name: " + fileName, false);
   if (!fileName) {
     throw new Error("Failed to generate file name for media file.");
   }
-
-  //linkHashes.ensureHashGenerated(link, contentData);
 
   return { fileName, needWrite };
 }

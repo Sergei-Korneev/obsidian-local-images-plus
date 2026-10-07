@@ -19,7 +19,8 @@ import {
 import {
   requestUrl,
   Notice,
-  TFile
+  TFile,
+  DataAdapter
 } from "obsidian";
 
 //import { TIMEOUT } from "dns";
@@ -77,7 +78,7 @@ export function md5Sig(contentData: ArrayBuffer|Buffer = undefined) {
     ].map(x => dec.decode(x)).join()
     ).toString();
 
-    return signature + "_MD5";
+    return signature;
   }
   catch (e) {
 
@@ -356,6 +357,95 @@ export function cFileName(name: string, sep: string = " ") {
     sep
   );
   return cleanedName;
+}
+
+export interface FileNameCtx {
+  md5?: string;
+  originalname?: string;
+  notename?: string;
+  date?: string;
+  unique?: string;
+  [key: string]: string | undefined;
+}
+
+const NAME_TEMPLATE_PATTERN = /\$\{(\w+)(?::(\d+))?\}/g;
+
+export const NAME_TEMPLATE_VARIABLES = ["md5", "originalname", "notename", "date", "unique"];
+
+//kind: "file" - result is a sanitized file name base (no extension), "path" - result is a folder path (kept as is)
+export function renderNameTemplate(
+  template: string,
+  ctx: FileNameCtx,
+  kind: "file" | "path" = "file"
+): string {
+  let rendered = (template || "").replace(
+    NAME_TEMPLATE_PATTERN,
+    (match: string, name: string, lenStr?: string) => {
+      const value = ctx[name];
+      if (value === undefined || value === null) {
+        return match;
+      }
+      if (lenStr !== undefined) {
+        const len = parseInt(lenStr, 10);
+        return len > 0 ? value.slice(0, len) : value;
+      }
+      return value;
+    }
+  );
+
+  if (kind !== "file") {
+    return rendered;
+  }
+
+  rendered = cFileName(rendered.replace(/[/\\?]+/g, " "));
+  rendered = rendered.replace(/\s+/g, " ").trim();
+  if (rendered.length > 200) {
+    rendered = rendered.slice(0, 200).replace(/[.\s]+$/, "");
+  }
+  rendered = rendered.replace(/^[.\s]+/, "").replace(/[.\s]+$/, "");
+
+  if (!rendered) {
+    rendered = ctx.md5 || "";
+  }
+  if (!rendered) {
+    rendered = "image";
+  }
+  return rendered;
+}
+
+//picks a file name: base + ext, appending " (N)" on collision.
+//if the candidate exists and holds the same content (contentHash), it is reused: needWrite = false
+export async function resolveUniqueName(
+  adapter: DataAdapter,
+  dir: string,
+  baseName: string,
+  fileExt: string,
+  contentHash: string,
+  readExisting: (filePath: string) => Promise<ArrayBuffer> = undefined
+): Promise<{ fileName: string; needWrite: boolean }> {
+  let ext = fileExt ? (fileExt.startsWith(".") ? fileExt : "." + fileExt) : "";
+  if (ext && baseName.toLowerCase().endsWith(ext.toLowerCase())) {
+    ext = "";
+  }
+  const reader = readExisting || ((filePath: string) => adapter.readBinary(filePath));
+
+  for (let counter = 0; counter < 10000; counter++) {
+    const suffix = counter ? ` (${counter})` : "";
+    const candidate = pathJoin([dir, baseName + suffix + ext]);
+    if (!await adapter.exists(candidate, false)) {
+      return { fileName: candidate, needWrite: true };
+    }
+    try {
+      const existing = await reader(candidate);
+      if (existing && md5Sig(existing) === contentHash) {
+        return { fileName: candidate, needWrite: false };
+      }
+    } catch (e) {
+      logError("Cannot read existing file: " + e, false);
+    }
+  }
+
+  throw new Error(`Cannot generate a unique file name: ${baseName}${ext}`);
 }
 
 export function trimTags(link: string){

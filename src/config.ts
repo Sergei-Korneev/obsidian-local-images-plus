@@ -110,7 +110,7 @@ export interface ISettings {
   includepattern: string;
   mediaRootDir: string;
   disAddCom: boolean;
-  useMD5ForNewAtt: boolean;
+  FileNameTemplate: string;
   removeMediaFolder: boolean;
   removeOrphansCompl: boolean;
   PngToJpeg: boolean;
@@ -142,7 +142,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   includepattern: "(?<md>.*\\.md)|(?<canvas>.*\\.canvas)",
   mediaRootDir: "_resources/${notename}",
   disAddCom: false,
-  useMD5ForNewAtt: true,
+  FileNameTemplate: "${md5}_MD5",
   removeMediaFolder: true,
   removeOrphansCompl: false,
   PngToJpeg: false,

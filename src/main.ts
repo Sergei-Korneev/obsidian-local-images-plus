@@ -34,7 +34,10 @@ import {
   blobToJpegArrayBuffer,
   getFileExt,
   trimTags,
-  readFromDiskB
+  readFromDiskB,
+  renderNameTemplate,
+  resolveUniqueName,
+  FileNameCtx
 } from "./utils"
 
 import {
@@ -51,6 +54,7 @@ import {
 
 import { UniqueQueue } from "./uniqueQueue"
 import path from "path"
+import moment from "moment"
 import { ModalW1 } from "./modal"
 const fs = require('fs').promises
 
@@ -1014,10 +1018,6 @@ logError(allAttachments)
               }
 
 
-              let newpath = pathJoin([mdir, cFileName(elBaseName)])
-              let { pathWiki, pathMd } = await getRDir(note, this.settings, newpath)
-              let newBinData: ArrayBuffer | null = null
-              let newMD5: string | null = null
               const oldBinData = await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, oldpath]), 5000)
               const oldMD5 = md5Sig(oldBinData)
               const fileExt = await getFileExt(oldBinData, oldpath)
@@ -1026,79 +1026,69 @@ logError(allAttachments)
               logError(oldBinData)
               logError("oldext: " + fileExt)
 
+              let newBinData: ArrayBuffer | null = null
+              let contentHash: string = oldMD5
+              let readExisting: (filePath: string) => Promise<ArrayBuffer> =
+                (filePath) => readFromDiskB(pathJoin([this.app.vault.adapter.basePath, filePath]), 5000)
+              let targetExt: string = path.extname(el.link)
+              if (!targetExt && fileExt && fileExt != "unknown") {
+                targetExt = "." + fileExt
+              }
+
               if (this.settings.PngToJpegLocal && fileExt == "png") {
                 const compExt = (this.settings.ImgCompressionType == "image/webp") ? ".webp" : ".jpeg"
                 logError("Compressing image to " + compExt)
 
                 newBinData = await blobToJpegArrayBuffer(await this.app.vault.adapter.readBinary(oldpath), this.settings.JpegQuality * 0.01, this.settings.ImgCompressionType)
-
-                newMD5 = md5Sig(newBinData)
                 logError("newBinData: ")
                 logError(newBinData)
 
-
-
                 if (newBinData != null) {
-                  newpath =
-                    (this.settings.useMD5ForNewAtt) ? pathJoin([mdir, newMD5 + compExt]) : pathJoin([mdir, cFileName(path.parse(el.link)?.name + compExt)]);
-                  ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
+                  contentHash = md5Sig(newBinData)
+                  targetExt = compExt
+                  readExisting = (filePath) => this.app.vault.adapter.readBinary(filePath)
                 }
-
-
-
-              } else if (this.settings.useMD5ForNewAtt) {
-                newpath = pathJoin([mdir, oldMD5 + path.extname(el.link)]);
-                ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
-
-
-              } else if (!this.settings.useMD5ForNewAtt) {
-                newpath = pathJoin([mdir, cFileName(elBaseName)]);
-                ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
               }
 
-              if (await this.app.vault.adapter.exists(newpath)) {
+              const nameCtx: FileNameCtx = {
+                md5: contentHash,
+                originalname: path.parse(el.link)?.name ?? "",
+                notename: note.basename,
+                date: moment().format(this.settings.DateFormat),
+                unique: Math.random().toString(16).slice(2,)
+              }
+              const baseName = renderNameTemplate(this.settings.FileNameTemplate, nameCtx, "file")
 
+              const resolved = await resolveUniqueName(
+                this.app.vault.adapter,
+                mdir,
+                baseName,
+                targetExt,
+                contentHash,
+                readExisting
+              )
+              const newpath = resolved.fileName
+              const needWrite = resolved.needWrite
+              let { pathWiki, pathMd } = await getRDir(note, this.settings, newpath)
 
-                const newFMD5 = (newBinData != null) ?
-                  md5Sig(await this.app.vault.adapter.readBinary(newpath)) :
-                  md5Sig(await readFromDiskB(pathJoin([this.app.vault.adapter.basePath, newpath]), 5000))
-
-                if (newMD5 === newFMD5 || (oldMD5 === newFMD5 && oldpath != newpath)) {
-
+              if (!needWrite) {
+                if (oldpath != newpath) {
                   logError(path.dirname(oldpath))
                   logError("Deleting duplicate file: " + oldpath)
                   await this.app.vault.adapter.remove(oldpath)
-
-                } else if (oldpath != newpath) {
-
-                  logError("Renaming existing: " + oldpath)
-                  let inc = 1
-                  while (await this.app.vault.adapter.exists(newpath)) {
-                    newpath = pathJoin([mdir, cFileName(elBaseName) + ` (${inc})`])
-                    inc++
-                  }
-
-                  ({ pathMd, pathWiki } = await getRDir(note, this.settings, newpath))
-                  await this.app.vault.adapter.rename(oldpath, newpath)
                 }
-
-              } else {
+              } else if (newpath != oldpath) {
                 logError(`renaming  ${oldpath}  to  ${newpath}`)
                 try {
                   if (newBinData != null) {
-                    await this.app.vault.adapter.writeBinary(newpath, newBinData).then(
-                    ); {
-                      await this.app.vault.adapter.remove(oldpath)
-                    }
+                    await this.app.vault.adapter.writeBinary(newpath, newBinData)
+                    await this.app.vault.adapter.remove(oldpath)
                   } else {
                     await this.app.vault.adapter.rename(oldpath, newpath)
                   }
-
                 } catch (error) {
                   logError(error)
                 }
-
-
               }
 
               const TagsParams = {
@@ -1221,7 +1211,14 @@ logError(allAttachments)
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+    const data = await this.loadData()
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, data)
+    if (data && typeof data.FileNameTemplate !== "string" && typeof data.useMD5ForNewAtt === "boolean") {
+      this.settings.FileNameTemplate = data.useMD5ForNewAtt ? "${md5}_MD5" : "${originalname}"
+    }
+    if ("useMD5ForNewAtt" in this.settings) {
+      delete (this.settings as any).useMD5ForNewAtt
+    }
     this.setupQueueInterval()
   }
 
