@@ -12,6 +12,8 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 
  
 
+> **Note for release 0.16.7:** I want to thank [this music channel](https://www.youtube.com/channel/UCcE10s4MFy4eed7q7QkonZg) and other musicians for helping me write this and other products ;)
+
 ## Main features of the plugin include:
 
 - Downloading media files from copied/pasted content of web pages
