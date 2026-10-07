@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js --environment BUILD:production",
-    "version": "0.16.7"this.version='$npm_package_version'\" && json -I -f versions.json -e \"this['$npm_package_version']='$(cat manifest.json | json minAppVersion)'\" && git add ."
+    "version": "npx ts-node --compiler-options \"{\"module\":\"commonjs\"}\" src/version-bump.ts"
   },
   "keywords": [],
   "author": "",
