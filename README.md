@@ -12,7 +12,7 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 
  
 
-> **Note for release 0.16.7:** I want to thank [First To Eleven](https://www.youtube.com/channel/UCcE10s4MFy4eed7q7QkonZg), [The Petersens](https://www.youtube.com/@ThePetersens) and the other guys for helping me write this and other software. ;)
+> **Note for release 0.16.7:** I want to thank [First To Eleven](https://youtu.be/CX8wttXDDbI), [The Petersens](https://youtu.be/1RjYGOslK50?t=660) and the other guys (including one AI) for helping me write this and other software. ;)
 
 ## Main features of the plugin include:
 
