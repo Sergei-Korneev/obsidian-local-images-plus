@@ -147,7 +147,12 @@ export function imageTagProcessor(app: Plugin,
 
           if (needWrite && fileName) {
             await app.ensureFolderExists(mediaDir);
-            await app.app.vault.createBinary(fileName, fileData);
+            try {
+              await app.app.vault.createBinary(fileName, fileData);
+            } catch (e) {
+              logError(e);
+              throw e;
+            }
           }
 
           return { fileName, needWrite };
