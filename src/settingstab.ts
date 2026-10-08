@@ -220,7 +220,7 @@ export default class SettingTab extends PluginSettingTab {
                     .onChange(async (value) => {
                         if (value.includes("/") || value.includes("\\")) {
                             displayError(
-                                "File name template cannot contain path separators. Use 'Folder to save new attachments' to set subfolders."
+t(this.app, "fileNameTemplateError")
                             )
                             return
                         }
@@ -231,8 +231,8 @@ export default class SettingTab extends PluginSettingTab {
             .setDesc("Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.")
 
         new Setting(containerEl)
-            .setName("Use markdown link format with angle brackets ![](<link>)")
-            .setDesc("Force using markdown link format with angle brackets instead of encoded URI when generating links.")
+            .setName(t(this.app, "useMarkdownAngle"))
+            .setDesc(t(this.app, "useMarkdownAngleDesc"))
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.useMarkdownLinkFormat)
@@ -243,8 +243,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("Process Canvas files")
-            .setDesc("Process images in Obsidian Canvas (.canvas files)")
+            .setName(t(this.app, "processCanvas"))
+            .setDesc(t(this.app, "processCanvasDesc"))
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.processCanvas)
@@ -255,8 +255,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName("URL exclude regexps")
-            .setDesc("One per line: regexps to exclude URLs when downloading. Examples:\n^https://example\\.com/.*\n.*ads\\..*")
+            .setName(t(this.app, "urlExcludeRegexps"))
+            .setDesc(t(this.app, "urlExcludeRegexpsDesc"))
             .addTextArea((text) => {
                 text
                     .setValue(this.plugin.settings.UrlExcludeRegexps || "")
@@ -269,8 +269,8 @@ export default class SettingTab extends PluginSettingTab {
             })
 
         new Setting(containerEl)
-            .setName("Download unknown filetypes")
-            .setDesc("Download unknown filetypes and save them with .unknown extension.")
+            .setName(t(this.app, "downloadUnknown"))
+            .setDesc(t(this.app, "downloadUnknownDesc"))
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.downUnknown)
