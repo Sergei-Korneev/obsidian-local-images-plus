@@ -538,6 +538,10 @@ export default class LocalImagesPlugin extends Plugin {
     logError("processActivePage")
     try {
       const activeFile = this.getCurrentNote()
+      if (!activeFile) {
+        showBalloon("Cannot get current note/canvas!", this.settings.showNotifications)
+        return
+      }
       await this.processPage(activeFile, defaultdir)
     } catch (e) {
       showBalloon(`Please select a note or click inside selected note in canvas.`, this.settings.showNotifications)
