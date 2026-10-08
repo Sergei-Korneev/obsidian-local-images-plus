@@ -243,6 +243,18 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
+            .setName("Process Canvas files")
+            .setDesc("Process images in Obsidian Canvas (.canvas files)")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.processCanvas)
+                    .onChange(async (value) => {
+                        this.plugin.settings.processCanvas = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
+        new Setting(containerEl)
             .setName("Download unknown filetypes")
             .setDesc("Download unknown filetypes and save them with .unknown extension.")
             .addToggle((toggle) =>

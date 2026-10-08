@@ -122,7 +122,8 @@ export interface ISettings {
   ImgCompressionType:string;
   ExcludedFoldersList:string;
   ExcludedFoldersListRegexp: string;
-  useMarkdownLinkFormat: boolean
+  useMarkdownLinkFormat: boolean;
+  processCanvas: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -155,5 +156,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   ImgCompressionType: "image/jpeg",
   ExcludedFoldersList: "",
   ExcludedFoldersListRegexp: "",
-  useMarkdownLinkFormat: false
+  useMarkdownLinkFormat: false,
+  processCanvas: true
 };

@@ -456,7 +456,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     if (file == null) { return null }
 
-    if (this.ExemplaryOfCANVAS(file.path)) {
+    if (this.settings.processCanvas && this.ExemplaryOfCANVAS(file.path)) {
       const content = await this.app.vault.cachedRead(file)
       if (content.length == 0) { return null }
       const processor = imageTagProcessor(this, file, this.settings, defaultdir, "markdown")
