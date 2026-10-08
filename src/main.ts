@@ -744,14 +744,14 @@ logError(allAttachments)
 
                   logError("file/image json")
 
-                  if (node.file) {
-                    allAttachmentsLinks.push(path.basename(node.file))
+                  const candidates = [node.file, node.url, node.path, node.source, node.image, node.media, node.link, node.attachment, node.resource, node.data]
+                  for (const c of candidates) {
+                    if (typeof c === "string" && c) {
+                      allAttachmentsLinks.push(path.basename(c))
+                    }
                   }
-                  if (node.url) {
-                    allAttachmentsLinks.push(path.basename(node.url))
-                  }
-                  if (node.path) {
-                    allAttachmentsLinks.push(path.basename(node.path))
+                  if (node.data && typeof node.data === "string" && node.data.startsWith("app://")) {
+                    allAttachmentsLinks.push(path.basename(node.data))
                   }
 
                 } else if (node.type == "text") {
