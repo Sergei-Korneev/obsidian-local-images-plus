@@ -49,6 +49,7 @@ import {
   NOTICE_TIMEOUT,
   TIMEOUT_LIKE_INFINITY,
   FRONTMATTER_SEARCH_PATTERN,
+  CANVAS_BARE_URL_PATTERN,
   TIME_DIFF
 } from "./config"
 
@@ -452,7 +453,10 @@ export default class LocalImagesPlugin extends Plugin {
       const content = await this.app.vault.cachedRead(file)
       if (content.length == 0) { return null }
       const processor = imageTagProcessor(this, file, this.settings, defaultdir, "markdown")
-      const fixed: any = await replaceAsync(content, MD_SEARCH_PATTERN, processor)
+      let fixed: any = await replaceAsync(content, MD_SEARCH_PATTERN, processor)
+      if (fixed[0] === content) {
+        fixed = await replaceAsync(content, CANVAS_BARE_URL_PATTERN, processor)
+      }
       if (fixed[0] !== content) {
         await this.app.vault.modify(file, fixed[0])
         showBalloon(`Image downloaded and linked in "${file.path}".`, this.settings.showNotifications)

@@ -64,6 +64,7 @@ new RegExp(
   "gm"
 )
 
+export const CANVAS_BARE_URL_PATTERN = /"(?<link>https?:\/\/[^\s"'{}\[\]]+\.(?:png|jpe?g|gif|webp|svg|avif|bmp|tiff?|ico|pdf|epub|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip)(?:[?#][^\s"'{}\[\]]*)?)"/gm;
 export const MD_SEARCH_PATTERN = [...MD_CORE_SEARCH_PATTERN, WIKILINK_SEARCH_PATTERN]
 
 //patterns for the frontmatter part of a note (local links stay untouched)
