@@ -439,6 +439,22 @@ export default class LocalImagesPlugin extends Plugin {
 
     if (file == null) { return null }
 
+    if (this.ExemplaryOfCANVAS(file.path)) {
+      // For canvas files, process similarly by extracting and replacing links in JSON? Or use existing logic on text nodes
+      // Simple approach: read as text and run replaceAsync on the whole content for MD patterns
+      const content = await this.app.vault.cachedRead(file)
+      if (content.length == 0) { return null }
+      const processor = imageTagProcessor(this, file, this.settings, defaultdir, "markdown")
+      const fixed: any = await replaceAsync(content, MD_SEARCH_PATTERN, processor)
+      if (fixed[0] !== content) {
+        await this.app.vault.modify(file, fixed[0])
+        showBalloon(`Image downloaded and linked in "${file.path}".`, this.settings.showNotifications)
+        return fixed[0]
+      }
+      return content
+    }
+
+
     const content = await this.app.vault.cachedRead(file)
 
     if (content.length == 0) { return null }
