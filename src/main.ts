@@ -351,16 +351,21 @@ export default class LocalImagesPlugin extends Plugin {
 
   private getCurrentNote(): TFile | null {
     try {
-      const canvasView: any = app.workspace.getActiveViewOfType((window as any).ItemView)
-      if (canvasView) {
-        logError("Active view type: " + canvasView.getViewType())
-      }
-      if (canvasView?.getViewType() === "canvas") {
-        const canvas = canvasView.canvas
-        logError("Canvas has file: " + (canvas?.file?.path || "no"))
-        if (canvas?.file) {
-          return canvas.file
+      try {
+        const leaf: any = app.workspace.activeLeaf
+        if (leaf?.view) {
+          const vtype = (leaf.view as any).getViewType ? (leaf.view as any).getViewType() : (leaf.view as any).type
+          logError("Active view type: " + vtype)
+          if (vtype === "canvas") {
+            const canvas = (leaf.view as any).canvas
+            logError("Canvas has file: " + (canvas?.file?.path || "no"))
+            if (canvas?.file) {
+              return canvas.file
+            }
+          }
         }
+      } catch (e) {
+        logError(e)
       }
       if (app.workspace.activeEditor?.file) {
         return app.workspace.activeEditor.file
