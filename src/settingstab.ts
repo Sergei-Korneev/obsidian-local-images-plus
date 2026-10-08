@@ -231,6 +231,18 @@ export default class SettingTab extends PluginSettingTab {
             .setDesc("Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.")
 
         new Setting(containerEl)
+            .setName("Use markdown link format with angle brackets ![](<link>)")
+            .setDesc("Force using markdown link format with angle brackets instead of encoded URI when generating links.")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.useMarkdownLinkFormat)
+                    .onChange(async (value) => {
+                        this.plugin.settings.useMarkdownLinkFormat = value
+                        await this.plugin.saveSettings()
+                    })
+            )
+
+        new Setting(containerEl)
             .setName("Download unknown filetypes")
             .setDesc("Download unknown filetypes and save them with .unknown extension.")
             .addToggle((toggle) =>

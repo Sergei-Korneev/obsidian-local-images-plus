@@ -157,11 +157,12 @@ export function imageTagProcessor(app: Plugin,
 
         if (fileName) {
 
-          let { pathWiki, pathMd } = await getRDir(noteFile, settings, fileName, link);
+          let { pathWiki, pathMd, pathMdAngle } = await getRDir(noteFile, settings, fileName, link);
 
           let imageTag = "";
 
-          if (!app.app.vault.getConfig("useMarkdownLinks")) {
+          const useMd = settings.useMarkdownLinkFormat || app.app.vault.getConfig("useMarkdownLinks");
+          if (!useMd) {
 
             // image size has higher priority, otherwise the caption is kept
             if (!settings.useCaptions) {
@@ -177,7 +178,8 @@ export function imageTagProcessor(app: Plugin,
 
           else {
             (!settings.useCaptions || !caption.length) ? caption = "" : caption = " " + caption;
-            imageTag = `![${anchor}](${pathMd}${caption})`;
+            const mdLink = settings.useMarkdownLinkFormat ? `<${pathMdAngle}>` : pathMd;
+            imageTag = `![${anchor}](${mdLink}${caption})`;
           }
 
           //the tag without the frontmatter key: what the metadata cache reports as the embed
@@ -225,6 +227,7 @@ export async function getRDir(noteFile: TFile,
   Promise<any> {
   let pathWiki = "";
   let pathMd = "";
+  let pathMdAngle = "";
 
   const notePath = normalizePath(noteFile.parent.path);
   const parsedPath = path.parse(normalizePath(fileName));
@@ -240,21 +243,24 @@ export async function getRDir(noteFile: TFile,
 
   switch (settings.pathInTags) {
     case "baseFileName":
-      pathWiki = pathMd = parsedPathE["basen"];
+      pathWiki = pathMd = pathMdAngle = parsedPathE["basen"];
       break;
     case "onlyRelative":
       pathWiki = pathJoin([path.relative(path.sep + notePath, path.sep + parsedPath["dir"]), parsedPathE["basen"]]);
       pathMd = encodeURI(pathWiki);
+      pathMdAngle = pathWiki;
       break;
     case "fullDirPath":
       pathWiki = normalizePath(fileName);
       pathMd = parsedPathE["pathuri"];
+      pathMdAngle = pathWiki;
       break;
     default:
       pathWiki = fileName;
       pathMd = parsedPathE["pathuri"];
+      pathMdAngle = pathWiki;
   };
-  return { pathWiki: pathWiki, pathMd: pathMd, parsedPathE: parsedPathE };
+  return { pathWiki: pathWiki, pathMd: pathMd, pathMdAngle: (pathMdAngle || pathWiki), parsedPathE: parsedPathE };
 
 }
 

@@ -1082,7 +1082,7 @@ logError(allAttachments)
               )
               const newpath = resolved.fileName
               const needWrite = resolved.needWrite
-              let { pathWiki, pathMd } = await getRDir(note, this.settings, newpath)
+              let { pathWiki, pathMd, pathMdAngle } = await getRDir(note, this.settings, newpath)
 
               if (!needWrite) {
                 if (oldpath != newpath) {
@@ -1114,12 +1114,13 @@ logError(allAttachments)
 
 
              // const vvv = MarkdownLinkParser(el.link);
-              const useMdLinks = this.app.vault.getConfig("useMarkdownLinks")
+              const useMdLinks = this.settings.useMarkdownLinkFormat || this.app.vault.getConfig("useMarkdownLinks")
 
               let newtag = oldtag.replace(el.link, pathWiki)
 
               if (useMdLinks) {
-                newtag = oldtag.replace(encObsURI(el.link), pathMd)
+                const mdLink = this.settings.useMarkdownLinkFormat ? `<${pathMdAngle}>` : pathMd
+                newtag = oldtag.replace(encObsURI(el.link), mdLink)
               }
 
 
