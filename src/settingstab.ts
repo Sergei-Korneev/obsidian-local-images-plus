@@ -226,7 +226,7 @@ export default class SettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
                     })
             )
-            .setDesc("Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.")
+            )
 
         new Setting(containerEl)
             .setName(t(this.app, "useMarkdownAngle"))
@@ -276,7 +276,8 @@ export default class SettingTab extends PluginSettingTab {
                         this.plugin.settings.downUnknown = value
                         await this.plugin.saveSettings()
                     })
-            )
+            ))
+
         new Setting(containerEl)
             .setName("Compress images (Web Images)")
             .setDesc("Compress all downloaded images. May reduce file size by several times, but can also affect performance.")
