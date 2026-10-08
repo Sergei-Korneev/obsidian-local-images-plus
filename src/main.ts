@@ -740,11 +740,19 @@ logError(allAttachments)
 
                 logError(node)
 
-                if (node.type === "file") {
+                if (node.type === "file" || node.type === "image") {
 
-                  logError("file json")
+                  logError("file/image json")
 
-                  allAttachmentsLinks.push(path.basename(node.file))
+                  if (node.file) {
+                    allAttachmentsLinks.push(path.basename(node.file))
+                  }
+                  if (node.url) {
+                    allAttachmentsLinks.push(path.basename(node.url))
+                  }
+                  if (node.path) {
+                    allAttachmentsLinks.push(path.basename(node.path))
+                  }
 
                 } else if (node.type == "text") {
 
