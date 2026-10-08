@@ -351,9 +351,13 @@ export default class LocalImagesPlugin extends Plugin {
 
   private getCurrentNote(): TFile | null {
     try {
-      const canvasView: any = app.workspace.getActiveViewOfType((window as any).ItemView || (app as any).ItemView)
+      const canvasView: any = app.workspace.getActiveViewOfType((window as any).ItemView)
+      if (canvasView) {
+        logError("Active view type: " + canvasView.getViewType())
+      }
       if (canvasView?.getViewType() === "canvas") {
         const canvas = canvasView.canvas
+        logError("Canvas has file: " + (canvas?.file?.path || "no"))
         if (canvas?.file) {
           return canvas.file
         }
@@ -547,10 +551,10 @@ export default class LocalImagesPlugin extends Plugin {
   // using arrow syntax for callbacks to correctly pass this context
 
   processActivePage = (defaultdir: boolean = false) => async () => {
-    logError("processActivePage")
+    logError("processActivePage START")
     try {
       const activeFile = this.getCurrentNote()
-      showBalloon("getCurrentNote: " + (activeFile ? activeFile.path : "null"), this.settings.showNotifications)
+      logError("getCurrentNote result: " + (activeFile ? activeFile.path : "null"))
       if (!activeFile) {
         showBalloon("Cannot get current note/canvas!", this.settings.showNotifications)
         return
