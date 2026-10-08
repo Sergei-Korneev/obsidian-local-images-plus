@@ -256,9 +256,7 @@ export default class SettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("URL exclude regexps")
-            .setDesc("One per line: regexps to exclude URLs when downloading. Example: 
-^https://example\.com/.*
-.*ads\..*")
+            .setDesc("One per line: regexps to exclude URLs when downloading. Examples:\n^https://example\\.com/.*\n.*ads\\..*")
             .addTextArea((text) => {
                 text
                     .setValue(this.plugin.settings.UrlExcludeRegexps || "")
