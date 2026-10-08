@@ -219,9 +219,7 @@ export default class SettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.FileNameTemplate)
                     .onChange(async (value) => {
                         if (value.includes("/") || value.includes("\\")) {
-                            displayError(
-t(this.app, "fileNameTemplateError")
-                            )
+                            displayError(t(this.app, "fileNameTemplateError"))
                             return
                         }
                         this.plugin.settings.FileNameTemplate = value
