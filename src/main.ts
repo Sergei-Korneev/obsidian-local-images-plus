@@ -637,7 +637,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
 
 
-      if (this.ExemplaryOfMD(noteFile.path)) {
+      if (this.ExemplaryOfMD(noteFile.path) || this.ExemplaryOfCANVAS(noteFile.path)) {
 
         oldRootdir = oldRootdir.replace("${notename}", path.parse(noteFile.path)?.name)
         oldRootdir = trimAny(pathJoin([path.parse(noteFile.path)?.dir, oldRootdir]), ["\/"])
@@ -674,6 +674,40 @@ logError(links)
           for (const link of links) {
             allAttachmentsLinks.push(path.parse(link.link).name + trimTags(path.parse(link.link).ext))
              logError(path.basename(link.link))
+          }
+        }
+        if (this.ExemplaryOfCANVAS(noteFile.path)) {
+          let canvasData;
+          try {
+            canvasData = JSON.parse(await app.vault.cachedRead(noteFile));
+          } catch (e) {
+            logError("Parse canvas data error");
+          }
+          if (canvasData && canvasData.nodes && canvasData.nodes.length > 0) {
+            for (const node of canvasData.nodes) {
+              if (node.type === "file" || node.type === "image") {
+                const candidates = [node.file, node.url, node.path, node.source, node.image, node.media, node.link, node.attachment, node.resource, node.data];
+                for (const c of candidates) {
+                  if (typeof c === "string" && c) {
+                    allAttachmentsLinks.push(path.basename(c));
+                  }
+                }
+                if (node.data && typeof node.data === "string" && node.data.startsWith("app://")) {
+                  allAttachmentsLinks.push(path.basename(node.data));
+                }
+              } else if (node.type == "text") {
+                try {
+                  const AllNodeLinks = (await this.app.internalPlugins.plugins.canvas.instance.index.parseText(node.text))?.links;
+                  if (AllNodeLinks) {
+                    for (const Nodelink of AllNodeLinks) {
+                      allAttachmentsLinks.push(path.basename(Nodelink.link));
+                    }
+                  }
+                } catch (e) {
+                  logError(e);
+                }
+              }
+            }
           }
         }
         if (allAttachments) {
