@@ -2,8 +2,7 @@ import {
     App,
     PluginSettingTab,
     Setting,
-} from "obsidian";
-import { translate } from "./i18n/index"
+} from "obsidian"
 
 import {
     displayError,
@@ -256,10 +255,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName(t(this.app, "URL exclude regexps"))
-            .setDesc("One per line: regexps to exclude URLs when downloading. Example: 
-^https://example\.com/.*
-.*ads\..*")
+            .setName("Регулярные выражения для исключения URL")
+            .setDesc("One per line: regexps to exclude URLs when downloading. Examples:\n^https://example\\.com/.*\n.*ads\\..*")
             .addTextArea((text) => {
                 text
                     .setValue(this.plugin.settings.UrlExcludeRegexps || "")
