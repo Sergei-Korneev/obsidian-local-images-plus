@@ -462,7 +462,6 @@ export default class LocalImagesPlugin extends Plugin {
       if (content.length == 0) { return null }
       const processor = imageTagProcessor(this, file, this.settings, defaultdir, "markdown")
       let fixed: any = await replaceAsync(content, MD_SEARCH_PATTERN, processor)
-      showBalloon("Processing canvas: " + file.path, this.settings.showNotifications)
             if (fixed[0] === content) {
         fixed = await replaceAsync(content, CANVAS_BARE_URL_PATTERN, processor)
       }
