@@ -355,8 +355,7 @@ export default class LocalImagesPlugin extends Plugin {
       if (leaf?.view) {
         try {
           const vtype = leaf.view.getViewType ? leaf.view.getViewType() : leaf.view.type
-          logError("Active view type: " + vtype)
-          if (vtype === "canvas" && leaf.view.canvas?.file) {
+              if (vtype === "canvas" && leaf.view.canvas?.file) {
             return leaf.view.canvas.file
           }
         } catch (e) { logError(e) }
@@ -458,7 +457,6 @@ export default class LocalImagesPlugin extends Plugin {
     if (file == null) { return null }
 
     if (this.ExemplaryOfCANVAS(file.path)) {
-      logError("CANVAS branch entered for: " + file.path)
       const content = await this.app.vault.cachedRead(file)
       if (content.length == 0) { return null }
       const processor = imageTagProcessor(this, file, this.settings, defaultdir, "markdown")
@@ -548,10 +546,9 @@ export default class LocalImagesPlugin extends Plugin {
   // using arrow syntax for callbacks to correctly pass this context
 
   processActivePage = (defaultdir: boolean = false) => async () => {
-    logError("processActivePage START")
+    logError("processActivePage")
     try {
       const activeFile = this.getCurrentNote()
-      logError("getCurrentNote result: " + (activeFile ? activeFile.path : "null"))
       if (!activeFile) {
         showBalloon("Cannot get current note/canvas!", this.settings.showNotifications)
         return
