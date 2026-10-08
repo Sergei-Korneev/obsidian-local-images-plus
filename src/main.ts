@@ -350,14 +350,21 @@ export default class LocalImagesPlugin extends Plugin {
 
   private getCurrentNote(): TFile | null {
     try {
-      const noteFile = app.workspace.activeEditor.file
-      return noteFile
+      if (app.workspace.activeEditor?.file) {
+        return app.workspace.activeEditor.file
+      }
+      const activeFile = app.workspace.getActiveFile()
+      if (activeFile) {
+        return activeFile
+      }
+      const leaf = app.workspace.activeLeaf
+      if (leaf?.view?.file) {
+        return leaf.view.file
+      }
     } catch (e) {
       showBalloon("Cannot get current note! ", this.settings.showNotifications)
-
     }
     return null
-
   }
 
 
