@@ -55,8 +55,7 @@ export default class SettingTab extends PluginSettingTab {
 
         containerEl.createEl("h1", { text: APP_TITLE })
 
-        const donheader = containerEl.createEl("div")
-        donheader.createEl("a", { text: "Support the project on Buy Me a Coffee", href: "https://www.buymeacoffee.com/sergeikorneev", cls: "donheader_txt", target: "_blank" })
+        /* Buy Me a Coffee link removed as requested */
 
         containerEl.createEl("h3", { text: "Interface settings" })
 
