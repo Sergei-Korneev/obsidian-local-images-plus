@@ -255,6 +255,22 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
+            .setName("URL exclude regexps")
+            .setDesc("One per line: regexps to exclude URLs when downloading. Example: 
+^https://example\.com/.*
+.*ads\..*")
+            .addTextArea((text) => {
+                text
+                    .setValue(this.plugin.settings.UrlExcludeRegexps || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.UrlExcludeRegexps = value
+                        await this.plugin.saveSettings()
+                    })
+                text.inputEl.rows = 4
+                text.inputEl.cols = 50
+            })
+
+        new Setting(containerEl)
             .setName("Download unknown filetypes")
             .setDesc("Download unknown filetypes and save them with .unknown extension.")
             .addToggle((toggle) =>

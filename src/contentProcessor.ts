@@ -67,6 +67,21 @@ export function imageTagProcessor(app: Plugin,
       return replp;
     }
 
+    // check url excludes
+    if (settings.UrlExcludeRegexps) {
+      const lines = settings.UrlExcludeRegexps.split(/[\n\r]+/).map(l => l.trim()).filter(l => l);
+      for (const r of lines) {
+        try {
+          if (new RegExp(r, "i").test(link)) {
+            logError("URL excluded by regexp: " + r + " -> " + link);
+            return replp;
+          }
+        } catch (e) {
+          logError("Bad exclude regexp: " + r + " " + e);
+        }
+      }
+    }
+
     try {
 
       let fpath =  link.replace(protocol, "");

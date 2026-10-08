@@ -124,6 +124,7 @@ export interface ISettings {
   ExcludedFoldersListRegexp: string;
   useMarkdownLinkFormat: boolean;
   processCanvas: boolean;
+  UrlExcludeRegexps: string;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -157,5 +158,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   ExcludedFoldersList: "",
   ExcludedFoldersListRegexp: "",
   useMarkdownLinkFormat: false,
-  processCanvas: true
+  processCanvas: true,
+  UrlExcludeRegexps: ""
 };
