@@ -351,6 +351,13 @@ export default class LocalImagesPlugin extends Plugin {
 
   private getCurrentNote(): TFile | null {
     try {
+      const canvasView: any = app.workspace.getActiveViewOfType((window as any).ItemView || (app as any).ItemView)
+      if (canvasView?.getViewType() === "canvas") {
+        const canvas = canvasView.canvas
+        if (canvas?.file) {
+          return canvas.file
+        }
+      }
       if (app.workspace.activeEditor?.file) {
         return app.workspace.activeEditor.file
       }
@@ -358,11 +365,12 @@ export default class LocalImagesPlugin extends Plugin {
       if (activeFile) {
         return activeFile
       }
-      const leaf = app.workspace.activeLeaf
+      const leaf: any = app.workspace.activeLeaf
       if (leaf?.view?.file) {
         return leaf.view.file
       }
     } catch (e) {
+      logError(e)
       showBalloon("Cannot get current note! ", this.settings.showNotifications)
     }
     return null
@@ -543,6 +551,7 @@ export default class LocalImagesPlugin extends Plugin {
     logError("processActivePage")
     try {
       const activeFile = this.getCurrentNote()
+      showBalloon("getCurrentNote: " + (activeFile ? activeFile.path : "null"), this.settings.showNotifications)
       if (!activeFile) {
         showBalloon("Cannot get current note/canvas!", this.settings.showNotifications)
         return
