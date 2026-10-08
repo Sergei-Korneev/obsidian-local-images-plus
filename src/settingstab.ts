@@ -229,8 +229,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName(t(this.app, "useMarkdownAngle"))
-            .setDesc(t(this.app, "useMarkdownAngleDesc"))
+            .setName("Use markdown link format with angle brackets ![](<link>)")
+            .setDesc("Force using markdown link format with angle brackets instead of encoded URI when generating links.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.useMarkdownLinkFormat)
@@ -241,8 +241,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName(t(this.app, "processCanvas"))
-            .setDesc(t(this.app, "processCanvasDesc"))
+            .setName("Process Canvas files")
+            .setDesc("Process images in Obsidian Canvas (.canvas files)")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.processCanvas)
@@ -253,8 +253,8 @@ export default class SettingTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName(t(this.app, "urlExcludeRegexps"))
-            .setDesc(t(this.app, "urlExcludeRegexpsDesc"))
+            .setName("URL exclude regexps")
+            .setDesc("One per line: regexps to exclude URLs when downloading. Examples:\n^https://example\\.com/.*\n.*ads\\..*")
             .addTextArea((text) => {
                 text
                     .setValue(this.plugin.settings.UrlExcludeRegexps || "")
@@ -267,8 +267,8 @@ export default class SettingTab extends PluginSettingTab {
             })
 
         new Setting(containerEl)
-            .setName(t(this.app, "downloadUnknown"))
-            .setDesc(t(this.app, "downloadUnknownDesc"))
+            .setName("Download unknown filetypes")
+            .setDesc("Download unknown filetypes and save them with .unknown extension.")
             .addToggle((toggle) =>
                 toggle
                     .setValue(this.plugin.settings.downUnknown)
