@@ -39,6 +39,7 @@ import {
   resolveUniqueName,
   FileNameCtx,
 } from "./utils";
+import { translate } from "./i18n/index";
 
 import {
   APP_TITLE,
@@ -579,7 +580,7 @@ export default class LocalImagesPlugin extends Plugin {
         this.newfCreatedByDownloader.push(element);
       });
 
-      this.Notify(`Attachments for "${file.path}" were processed.`);
+      this.Notify(translate("Attachments for '{p}' were processed.", [file.path]));
     } else if (content != fixedContent[0] && fixedContent[1] === true) {
       this.modifiedQueue.remove(file);
       await this.app.vault.modify(file, fixedContent[0]);
@@ -589,12 +590,12 @@ export default class LocalImagesPlugin extends Plugin {
       });
 
       this.Notify(
-        `WARNING!\r\nAttachments for "${file.path}" were processed, but some attachments were not downloaded/replaced...`
+        translate("WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...", [file.path])
       );
     } else {
       if (this.settings.showNotifications) {
         this.Notify(
-          `Page "${file.path}" has been processed, but nothing was changed.`
+          translate("Page '{p}' has been processed, but nothing was changed.", [file.path])
         );
       }
     }
@@ -609,7 +610,7 @@ export default class LocalImagesPlugin extends Plugin {
       try {
         const activeFile = this.getCurrentNote();
         if (!activeFile) {
-          this.Notify("Cannot get current note/canvas!");
+          this.Notify(translate("Cannot get current note/canvas!"));
           return;
         }
         await this.processPage(activeFile, defaultdir);
@@ -691,7 +692,7 @@ export default class LocalImagesPlugin extends Plugin {
             for (const reg_p of MD_SEARCH_PATTERN) {
               if (reg_p.test(cont)) {
                 logError("content: " + cont);
-                this.Notify("Media links were found, processing...");
+                this.Notify(translate("Media links were found, processing..."));
 
                 this.enqueueActivePage(activeFile);
                 this.setupQueueInterval();
@@ -888,7 +889,7 @@ export default class LocalImagesPlugin extends Plugin {
             );
             mod.open();
           } else {
-            this.Notify("No orphaned files found!");
+            this.Notify(translate("No orphaned files found!"));
           }
         }
       }
@@ -1059,7 +1060,7 @@ export default class LocalImagesPlugin extends Plugin {
           );
           mod.open();
         } else {
-          this.Notify("No orphaned files found!");
+          this.Notify(translate("No orphaned files found!"));
         }
       }
 
@@ -1085,7 +1086,7 @@ export default class LocalImagesPlugin extends Plugin {
           });
         }
 
-        this.Notify(filesToRemove.length + " file(s) " + msg);
+        this.Notify(translate("{p} file(s) {p1}", [String(filesToRemove.length), msg]));
       }
     };
 
@@ -1397,11 +1398,11 @@ export default class LocalImagesPlugin extends Plugin {
           }
           await this.app.vault.rename(noteFile, fullPath);
 
-          this.Notify(`The note was renamed to ` + fullPath);
+          this.Notify(translate("The note was renamed to {p}", [fullPath]));
         }
       }
     } catch (e) {
-      this.Notify(`Cannot rename.`);
+      this.Notify(translate("Cannot rename."));
       return;
     }
   };

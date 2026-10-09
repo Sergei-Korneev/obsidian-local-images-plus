@@ -129,4 +129,42 @@ export default {
     "Рядом с заметкой в папке, указанной ниже",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Невозможно скопировать/загрузить вложение! Попробуйте добавить referer в frontmatter поле 'source'.",
+
+  "Attachments for '{p}' were processed.": "Вложения для '{p}' обработаны.",
+
+  "WARNING!
+Attachments for '{p}' were processed, but some attachments were not downloaded/replaced...": "ВНИМАНИЕ!
+Вложения для '{p}' обработаны, но некоторые вложения не были загружены/заменены...",
+
+  "Page '{p}' has been processed, but nothing was changed.": "Страница '{p}' обработана, но ничего не изменилось.",
+
+  "Cannot get current note/canvas!": "Не удалось получить текущую заметку/холст!",
+
+  "The note/canvas file is not found! Try to save the file before running the command.": "Файл заметки/холста не найден! Попробуйте сохранить файл перед выполнением команды.",
+
+  "Media links were found, processing...": "Найдены медиа-ссылки, обрабатываю...",
+
+  "There were errors while processing files. Please, check the console for more details.": "Во время обработки файлов возникли ошибки. Проверьте консоль для получения подробной информации.",
+
+  "All files have been processed successfully. Let's check for orphaned files! (command: Find orphaned attachments)": "Все файлы успешно обработаны. Давайте проверим неиспользуемые вложения! (команда: Найти неиспользуемые вложения)",
+
+  "All attachments have been processed successfully.": "Все вложения успешно обработаны.",
+
+  "There were errors while processing some attachments. Please, check the console for more details.": "При обработке некоторых вложений возникли ошибки. Проверьте консоль для получения подробной информации.",
+
+  "No orphaned files found!": "Неиспользуемые файлы не найдены!",
+
+  "There were errors while finding orphaned files. Please, check the console for more details.": "При поиске неиспользуемых файлов возникли ошибки. Проверьте консоль для получения подробной информации.",
+
+  "Orphaned files were found. Check and remove them via the command: Find orphaned attachments": "Найдены неиспользуемые файлы. Проверьте и удалите их с помощью команды: Найти неиспользуемые вложения",
+
+  "{p} file(s) {p1}": "{p} файл(ов) {p1}",
+
+  "There were errors while removing orphaned files. Please, check the console for more details.": "При удалении неиспользуемых файлов возникли ошибки. Проверьте консоль для получения подробной информации.",
+
+  "Attachment folder name has been changed. Renaming notes is recommended (command: Rename notes in the current folder)!": "Имя папки вложений изменено. Рекомендуется переименовать заметки (команда: Переименовать заметки в текущей папке)!",
+
+  "The note was renamed to {p}": "Заметка переименована в {p}",
+
+  "Cannot rename.": "Невозможно переименовать.",
 };
