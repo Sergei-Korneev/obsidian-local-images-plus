@@ -126,4 +126,6 @@ export default {
   "In the root folder specified below": "У кореневій папці, вказаній нижче",
   "Next to note in the folder specified below":
     "Біля нотатки у вказаній нижче папці",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Неможливо скопіювати/завантажити вкладення! Спробуйте додати referer у поле 'source' frontmatter.",
 };

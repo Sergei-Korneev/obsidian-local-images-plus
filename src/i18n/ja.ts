@@ -123,4 +123,6 @@ export default {
   "In the root folder specified below": "下記指定のルートフォルダ内",
   "Next to note in the folder specified below":
     "下記指定フォルダ内でノートの隣",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "添付ファイルをコピー/ダウンロードできません！frontmatterの'source'フィールドにrefererを追加してみてください。",
 };

@@ -124,4 +124,6 @@ export default {
   "In the root folder specified below": "W folderze głównym podanym poniżej",
   "Next to note in the folder specified below":
     "Obok notatki w folderze podanym poniżej",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Nie można skopiować/pobrać załącznika! Spróbuj dodać referer w polu 'source' frontmatter.",
 };

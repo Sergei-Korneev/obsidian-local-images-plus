@@ -127,4 +127,6 @@ export default {
   "In the root folder specified below": "In de hieronder opgegeven rootmap",
   "Next to note in the folder specified below":
     "Naar de notitie in de hieronder opgegeven map",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Kan bijlage niet kopiëren/downloaden! Probeer referer toe te voegen aan het 'source' veld in frontmatter.",
 };

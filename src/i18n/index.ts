@@ -35,18 +35,31 @@ const dicts: Record<string, Record<string, string>> = {
   nl,
 };
 
-export function translate(key: string): string {
+export function translate(key: string, params?: string[]): string {
   logError("Translating: ");
   try {
     const lang = getLanguage() || "en";
     logError("App language: " + lang);
     const loc = String(lang).toLowerCase();
     if (lang === "en") {
-      return key;
+      return params ? formatString(key, params) : key;
     }
-    return dicts[loc][key] || key;
+    const trans = dicts[loc][key] || key;
+    return params ? formatString(trans, params) : trans;
   } catch (e) {
     logError("Translation error: " + String(e));
     return key;
   }
 }
+
+
+function formatString(template: string, params: string[]): string {
+  let result = template;
+  params.forEach((param) => {
+    result = result.replace('{p}', param);
+  });
+  return result;
+}
+
+// Usage
+///formatString("Text {p} text2 {p}", ["param1", "param2"]);

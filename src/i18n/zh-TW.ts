@@ -117,4 +117,6 @@ export default {
   "Copy Obsidian settings": "複製 Obsidian 設定",
   "In the root folder specified below": "在下方指定的根資料夾中",
   "Next to note in the folder specified below": "在下方指定資料夾中緊鄰筆記",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "無法複製/下載附件！請嘗試在 frontmatter 的 'source' 欄位中新增 referer。",
 };

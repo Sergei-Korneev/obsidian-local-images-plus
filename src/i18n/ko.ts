@@ -119,4 +119,6 @@ export default {
   "Copy Obsidian settings": "Obsidian 설정 복사",
   "In the root folder specified below": "아래 지정된 루트 폴더에",
   "Next to note in the folder specified below": "아래 지정된 폴더에서 노트 옆",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "첨부 파일을 복사/다운로드할 수 없습니다! frontmatter의 'source' 필드에 referer를 추가해 보세요.",
 };

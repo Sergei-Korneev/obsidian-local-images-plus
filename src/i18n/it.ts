@@ -125,4 +125,6 @@ export default {
     "Nella cartella radice specificata sotto",
   "Next to note in the folder specified below":
     "Accanto alla nota nella cartella specificata sotto",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Impossibile copiare/scaricare un allegato! Prova ad aggiungere referer nel campo 'source' del frontmatter.",
 };

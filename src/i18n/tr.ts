@@ -126,4 +126,6 @@ export default {
   "In the root folder specified below": "Aşağıda belirtilen kök klasörde",
   "Next to note in the folder specified below":
     "Aşağıda belirtilen klasörde notun yanında",
+
+  "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Ek kopyalanamıyor/indirilemiyor! Frontmatter 'source' alanına referer eklemeyi deneyin.",
 };
