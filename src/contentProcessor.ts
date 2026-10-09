@@ -23,6 +23,7 @@ import {
   resolveUniqueName,
   FileNameCtx,
 } from "./utils";
+import { translate } from "./i18n/index";
 
 import {
   ISettings,
@@ -123,7 +124,7 @@ export function imageTagProcessor(
           false
         );
         showBalloon(
-          "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.",
+          translate("Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field."),
           settings.showNotifications,
           NOTICE_TIMEOUT
         );
