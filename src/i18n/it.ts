@@ -127,4 +127,16 @@ export default {
     "Accanto alla nota nella cartella specificata sotto",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Impossibile copiare/scaricare un allegato! Prova ad aggiungere referer nel campo 'source' del frontmatter.",
+
+  "{p} file(s) {p}": "{p} file {p}",
+
+  "{p} attachments for note {p}": "{p} allegati per la nota {p}",
+
+  "{p} attachments for note {p}": "{p} allegati per la nota {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter di '{p}' saltato (errore di parsing)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "La cartella media di Obsidian impostata a {p} è stata creata dal plugin. Riprova.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "La cartella media di Obsidian impostata a {p} è stata cambiata in {p}. Potrebbe essere necessario aggiornare le impostazioni del plugin.",
 };

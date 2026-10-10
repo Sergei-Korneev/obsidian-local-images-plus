@@ -156,7 +156,7 @@ export default {
 
   "Orphaned files were found. Check and remove them via the command: Find orphaned attachments": "Найдены неиспользуемые файлы. Проверьте и удалите их с помощью команды: Найти неиспользуемые вложения",
 
-  "{p} file(s) {p1}": "{p} файл(ов) {p1}",
+  "{p} file(s) {p}": "{p} файл(ов) {p}",
 
   "There were errors while removing orphaned files. Please, check the console for more details.": "При удалении неиспользуемых файлов возникли ошибки. Проверьте консоль для получения подробной информации.",
 

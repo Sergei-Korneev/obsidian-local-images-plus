@@ -128,4 +128,16 @@ export default {
     "Біля нотатки у вказаній нижче папці",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Неможливо скопіювати/завантажити вкладення! Спробуйте додати referer у поле 'source' frontmatter.",
+
+  "{p} file(s) {p}": "{p} файл(ів) {p}",
+
+  "{p} attachments for note {p}": "{p} вкладень для нотатки {p}",
+
+  "{p} attachments for note {p}": "{p} вкладень для нотатки {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter '{p}' пропущено (помилка розбору)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Папка медіа Obsidian встановлена як {p} і створена плагіном. Спробуйте ще раз.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Папка медіа Obsidian змінена з {p} на {p}. Можливо, потрібно оновити налаштування плагіна.",
 };

@@ -119,4 +119,16 @@ export default {
   "Next to note in the folder specified below": "在下方指定文件夹中紧邻笔记",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "无法复制/下载附件！请尝试在 frontmatter 的 'source' 字段中添加 referer。",
+
+  "{p} file(s) {p}": "{p} 个文件 {p}",
+
+  "{p} attachments for note {p}": "笔记 {p} 的附件 {p}",
+
+  "{p} attachments for note {p}": "笔记 {p} 的附件 {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "已跳过 '{p}' 的 frontmatter（解析错误）",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian 媒体文件夹已设置为 {p} 并由插件创建。请重试。",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian 媒体文件夹已从 {p} 更改为 {p}。可能需要更新插件设置。",
 };

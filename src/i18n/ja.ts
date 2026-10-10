@@ -125,4 +125,16 @@ export default {
     "下記指定フォルダ内でノートの隣",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "添付ファイルをコピー/ダウンロードできません！frontmatterの'source'フィールドにrefererを追加してみてください。",
+
+  "{p} file(s) {p}": "{p}ファイル {p}",
+
+  "{p} attachments for note {p}": "ノート {p} の添付ファイル {p}",
+
+  "{p} attachments for note {p}": "ノート {p} の添付ファイル {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "'{p}' のフロントマターをスキップしました（解析エラー）",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidianメディアフォルダが{p}に設定され、プラグインによって作成されました。もう一度お試しください。",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidianメディアフォルダが{p}から{p}に変更されました。プラグイン設定の更新が必要な場合があります。",
 };

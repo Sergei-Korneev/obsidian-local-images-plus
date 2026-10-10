@@ -1080,7 +1080,7 @@ export default class LocalImagesPlugin extends Plugin {
           });
         }
 
-        this.Notify(translate("{p} file(s) {p1}", [String(filesToRemove.length), msg]));
+        this.Notify(translate("{p} file(s) {p}", [String(filesToRemove.length), msg]));
       }
     };
 

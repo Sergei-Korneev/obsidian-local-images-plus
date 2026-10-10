@@ -128,4 +128,16 @@ export default {
     "Aşağıda belirtilen klasörde notun yanında",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Ek kopyalanamıyor/indirilemiyor! Frontmatter 'source' alanına referer eklemeyi deneyin.",
+
+  "{p} file(s) {p}": "{p} dosya {p}",
+
+  "{p} attachments for note {p}": "{p} ekleri not {p}",
+
+  "{p} attachments for note {p}": "{p} ekleri not {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "'{p}' frontmatter atlandı (ayrıştırma hatası)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian medya klasörü {p} olarak ayarlandı ve eklenti tarafından oluşturuldu. Lütfen tekrar deneyin.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian medya klasörü {p} iken {p} olarak değiştirildi. Eklenti ayarlarının güncellenmesi gerekebilir.",
 };

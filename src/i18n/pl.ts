@@ -126,4 +126,16 @@ export default {
     "Obok notatki w folderze podanym poniżej",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Nie można skopiować/pobrać załącznika! Spróbuj dodać referer w polu 'source' frontmatter.",
+
+  "{p} file(s) {p}": "{p} plik(ów) {p}",
+
+  "{p} attachments for note {p}": "{p} załączników dla notatki {p}",
+
+  "{p} attachments for note {p}": "{p} załączników dla notatki {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Pominięto frontmatter '{p}' (błąd parsowania)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Folder mediów Obsidian ustawiony na {p} został utworzony przez wtyczkę. Spróbuj ponownie.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Folder mediów Obsidian ustawiony na {p} został zmieniony na {p}. Konieczna może być aktualizacja ustawień wtyczki.",
 };

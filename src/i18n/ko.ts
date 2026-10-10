@@ -121,4 +121,16 @@ export default {
   "Next to note in the folder specified below": "아래 지정된 폴더에서 노트 옆",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "첨부 파일을 복사/다운로드할 수 없습니다! frontmatter의 'source' 필드에 referer를 추가해 보세요.",
+
+  "{p} file(s) {p}": "{p}개 파일 {p}",
+
+  "{p} attachments for note {p}": "{p}개의 첨부파일 ({p})",
+
+  "{p} attachments for note {p}": "{p}개의 첨부파일 ({p})",
+
+  "Frontmatter of '{p}' skipped (parse error)": "'{p}'의 frontmatter 건너뜀 (구문 분석 오류)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian 미디어 폴더가 {p}로 설정되었으며 플러그인에 의해 생성되었습니다. 다시 시도하세요.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian 미디어 폴더가 {p}에서 {p}로 변경되었습니다. 플러그인 설정을 업데이트해야 할 수 있습니다.",
 };

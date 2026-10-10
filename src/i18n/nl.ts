@@ -129,4 +129,16 @@ export default {
     "Naar de notitie in de hieronder opgegeven map",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "Kan bijlage niet kopiëren/downloaden! Probeer referer toe te voegen aan het 'source' veld in frontmatter.",
+
+  "{p} file(s) {p}": "{p} bestand(en) {p}",
+
+  "{p} attachments for note {p}": "{p} bijlagen voor notitie {p}",
+
+  "{p} attachments for note {p}": "{p} bijlagen voor notitie {p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter van '{p}' overgeslagen (parsefout)",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "De mediummap van Obsidian is ingesteld op {p} en is door de plugin aangemaakt. Probeer het opnieuw.",
+
+  "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "De mediummap van Obsidian is gewijzigd van {p} naar {p}. Mogelijk moeten de plugininstellingen worden bijgewerkt.",
 };
