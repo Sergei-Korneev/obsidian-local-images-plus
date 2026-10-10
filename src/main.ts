@@ -611,9 +611,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
         await this.processPage(activeFile, defaultdir);
       } catch (e) {
-        this.Notify(
-          `Please select a note or click inside selected note in canvas.`
-        );
+        this.Notify(translate("Please select a note or click inside selected note in canvas."));
         return;
       }
     };
@@ -701,7 +699,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
     } catch (e) {
       this.Notify(
-        `Please select a note or click inside selected note in canvas.`
+        translate("Please select a note or click inside selected note in canvas.")
       );
       return;
     }
@@ -727,7 +725,7 @@ export default class LocalImagesPlugin extends Plugin {
           oldRootdir.includes("${date}")
         ) {
           this.Notify(
-            "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n"
+            translate("This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n")
           );
           return;
         }
@@ -736,7 +734,7 @@ export default class LocalImagesPlugin extends Plugin {
           noteFile = this.getCurrentNote();
           if (!noteFile) {
             this.Notify(
-              "Please, select a note or click inside a note in canvas!"
+              translate("Please, select a note or click inside a note in canvas!")
             );
             return;
           }
@@ -756,7 +754,7 @@ export default class LocalImagesPlugin extends Plugin {
           );
           if (!(await this.app.vault.exists(oldRootdir))) {
             this.Notify(
-              "The attachment folder " + oldRootdir + " does not exist!"
+              translate("The attachment folder {p} does not exist!", [oldRootdir])
             );
             return;
           }
@@ -776,7 +774,7 @@ export default class LocalImagesPlugin extends Plugin {
           } catch (e) {
             logError("Frontmatter of " + noteFile.path + " skipped: " + e);
             this.Notify(
-              "Frontmatter of '" + noteFile.path + "' skipped (parse error)"
+              translate("Frontmatter of '{p}' skipped (parse error)", [noteFile.path])
             );
           }
           logError(embeds);
@@ -893,7 +891,7 @@ export default class LocalImagesPlugin extends Plugin {
       if (type == "obsidian") {
         if (obsmediadir.slice(0, 2) == "./" || obsmediadir == "/") {
           this.Notify(
-            "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n"
+            translate("This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n")
           );
           return;
         }
@@ -992,7 +990,7 @@ export default class LocalImagesPlugin extends Plugin {
               } catch (e) {
                 logError("Frontmatter of " + file.path + " skipped: " + e);
                 this.Notify(
-                  "Frontmatter of '" + file.path + "' skipped (parse error)"
+                  translate("Frontmatter of '{p}' skipped (parse error)", [file.path])
                 );
               }
 
@@ -1195,7 +1193,7 @@ export default class LocalImagesPlugin extends Plugin {
           if (!this.settings.DoNotCreateObsFolder) {
             this.ensureFolderExists(obsmdir);
             this.Notify(
-              `You obsidian media folder set to ${obsmdir}, and has been created by the plugin. Please, try again. `
+              translate("You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.", [obsmdir])
             );
             this.onRet();
           }
@@ -1354,10 +1352,7 @@ export default class LocalImagesPlugin extends Plugin {
         if (itemcount > 0) {
           await this.app.vault.modify(note, filedata);
           this.Notify(
-            itemcount +
-              " attachments for note " +
-              note.path +
-              " were processed."
+            translate("{p} attachments for note {p} were processed.", [String(itemcount), note.path])
           );
           itemcount = 0;
         }
