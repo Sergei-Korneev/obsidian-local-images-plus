@@ -119,4 +119,52 @@ export default {
   "Next to note in the folder specified below": "在下方指定資料夾中緊鄰筆記",
 
   "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.": "無法複製/下載附件！請嘗試在 frontmatter 的 'source' 欄位中新增 referer。",
+
+  "Attachment folder was renamed to {p}": "附件資料夾已重新命名為 {p}",
+
+  "Attachment folder {p} was moved to trash can.": "附件資料夾 {p} 已移至垃圾桶。",
+
+  "Attachments for '{p}' were processed.": "已處理 '{p}' 的附件。",
+
+  "Cannot get current note! ": "無法獲取當前筆記! ",
+
+  "Cannot get current note/canvas!": "無法獲取當前筆記/canvas!",
+
+  "Cannot move attachment folder: \r\n{p}": "無法移動附件資料夾: \r\n{p}",
+
+  "Cannot rename.": "無法重命名。",
+
+  "Frontmatter of '{p}' skipped (parse error)": "已跳過 '{p}' 的 frontmatter（解析錯誤）",
+
+  "Image downloaded and linked in '{p}'.": "圖片已下載並在 '{p}' 中連結。",
+
+  "Media links were found, processing...": "找到媒體連結，正在處理...",
+
+  "No orphaned files found!": "未找到孤立檔案!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "頁面 '{p}' 已處理，但無變化。",
+
+  "Please select a note or click inside selected note in canvas.": "請選擇一條筆記或在畫布中點擊選中的筆記。",
+
+  "Please, select a note or click inside a note in canvas!": "請選擇一條筆記或在畫布中點擊筆記!",
+
+  "Remote image not found in '{p}' or it is already local.": "在 '{p}' 中未找到遠程圖片或其已為本地圖片。",
+
+  "Single image download failed: {p}": "單張圖片下載失敗: {p}",
+
+  "The attachment folder {p} does not exist!": "附件資料夾 {p} 不存在!",
+
+  "The note was renamed to {p}": "筆記已重新命名為 {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "此命令無法在 vault 根目錄或筆記旁的子資料夾中運行!\n請先更改設置!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "此命令需要啟用設置 '下方指定資料夾中的筆記旁' 和末尾的 '${notename}' 模式，路徑也不能包含 ${date} 模式。\n請先更改設置!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "警告!\r\n已處理 \'{p}\' 的附件，但某些附件未下載/替換...",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "您的 Obsidian 媒體資料夾設置為 {p} 並由外掛程式建立。請重試。",
+
+  "{p} attachments for note {p} were processed.": "已處理筆記 {p} 的 {p} 個附件。",
+
+  "{p} file(s) {p}": "{p} 個檔案 {p}",
 };

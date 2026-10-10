@@ -136,11 +136,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} pièces jointes pour la note {p}",
 
-  "{p} attachments for note {p}": "{p} pièces jointes pour la note {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "Frontmatter de '{p}' ignoré (erreur d'analyse)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Le dossier média Obsidian défini sur {p} a été créé par le plugin. Veuillez réessayer.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Le dossier média Obsidian défini sur {p} a été modifié en {p}. Veuillez noter que les paramètres du plugin peuvent devoir être mis à jour.",
+
+  "Attachment folder was renamed to {p}": "Le dossier des pièces jointes a été renommé en {p}",
+
+  "Attachment folder {p} was moved to trash can.": "Le dossier des pièces jointes {p} a été déplacé dans la corbeille.",
+
+  "Attachments for '{p}' were processed.": "Les pièces jointes pour '{p}' ont été traitées.",
+
+  "Cannot get current note! ": "Impossible d'obtenir la note actuelle! ",
+
+  "Cannot get current note/canvas!": "Impossible d\'obtenir la note/canvas actuelle!",
+
+  "Cannot move attachment folder: \r\n{p}": "Impossible de déplacer le dossier des pièces jointes: \r\n{p}",
+
+  "Cannot rename.": "Impossible de renommer.",
+
+  "Image downloaded and linked in '{p}'.": "Image téléchargée et liée dans '{p}'.",
+
+  "Media links were found, processing...": "Liens multimédias trouvés, traitement en cours...",
+
+  "No orphaned files found!": "Aucun fichier orphelin trouvé!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "La page '{p}' a été traitée, mais rien n'a changé.",
+
+  "Please select a note or click inside selected note in canvas.": "Veuillez sélectionner une note ou cliquer dans la note sélectionnée dans canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Veuillez sélectionner une note ou cliquer dans une note dans canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Image distante non trouvée dans '{p}' ou déjà locale.",
+
+  "Single image download failed: {p}": "Échec du téléchargement d'une image: {p}",
+
+  "The attachment folder {p} does not exist!": "Le dossier des pièces jointes {p} n'existe pas!",
+
+  "The note was renamed to {p}": "La note a été renommée en {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Cette commande ne peut pas s'exécuter à la racine du vault ou dans un sous-dossier à côté de la note!\nVeuillez d'abord modifier les paramètres!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Cette commande nécessite les paramètres 'À côté de la note dans le dossier spécifié ci-dessous' et le motif '${notename}' à la fin activé, aussi le chemin ne peut pas contenir le motif ${date}.\nVeuillez d'abord modifier les paramètres!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "ATTENTION!\r\nLes pièces jointes pour \'{p}\' ont été traitées, mais certaines pièces jointes n'ont pas été téléchargées/remplacées...",
+
+  "{p} attachments for note {p} were processed.": "{p} pièces jointes pour la note {p} ont été traitées.",
 };

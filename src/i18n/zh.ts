@@ -124,11 +124,52 @@ export default {
 
   "{p} attachments for note {p}": "笔记 {p} 的附件 {p}",
 
-  "{p} attachments for note {p}": "笔记 {p} 的附件 {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "已跳过 '{p}' 的 frontmatter（解析错误）",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian 媒体文件夹已设置为 {p} 并由插件创建。请重试。",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian 媒体文件夹已从 {p} 更改为 {p}。可能需要更新插件设置。",
+
+  "Attachment folder was renamed to {p}": "附件文件夹已重命名为 {p}",
+
+  "Attachment folder {p} was moved to trash can.": "附件文件夹 {p} 已移至废纸篓。",
+
+  "Attachments for '{p}' were processed.": "已处理 '{p}' 的附件。",
+
+  "Cannot get current note! ": "无法获取当前笔记! ",
+
+  "Cannot get current note/canvas!": "无法获取当前笔记/canvas!",
+
+  "Cannot move attachment folder: \r\n{p}": "无法移动附件文件夹: \r\n{p}",
+
+  "Cannot rename.": "无法重命名。",
+
+  "Image downloaded and linked in '{p}'.": "图片已下载并在 '{p}' 中链接。",
+
+  "Media links were found, processing...": "找到媒体链接，正在处理...",
+
+  "No orphaned files found!": "未找到孤立文件!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "页面 '{p}' 已处理，但无变化。",
+
+  "Please select a note or click inside selected note in canvas.": "请选择一条笔记或在画布中点击选中的笔记。",
+
+  "Please, select a note or click inside a note in canvas!": "请选择一条笔记或在画布中点击笔记!",
+
+  "Remote image not found in '{p}' or it is already local.": "在 '{p}' 中未找到远程图片或其已为本地图片。",
+
+  "Single image download failed: {p}": "单张图片下载失败: {p}",
+
+  "The attachment folder {p} does not exist!": "附件文件夹 {p} 不存在!",
+
+  "The note was renamed to {p}": "笔记已重命名为 {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "此命令无法在 vault 根目录或笔记旁的子文件夹中运行!\n请先更改设置!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "此命令需要启用设置 '下方指定文件夹中的笔记旁' 和末尾的 '${notename}' 模式，路径也不能包含 ${date} 模式。\n请先更改设置!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "警告!\r\n已处理 \'{p}\' 的附件，但某些附件未下载/替换...",
+
+  "{p} attachments for note {p} were processed.": "已处理笔记 {p} 的 {p} 个附件。",
 };

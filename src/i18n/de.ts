@@ -124,4 +124,52 @@ export default {
   "In the root folder specified below": "Im unten angegebenen Stammordner",
   "Next to note in the folder specified below":
     "Neben Notiz im unten angegebenen Ordner",
+
+  "Attachment folder was renamed to {p}": "Anhängeordner wurde in {p} umbenannt",
+
+  "Attachment folder {p} was moved to trash can.": "Anhängeordner {p} wurde in den Papierkorb verschoben.",
+
+  "Attachments for '{p}' were processed.": "Anhänge für '{p}' wurden verarbeitet.",
+
+  "Cannot get current note! ": "Aktuelle Notiz kann nicht ermittelt werden! ",
+
+  "Cannot get current note/canvas!": "Aktuelle Notiz/Canvas kann nicht ermittelt werden!",
+
+  "Cannot move attachment folder: \r\n{p}": "Anhängeordner kann nicht verschoben werden: \r\n{p}",
+
+  "Cannot rename.": "Kann nicht umbenannt werden.",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter von '{p}' übersprungen (Parse-Fehler)",
+
+  "Image downloaded and linked in '{p}'.": "Bild heruntergeladen und in '{p}' verlinkt.",
+
+  "Media links were found, processing...": "Medienlinks gefunden, wird verarbeitet...",
+
+  "No orphaned files found!": "Keine verwaiste Dateien gefunden!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "Seite '{p}' wurde verarbeitet, aber nichts hat sich geändert.",
+
+  "Please select a note or click inside selected note in canvas.": "Bitte wählen Sie eine Notiz oder klicken Sie in eine ausgewählte Notiz im Canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Bitte wählen Sie eine Notiz oder klicken Sie in eine Notiz im Canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Remote-Bild in '{p}' nicht gefunden oder bereits lokal.",
+
+  "Single image download failed: {p}": "Einzelner Bild-Download fehlgeschlagen: {p}",
+
+  "The attachment folder {p} does not exist!": "Der Anhängeordner {p} existiert nicht!",
+
+  "The note was renamed to {p}": "Die Notiz wurde in {p} umbenannt",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Dieser Befehl kann nicht im Vault-Stammverzeichnis oder in einem Unterordner neben der Notiz ausgeführt werden!\nBitte ändern Sie zuerst die Einstellungen!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Dieser Befehl erfordert die Einstellungen 'Neben Notiz im unten angegebenen Ordner' und das Muster '${notename}' am Ende aktiviert, der Pfad darf auch kein ${date}-Muster enthalten.\nBitte ändern Sie zuerst die Einstellungen!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "WARNUNG!\r\nAnhänge für \'{p}\' wurden verarbeitet, aber einige Anhänge wurden nicht heruntergeladen/ersetzt...",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Ihr Obsidian-Medienordner ist auf {p} gesetzt und wurde vom Plugin erstellt. Bitte versuchen Sie es erneut.",
+
+  "{p} attachments for note {p} were processed.": "{p} Anhänge für Notiz {p} wurden verarbeitet.",
+
+  "{p} file(s) {p}": "{p} Datei(en) {p}",
 };

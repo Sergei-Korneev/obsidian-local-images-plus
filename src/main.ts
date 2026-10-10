@@ -38,6 +38,7 @@ import {
   renderNameTemplate,
   resolveUniqueName,
   FileNameCtx,
+  MarkdownLinkParser,
 } from "./utils";
 import { translate } from "./i18n/index";
 
@@ -401,6 +402,49 @@ export default class LocalImagesPlugin extends Plugin {
     }
     return null;
   }
+
+  private collectBasenamesFromContent(content: string): string[] {
+    const basenames: string[] = [];
+    const seen = new Set<string>();
+    const patterns = [...MD_SEARCH_PATTERN, CANVAS_BARE_URL_PATTERN];
+    for (const regex of patterns) {
+      regex.lastIndex = 0;
+      const matches = content.matchAll(regex);
+      for (const match of matches) {
+        try {
+          const parsed = MarkdownLinkParser(match);
+          if (parsed && parsed.link) {
+            const b = path.basename(parsed.link);
+            if (b && !seen.has(b)) {
+              seen.add(b);
+              basenames.push(b);
+            }
+          }
+        } catch (e) {
+          logError(e);
+        }
+      }
+    }
+    // Also extract bare filenames (not URLs) that look like attachments from JSON
+    try {
+      const re = /"([^"]+\.(?:png|jpe?g|gif|webp|svg|bmp|tiff?|ico|avif|pdf|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip|7z|txt|md))"/gi;
+      let m;
+      while ((m = re.exec(content)) !== null) {
+        let fname = m[1];
+        if (fname.startsWith("http://") || fname.startsWith("https://")) continue;
+        fname = fname.replace(/^app:\/\/local\//, "").replace(/^app:\/\//, "");
+        fname = path.basename(fname);
+        if (fname && !seen.has(fname)) {
+          seen.add(fname);
+          basenames.push(fname);
+        }
+      }
+    } catch (e) {
+      logError(e);
+    }
+    return basenames;
+  }
+
 
   private normalizeRemoteUrl(link: string): string {
     const value = String(link ?? "").trim();
@@ -823,6 +867,11 @@ export default class LocalImagesPlugin extends Plugin {
                     node.attachment,
                     node.resource,
                     node.data,
+                    node.value,
+                    node.content,
+                    node.filename,
+                    node.name,
+                    node.encodedData,
                   ];
                   for (const c of candidates) {
                     if (typeof c === "string" && c) {
@@ -853,6 +902,18 @@ export default class LocalImagesPlugin extends Plugin {
                   }
                 }
               }
+            }
+            // Also scan raw canvas content for any links not caught by structured parsing
+            try {
+              const canvasContent = await app.vault.cachedRead(noteFile);
+              const extra = this.collectBasenamesFromContent(canvasContent);
+              for (const b of extra) {
+                if (!allAttachmentsLinks.includes(b)) {
+                  allAttachmentsLinks.push(b);
+                }
+              }
+            } catch (e) {
+              logError(e);
             }
           }
           if (allAttachments) {
@@ -935,6 +996,11 @@ export default class LocalImagesPlugin extends Plugin {
                       node.attachment,
                       node.resource,
                       node.data,
+                      node.value,
+                      node.content,
+                      node.filename,
+                      node.name,
+                      node.encodedData,
                     ];
                     for (const c of candidates) {
                       if (typeof c === "string" && c) {
@@ -970,6 +1036,18 @@ export default class LocalImagesPlugin extends Plugin {
                     }
                   }
                 }
+              }
+              // Also scan raw canvas content
+              try {
+                const canvasContent = await app.vault.cachedRead(file);
+                const extra = this.collectBasenamesFromContent(canvasContent);
+                for (const b of extra) {
+                  if (!allAttachmentsLinks.includes(b)) {
+                    allAttachmentsLinks.push(b);
+                  }
+                }
+              } catch (e) {
+                logError(e);
               }
             }
 

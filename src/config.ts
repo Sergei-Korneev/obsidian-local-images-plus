@@ -44,6 +44,10 @@ const MD_CORE_SEARCH_PATTERN =
 const WIKILINK_SEARCH_PATTERN =
 /\!\[\[(?<anchor>(?<link>https?:\/\/[^\]\|]+)(?:\|[^\]\|]*)?)\]\]/gm
 
+//wikilink embed with local files: ![[filename.png]] or ![[path/filename.png|300]]
+const WIKILINK_LOCAL_SEARCH_PATTERN =
+/\!\[\[(?<anchor>(?<link>(?!https?:\/\/)[^\]\|]+?)(?:\|[^\]\|]*)?)\]\]/gm
+
 const SOURCE_KEY_EXCLUSION = "(?!(?:[sS][oO][uU][rR][cC][eE])[ \\t]*:)"
 
 //frontmatter value that is an embed: cover: ![[https://...]] or cover: "![[https://...]]"
@@ -65,7 +69,7 @@ new RegExp(
 )
 
 export const CANVAS_BARE_URL_PATTERN = /"(?<link>https?:\/\/[^\s"'{}\[\]]+\.(?:png|jpe?g|gif|webp|svg|avif|bmp|tiff?|ico|pdf|epub|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip)(?:[?#][^\s"'{}\[\]]*)?)"/gm;
-export const MD_SEARCH_PATTERN = [...MD_CORE_SEARCH_PATTERN, WIKILINK_SEARCH_PATTERN]
+export const MD_SEARCH_PATTERN = [...MD_CORE_SEARCH_PATTERN, WIKILINK_SEARCH_PATTERN, WIKILINK_LOCAL_SEARCH_PATTERN]
 
 //patterns for the frontmatter part of a note (local links stay untouched)
 export const FRONTMATTER_DOWNLOAD_PATTERN =

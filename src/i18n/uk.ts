@@ -133,11 +133,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} вкладень для нотатки {p}",
 
-  "{p} attachments for note {p}": "{p} вкладень для нотатки {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "Frontmatter '{p}' пропущено (помилка розбору)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Папка медіа Obsidian встановлена як {p} і створена плагіном. Спробуйте ще раз.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Папка медіа Obsidian змінена з {p} на {p}. Можливо, потрібно оновити налаштування плагіна.",
+
+  "Attachment folder was renamed to {p}": "Папку вкладень перейменовано на {p}",
+
+  "Attachment folder {p} was moved to trash can.": "Папку вкладень {p} переміщено до кошика.",
+
+  "Attachments for '{p}' were processed.": "Вкладення для '{p}' оброблено.",
+
+  "Cannot get current note! ": "Не вдалося отримати поточну нотатку! ",
+
+  "Cannot get current note/canvas!": "Не вдалося отримати поточну нотатку/canvas!",
+
+  "Cannot move attachment folder: \r\n{p}": "Не вдалося перемістити папку вкладень: \r\n{p}",
+
+  "Cannot rename.": "Неможливо перейменувати.",
+
+  "Image downloaded and linked in '{p}'.": "Зображення завантажено та пов'язано у '{p}'.",
+
+  "Media links were found, processing...": "Знайдено медіа-посилання, обробка...",
+
+  "No orphaned files found!": "Невикористані файли не знайдено!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "Сторінка '{p}' оброблена, але нічого не змінилося.",
+
+  "Please select a note or click inside selected note in canvas.": "Будь ласка, оберіть нотатку або клацніть всередині вибраної нотатки в canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Будь ласка, оберіть нотатку або клацніть всередині нотатки в canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Віддалене зображення не знайдено в '{p}' або воно вже локальне.",
+
+  "Single image download failed: {p}": "Не вдалося завантажити зображення: {p}",
+
+  "The attachment folder {p} does not exist!": "Папка вкладень {p} не існує!",
+
+  "The note was renamed to {p}": "Нотатку перейменовано на {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Ця команда не може виконуватися в корені сховища або в підпапці поруч з нотаткою!\nБудь ласка, спочатку змініть налаштування!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Ця команда вимагає налаштування 'Поруч з нотаткою в папці, вказаній нижче' та шаблону '${notename}' в кінці, також шлях не може містити шаблон ${date}.\nБудь ласка, спочатку змініть налаштування!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "УВАГА!\r\nВкладення для \'{p}\' оброблено, але деякі вкладення не були завантажені/замінені...",
+
+  "{p} attachments for note {p} were processed.": "{p} вкладень для нотатки {p} оброблено.",
 };

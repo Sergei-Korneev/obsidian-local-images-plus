@@ -134,11 +134,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} bijlagen voor notitie {p}",
 
-  "{p} attachments for note {p}": "{p} bijlagen voor notitie {p}",
 
-  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter van '{p}' overgeslagen (parsefout)",
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter van '{p}' overgeslagen (parseerfout)",
 
-  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "De mediummap van Obsidian is ingesteld op {p} en is door de plugin aangemaakt. Probeer het opnieuw.",
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Jouw Obsidian mediamap is ingesteld op {p} en is aangemaakt door de plugin. Probeer het opnieuw.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "De mediummap van Obsidian is gewijzigd van {p} naar {p}. Mogelijk moeten de plugininstellingen worden bijgewerkt.",
+
+  "Attachment folder was renamed to {p}": "De bijlage map is hernoemd naar {p}",
+
+  "Attachment folder {p} was moved to trash can.": "De bijlage map {p} is verplaatst naar de prullenbak.",
+
+  "Attachments for '{p}' were processed.": "Bijlagen voor '{p}' zijn verwerkt.",
+
+  "Cannot get current note! ": "Huidige notitie kan niet worden opgehaald! ",
+
+  "Cannot get current note/canvas!": "Huidige notitie/canvas kan niet worden opgehaald!",
+
+  "Cannot move attachment folder: \r\n{p}": "Bijlage map kan niet worden verplaatst: \r\n{p}",
+
+  "Cannot rename.": "Kan niet hernoemd worden.",
+
+  "Image downloaded and linked in '{p}'.": "Afbeelding gedownload en gelinkt in '{p}'.",
+
+  "Media links were found, processing...": "Medialinks gevonden, verwerken...",
+
+  "No orphaned files found!": "Geen weesbestanden gevonden!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "Pagina '{p}' is verwerkt, maar niets is gewijzigd.",
+
+  "Please select a note or click inside selected note in canvas.": "Selecteer een notitie of klik in de geselecteerde notitie in canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Selecteer een notitie of klik in een notitie in canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Externe afbeelding niet gevonden in '{p}' of is al lokaal.",
+
+  "Single image download failed: {p}": "Download van enkele afbeelding mislukt: {p}",
+
+  "The attachment folder {p} does not exist!": "De bijlage map {p} bestaat niet!",
+
+  "The note was renamed to {p}": "De notitie is hernoemd naar {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Deze opdracht kan niet worden uitgevoerd in de root van de vault of in een submapp naast de notitie!\nWijzig eerst de instellingen!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Deze opdracht vereist de instelling 'Naast notitie in de onderstaand opgegeven map' en het patroon '${notename}' aan het einde ingeschakeld, ook mag het pad geen ${date} patroon bevatten.\nWijzig eerst de instellingen!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "WAARSCHUWING!\r\nBijlagen voor \'{p}\' zijn verwerkt, maar sommige bijlagen zijn niet gedownload/vervangen...",
+
+  "{p} attachments for note {p} were processed.": "{p} bijlagen voor notitie {p} zijn verwerkt.",
 };

@@ -131,11 +131,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} załączników dla notatki {p}",
 
-  "{p} attachments for note {p}": "{p} załączników dla notatki {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "Pominięto frontmatter '{p}' (błąd parsowania)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Folder mediów Obsidian ustawiony na {p} został utworzony przez wtyczkę. Spróbuj ponownie.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Folder mediów Obsidian ustawiony na {p} został zmieniony na {p}. Konieczna może być aktualizacja ustawień wtyczki.",
+
+  "Attachment folder was renamed to {p}": "Folder załączników został zmieniony na {p}",
+
+  "Attachment folder {p} was moved to trash can.": "Folder załączników {p} został przeniesiony do kosza.",
+
+  "Attachments for '{p}' were processed.": "Załączniki dla '{p}' zostały przetworzone.",
+
+  "Cannot get current note! ": "Nie można pobrać bieżącej notatki! ",
+
+  "Cannot get current note/canvas!": "Nie można pobrać bieżącej notatki/canvas!",
+
+  "Cannot move attachment folder: \r\n{p}": "Nie można przenieść folderu załączników: \r\n{p}",
+
+  "Cannot rename.": "Nie można zmienić nazwy.",
+
+  "Image downloaded and linked in '{p}'.": "Obraz pobrany i połączony w '{p}'.",
+
+  "Media links were found, processing...": "Znaleziono linki multimedialne, przetwarzanie...",
+
+  "No orphaned files found!": "Nie znaleziono plików osieroconych!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "Strona '{p}' została przetworzona, ale nic nie zmieniło się.",
+
+  "Please select a note or click inside selected note in canvas.": "Proszę wybrać notatkę lub kliknąć wewnątrz wybranej notatki w canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Proszę wybrać notatkę lub kliknąć wewnątrz notatki w canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Obraz zdalny nie znaleziony w '{p}' lub jest już lokalny.",
+
+  "Single image download failed: {p}": "Pobieranie pojedynczego obrazu nie powiodło się: {p}",
+
+  "The attachment folder {p} does not exist!": "Folder załączników {p} nie istnieje!",
+
+  "The note was renamed to {p}": "Notatka została zmieniona na {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "To polecenie nie może działać w głównym folderze vault ani w podfolderze obok notatki!\nProszę najpierw zmienić ustawienia!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "To polecenie wymaga ustawień 'Obok notatki w folderze określonym poniżej' i wzorca '${notename}' na końcu włączonego, ścieżka również nie może zawierać wzorca ${date}.\nProszę najpierw zmienić ustawienia!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "OSTRZEŻENIE!\r\nZałączniki dla \'{p}\' zostały przetworzone, ale niektóre załączniki nie zostały pobrane/zastąpione...",
+
+  "{p} attachments for note {p} were processed.": "{p} załączników dla notatki {p} przetworzono.",
 };

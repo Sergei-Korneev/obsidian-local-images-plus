@@ -130,11 +130,52 @@ export default {
 
   "{p} attachments for note {p}": "ノート {p} の添付ファイル {p}",
 
-  "{p} attachments for note {p}": "ノート {p} の添付ファイル {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "'{p}' のフロントマターをスキップしました（解析エラー）",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidianメディアフォルダが{p}に設定され、プラグインによって作成されました。もう一度お試しください。",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidianメディアフォルダが{p}から{p}に変更されました。プラグイン設定の更新が必要な場合があります。",
+
+  "Attachment folder was renamed to {p}": "添付ファイルフォルダが {p} にリネームされました",
+
+  "Attachment folder {p} was moved to trash can.": "添付ファイルフォルダ {p} がゴミ箱に移動されました。",
+
+  "Attachments for '{p}' were processed.": "'{p}' の添付ファイルが処理されました。",
+
+  "Cannot get current note! ": "現在のノートを取得できません! ",
+
+  "Cannot get current note/canvas!": "現在のノート/canvasを取得できません!",
+
+  "Cannot move attachment folder: \r\n{p}": "添付ファイルフォルダを移動できません: \r\n{p}",
+
+  "Cannot rename.": "リネームできません。",
+
+  "Image downloaded and linked in '{p}'.": "画像がダウンロードされ '{p}' にリンクされました。",
+
+  "Media links were found, processing...": "メディアリンクが見つかりました、処理中...",
+
+  "No orphaned files found!": "孤立ファイルが見つかりません!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "ページ '{p}' が処理されましたが、何も変更されませんでした。",
+
+  "Please select a note or click inside selected note in canvas.": "ノートを選択するか、キャンバスで選択したノート内をクリックしてください。",
+
+  "Please, select a note or click inside a note in canvas!": "ノートを選択するか、キャンバスでノート内をクリックしてください!",
+
+  "Remote image not found in '{p}' or it is already local.": "'{p}' でリモート画像が見つからないか、既にローカルです。",
+
+  "Single image download failed: {p}": "単一画像のダウンロードに失敗: {p}",
+
+  "The attachment folder {p} does not exist!": "添付ファイルフォルダ {p} が存在しません!",
+
+  "The note was renamed to {p}": "ノートが {p} にリネームされました",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "このコマンドは Vault のルートまたはノート隣のサブフォルダでは実行できません!\nまず設定を変更してください!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "このコマンドは、下記指定フォルダの 'ノートの隣' 設定と末尾の '${notename}' パターンが有効で、パスに ${date} パターンを含まないことが必要です。\nまず設定を変更してください!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "警告!\r\n\'{p}\' の添付ファイルが処理されましたが、一部の添付ファイルがダウンロード/置換されませんでした...",
+
+  "{p} attachments for note {p} were processed.": "ノート {p} の {p} 個の添付ファイルが処理されました。",
 };

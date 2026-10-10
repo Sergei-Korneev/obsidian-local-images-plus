@@ -126,11 +126,52 @@ export default {
 
   "{p} attachments for note {p}": "{p}개의 첨부파일 ({p})",
 
-  "{p} attachments for note {p}": "{p}개의 첨부파일 ({p})",
 
   "Frontmatter of '{p}' skipped (parse error)": "'{p}'의 frontmatter 건너뜀 (구문 분석 오류)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian 미디어 폴더가 {p}로 설정되었으며 플러그인에 의해 생성되었습니다. 다시 시도하세요.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian 미디어 폴더가 {p}에서 {p}로 변경되었습니다. 플러그인 설정을 업데이트해야 할 수 있습니다.",
+
+  "Attachment folder was renamed to {p}": "첨부 파일 폴더가 {p}(으)로 이름이 변경되었습니다",
+
+  "Attachment folder {p} was moved to trash can.": "첨부 파일 폴더 {p}가 휴지통으로 이동되었습니다.",
+
+  "Attachments for '{p}' were processed.": "'{p}'의 첨부 파일이 처리되었습니다.",
+
+  "Cannot get current note! ": "현재 노트를 가져올 수 없습니다! ",
+
+  "Cannot get current note/canvas!": "현재 노트/canvas를 가져올 수 없습니다!",
+
+  "Cannot move attachment folder: \r\n{p}": "첨부 파일 폴더를 이동할 수 없습니다: \r\n{p}",
+
+  "Cannot rename.": "이름 변경 불가.",
+
+  "Image downloaded and linked in '{p}'.": "이미지가 다운로드되어 '{p}'에 연결되었습니다.",
+
+  "Media links were found, processing...": "미디어 링크가 발견됨, 처리 중...",
+
+  "No orphaned files found!": "고아 파일을 찾을 수 없음!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "페이지 '{p}'가 처리되었으나 변경된 것이 없습니다.",
+
+  "Please select a note or click inside selected note in canvas.": "노트를 선택하거나 캔버스에서 선택한 노트 안을 클릭하세요.",
+
+  "Please, select a note or click inside a note in canvas!": "노트를 선택하거나 캔버스에서 노트 안을 클릭하세요!",
+
+  "Remote image not found in '{p}' or it is already local.": "'{p}'에서 원격 이미지를 찾을 수 없거나 이미 로컬에 있습니다.",
+
+  "Single image download failed: {p}": "단일 이미지 다운로드 실패: {p}",
+
+  "The attachment folder {p} does not exist!": "첨부 파일 폴더 {p}가 존재하지 않습니다!",
+
+  "The note was renamed to {p}": "노트가 {p}(으)로 이름이 변경되었습니다",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "이 명령은 볼트의 루트 또는 노트 옆의 하위 폴더에서 실행할 수 없습니다!\n먼저 설정을 변경하세요!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "이 명령은 아래 지정된 폴더의 '노트 옆' 설정과 끝에 '${notename}' 패턴이 활성화되어야 하며, 경로에 ${date} 패턴이 포함될 수 없습니다.\n먼저 설정을 변경하세요!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "경고!\r\n\'{p}\'의 첨부 파일이 처리되었으나 일부 첨부 파일이 다운로드/교체되지 않았습니다...",
+
+  "{p} attachments for note {p} were processed.": "노트 {p}의 {p}개 첨부 파일이 처리되었습니다.",
 };

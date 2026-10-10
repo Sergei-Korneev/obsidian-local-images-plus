@@ -133,11 +133,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} ekleri not {p}",
 
-  "{p} attachments for note {p}": "{p} ekleri not {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "'{p}' frontmatter atlandı (ayrıştırma hatası)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Obsidian medya klasörü {p} olarak ayarlandı ve eklenti tarafından oluşturuldu. Lütfen tekrar deneyin.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "Obsidian medya klasörü {p} iken {p} olarak değiştirildi. Eklenti ayarlarının güncellenmesi gerekebilir.",
+
+  "Attachment folder was renamed to {p}": "Ek dosya klasörü {p} olarak yeniden adlandırıldı",
+
+  "Attachment folder {p} was moved to trash can.": "Ek dosya klasörü {p} çöp kutusuna taşındı.",
+
+  "Attachments for '{p}' were processed.": "'{p}' için ekler işlendi.",
+
+  "Cannot get current note! ": "Mevcut not alınamıyor! ",
+
+  "Cannot get current note/canvas!": "Mevcut not/canvas alınamıyor!",
+
+  "Cannot move attachment folder: \r\n{p}": "Ek dosya klasörü taşınamıyor: \r\n{p}",
+
+  "Cannot rename.": "Yeniden adlandırılamıyor.",
+
+  "Image downloaded and linked in '{p}'.": "Resim indirildi ve '{p}' içinde bağlandı.",
+
+  "Media links were found, processing...": "Medya bağlantıları bulundu, işleniyor...",
+
+  "No orphaned files found!": "Baba eşi olmayan dosya bulunamadı!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "'{p}' sayfası işlendi ama hiçbir şey değişmedi.",
+
+  "Please select a note or click inside selected note in canvas.": "Lütfen bir not seçin veya canvas'ta seçili notun içine tıklayın.",
+
+  "Please, select a note or click inside a note in canvas!": "Lütfen bir not seçin veya canvas'ta bir notun içine tıklayın!",
+
+  "Remote image not found in '{p}' or it is already local.": "Uzak resim '{p}' içinde bulunamadı veya zaten yerel.",
+
+  "Single image download failed: {p}": "Tek resim indirme başarısız: {p}",
+
+  "The attachment folder {p} does not exist!": "Ek dosya klasörü {p} mevcut değil!",
+
+  "The note was renamed to {p}": "Not {p} olarak yeniden adlandırıldı",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Bu komut vault kökünde veya notun yanındaki alt klasörde çalıştırılamaz!\nLütfen önce ayarları değiştirin!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Bu komut, aşağıda belirtilen klasördeki 'Notun yanında' ayarının ve '${notename}' deseninin sonunda etkinleştirilmesini, ayrıca yolların ${date} desenini içermemesini gerektirir.\nLütfen önce ayarları değiştirin!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "UYARI!\r\n\'{p}\' için ekler işlendi ancak bazı ekler indirilmedi/değiştirilmedi...",
+
+  "{p} attachments for note {p} were processed.": "{p} not için {p} ek işlendi.",
 };

@@ -165,4 +165,34 @@ export default {
   "The note was renamed to {p}": "Заметка переименована в {p}",
 
   "Cannot rename.": "Невозможно переименовать.",
+
+  "Attachment folder was renamed to {p}": "Папка вложений переименована в {p}",
+
+  "Attachment folder {p} was moved to trash can.": "Папка вложений {p} перемещена в корзину.",
+
+  "Cannot get current note! ": "Не удалось получить текущую заметку! ",
+
+  "Cannot move attachment folder: \r\n{p}": "Не удалось переместить папку вложений: \r\n{p}",
+
+  "Frontmatter of '{p}' skipped (parse error)": "Frontmatter '{p}' пропущен (ошибка парсинга)",
+
+  "Image downloaded and linked in '{p}'.": "Изображение загружено и связано в '{p}'.",
+
+  "Please select a note or click inside selected note in canvas.": "Пожалуйста, выберите заметку или кликните внутри выбранной заметки в canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Пожалуйста, выберите заметку или кликните внутри заметки в canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Удаленное изображение не найдено в '{p}' или оно уже локально.",
+
+  "Single image download failed: {p}": "Не удалось загрузить изображение: {p}",
+
+  "The attachment folder {p} does not exist!": "Папка вложений {p} не существует!",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Эта команда не может выполняться в корне хранилища или в подпапке рядом с заметкой!\nПожалуйста, сначала измените настройки!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Эта команда требует настройки 'Рядом с заметкой в папке, указанной ниже' и шаблона '${notename}' в конце, также путь не может содержать шаблон ${date}.\nПожалуйста, сначала измените настройки!\r\n",
+
+  "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Ваша папка медиа Obsidian установлена на {p} и создана плагином. Пожалуйста, попробуйте снова.",
+
+  "{p} attachments for note {p} were processed.": "{p} вложений для заметки {p} обработано.",
 };

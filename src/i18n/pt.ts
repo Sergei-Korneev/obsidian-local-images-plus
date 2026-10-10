@@ -132,11 +132,52 @@ export default {
 
   "{p} attachments for note {p}": "{p} anexos para a nota {p}",
 
-  "{p} attachments for note {p}": "{p} anexos para a nota {p}",
 
   "Frontmatter of '{p}' skipped (parse error)": "Frontmatter de '{p}' ignorado (erro de análise)",
 
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "A pasta de multimédia do Obsidian definida como {p} foi criada pelo plugin. Tente novamente.",
 
   "You obsidian media folder set to {p}, and has been changed to {p}. Please, note that the plugin settings might need to be updated.": "A pasta de multimédia do Obsidian definida como {p} foi alterada para {p}. Pode ser necessário atualizar as definições do plugin.",
+
+  "Attachment folder was renamed to {p}": "A pasta de anexos foi renomeada para {p}",
+
+  "Attachment folder {p} was moved to trash can.": "A pasta de anexos {p} foi movida para a lixeira.",
+
+  "Attachments for '{p}' were processed.": "Os anexos para '{p}' foram processados.",
+
+  "Cannot get current note! ": "Não foi possível obter a nota atual! ",
+
+  "Cannot get current note/canvas!": "Não é possível obter a nota/canvas atual!",
+
+  "Cannot move attachment folder: \r\n{p}": "Não é possível mover a pasta de anexos: \r\n{p}",
+
+  "Cannot rename.": "Não é possível renomear.",
+
+  "Image downloaded and linked in '{p}'.": "Imagem baixada e vinculada em '{p}'.",
+
+  "Media links were found, processing...": "Links de mídia encontrados, processando...",
+
+  "No orphaned files found!": "Nenhum arquivo órfão encontrado!",
+
+  "Page '{p}' has been processed, but nothing was changed.": "A página '{p}' foi processada, mas nada mudou.",
+
+  "Please select a note or click inside selected note in canvas.": "Por favor, selecione uma nota ou clique dentro da nota selecionada no canvas.",
+
+  "Please, select a note or click inside a note in canvas!": "Por favor, selecione uma nota ou clique dentro de uma nota no canvas!",
+
+  "Remote image not found in '{p}' or it is already local.": "Imagem remota não encontrada em '{p}' ou já é local.",
+
+  "Single image download failed: {p}": "Falha no download de imagem única: {p}",
+
+  "The attachment folder {p} does not exist!": "A pasta de anexos {p} não existe!",
+
+  "The note was renamed to {p}": "A nota foi renomeada para {p}",
+
+  "This command cannot run on vault's root or on subfolder next to note!\nPlease, change settings first!\r\n": "Este comando não pode ser executado na raiz do vault ou em subpasta ao lado da nota!\nPor favor, altere as configurações primeiro!\r\n",
+
+  "This command requires the settings 'Next to note in the folder specified below' and pattern '${notename}' at the end to be enabled, also the path cannot contain ${date} pattern.\nPlease, change settings first!\r\n": "Este comando requer as configurações 'Ao lado da nota na pasta especificada abaixo' e o padrão '${notename}' no final habilitado, também o caminho não pode conter o padrão ${date}.\nPor favor, altere as configurações primeiro!\r\n",
+
+  "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "AVISO!\r\nAnexos para \'{p}\' foram processados, mas alguns anexos não foram baixados/substituídos...",
+
+  "{p} attachments for note {p} were processed.": "{p} anexos para a nota {p} foram processados.",
 };
