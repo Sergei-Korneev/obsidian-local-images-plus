@@ -240,9 +240,7 @@ export default class LocalImagesPlugin extends Plugin {
               app.vault.getAbstractFileByPath(rootdir),
               useSysTrash
             );
-            this.Notify(
-              "Attachment folder " + rootdir + " was moved to trash can."
-            );
+            this.Notify(translate("Attachment folder {p} was moved to trash can.", [rootdir]));
           }
         } catch (e) {
           logError(e);
@@ -291,10 +289,10 @@ export default class LocalImagesPlugin extends Plugin {
             await this.ensureFolderExists(path.dirname(newRootDir_));
             //await this.app.fileManager.renameFile(app.vault.getAbstractFileByPath(oldRootdir),newRootDir)
             await this.app.vault.adapter.rename(oldRootdir_, newRootDir_);
-            this.Notify("Attachment folder was renamed to " + newRootDir_);
+            this.Notify(translate("Attachment folder was renamed to {p}", [newRootDir_]));
           }
         } catch (e) {
-          this.Notify("Cannot move attachment folder: \r\n" + e);
+          this.Notify(translate("Cannot move attachment folder: \r\n{p}", [String(e)]));
           logError(e);
           return;
         }
@@ -399,7 +397,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
     } catch (e) {
       logError(e);
-      this.Notify("Cannot get current note! ");
+      this.Notify(translate("Cannot get current note! "));
     }
     return null;
   }
@@ -489,15 +487,13 @@ export default class LocalImagesPlugin extends Plugin {
 
       if (newContent !== content) {
         await this.app.vault.modify(file, newContent);
-        this.Notify(`Image downloaded and linked in "${file.path}".`);
+        this.Notify(translate("Image downloaded and linked in '{p}'.", [file.path]));
       } else if (!failed) {
-        this.Notify(
-          `Remote image not found in "${file.path}" or it is already local.`
-        );
+        this.Notify(translate("Remote image not found in '{p}' or it is already local.", [file.path]));
       }
     } catch (e) {
       logError("Single image download failed: " + e, false);
-      this.Notify("Single image download failed: " + e.message);
+      this.Notify(translate("Single image download failed: {p}", [e.message]));
     }
   }
 
@@ -531,7 +527,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
       if (fixed[0] !== content) {
         await this.app.vault.modify(file, fixed[0]);
-        this.Notify(`Image downloaded and linked in "${file.path}".`);
+        this.Notify(translate("Image downloaded and linked in '{p}'.", [file.path]));
         return fixed[0];
       }
       return content;

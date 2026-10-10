@@ -132,9 +132,7 @@ export default {
 
   "Attachments for '{p}' were processed.": "Вложения для '{p}' обработаны.",
 
-  "WARNING!
-Attachments for '{p}' were processed, but some attachments were not downloaded/replaced...": "ВНИМАНИЕ!
-Вложения для '{p}' обработаны, но некоторые вложения не были загружены/заменены...",
+  "WARNING!\r\nAttachments for '{p}' were processed, but some attachments were not downloaded/replaced...": "ВНИМАНИЕ!\r\nВложения для '{p}' обработаны, но некоторые вложения не были загружены/заменены...",
 
   "Page '{p}' has been processed, but nothing was changed.": "Страница '{p}' обработана, но ничего не изменилось.",
 
