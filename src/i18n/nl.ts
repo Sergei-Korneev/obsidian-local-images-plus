@@ -15,6 +15,9 @@ export default {
   "Process images in frontmatter": "Afbeeldingen in frontmatter verwerken",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "Afbeeldingslinks in de YAML frontmatter downloaden en lokaliseren. Wanneer uitgeschakeld blijft het frontmatter-blok ongewijzigd ('source' sleutel wordt nog steeds gebruikt als referer voor body-afbeeldingen).",
+  "Plain paths in frontmatter": "Gewone paden in frontmatter",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "Schrijf gewone bestandspaden in YAML frontmatter in plaats van ![[embed]]-links. Nodig voor afbeeldingseigenschappen in Bases. Links in de body worden niet beïnvloed.",
   "Automatic processing interval": "Interval automatische verwerking",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "Interval in seconden voor verwerkingsupdate. Het duurt even voordat gewijzigde inhoud van een notitie zichtbaar is voor plugins.",

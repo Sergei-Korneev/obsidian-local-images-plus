@@ -15,6 +15,9 @@ export default {
   "Process images in frontmatter": "フロントマターの画像を処理",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "YAMLフロントマター内の画像リンクをダウンロードしてローカル化します。無効にするとフロントマターブロックはそのままになります（「source」キーは本文画像のリファラーとして使用されます）。",
+  "Plain paths in frontmatter": "フロントマターでプレーンパスを使用",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "YAMLフロントマターに![[embed]]リンクの代わりにプレーンなファイルパスを書き込みます。Basesの画像プロパティに必要です。本文のリンクには影響しません。",
   "Automatic processing interval": "自動処理間隔",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "処理更新の間隔（秒）。プラグインに変更されたノートの内容が反映されるまで時間がかかります。",

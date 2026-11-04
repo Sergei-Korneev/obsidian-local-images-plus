@@ -14,6 +14,9 @@ export default {
   "Process images in frontmatter": "Frontmatter'daki görselleri işle",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "YAML frontmatter'daki görsel bağlantılarını indir ve yerelleştir. Devre dışı bırakıldığında frontmatter bloğu dokunulmaz ('source' anahtarı gövde görselleri için referans olarak kullanılır).",
+  "Plain paths in frontmatter": "Frontmatter'da düz dosya yolları",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "YAML frontmatter'a ![[embed]] bağlantıları yerine düz dosya yolları yazın. Bases'teki görsel özellikleri için gereklidir. Gövde bağlantıları etkilenmez.",
   "Automatic processing interval": "Otomatik işleme aralığı",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "İşleme güncellemesi için saniye cinsinden aralık. Bir notun değiştirilmiş içeriğinin eklentilere yansması biraz zaman alır.",

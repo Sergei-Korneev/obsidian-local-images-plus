@@ -15,6 +15,9 @@ export default {
   "Process images in frontmatter": "Processar imagens no frontmatter",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "Baixar e localizar links de imagens no frontmatter YAML. Quando desativado, o bloco frontmatter permanece intocado (a chave 'source' ainda é usada como referenciador para imagens do corpo).",
+  "Plain paths in frontmatter": "Caminhos simples no frontmatter",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "Escrever caminhos de arquivos simples no frontmatter YAML em vez de links ![[embed]]. Necessário para propriedades de imagem no Bases. Links no corpo não são afetados.",
   "Automatic processing interval": "Intervalo de processamento automático",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "Intervalo em segundos para atualização de processamento. Leva algum tempo para revelar conteúdo alterado de uma nota aos plugins.",

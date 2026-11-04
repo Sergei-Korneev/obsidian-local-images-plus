@@ -129,6 +129,7 @@ export interface ISettings {
   useMarkdownLinkFormat: boolean;
   processCanvas: boolean;
   UrlExcludeRegexps: string;
+  plainFmPaths: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -163,5 +164,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   ExcludedFoldersListRegexp: "",
   useMarkdownLinkFormat: false,
   processCanvas: true,
-  UrlExcludeRegexps: ""
+  UrlExcludeRegexps: "",
+  plainFmPaths: false
 };

@@ -119,6 +119,22 @@ export default class SettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
+      .setName(translate("Plain paths in frontmatter"))
+      .setDesc(
+        translate(
+          "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected."
+        )
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.plainFmPaths)
+          .onChange(async (value) => {
+            this.plugin.settings.plainFmPaths = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
       .setName(translate("Automatic processing interval"))
       .setDesc(
         translate(

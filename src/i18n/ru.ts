@@ -15,6 +15,9 @@ export default {
   "Process images in frontmatter": "Обрабатывать изображения во frontmatter",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "Скачивать и локализовывать ссылки на изображения в YAML frontmatter. При отключении блок frontmatter остается нетронутым (ключ 'source' всё ещё используется как реферер для изображений в теле заметки).",
+  "Plain paths in frontmatter": "Простые пути во frontmatter",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "Записывать простые пути к файлам в YAML frontmatter вместо ![[embed]] ссылок. Необходимо для свойств-изображений в Bases. Ссылки в теле заметки не затрагиваются.",
   "Automatic processing interval": "Интервал автоматической обработки",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "Интервал в секундах для обновления обработки. Требуется время, чтобы изменённое содержимое заметки стало доступно плагинам.",

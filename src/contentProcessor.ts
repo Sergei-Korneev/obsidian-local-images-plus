@@ -207,7 +207,12 @@ export function imageTagProcessor(
           const useMd =
             settings.useMarkdownLinkFormat ||
             app.app.vault.getConfig("useMarkdownLinks");
-          if (!useMd) {
+
+          //frontmatter values with plainFmPaths: bare path for Bases, no embed brackets
+          const isFmValue = keypart !== undefined && keypart !== "";
+          if (isFmValue && settings.plainFmPaths) {
+            imageTag = pathWiki;
+          } else if (!useMd) {
             // image size has higher priority, otherwise the caption is kept
             if (!settings.useCaptions) {
               caption = "";

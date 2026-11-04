@@ -12,6 +12,9 @@ export default {
   "Process images in frontmatter": "處理 Frontmatter 中的圖片",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "下載並本地化 YAML frontmatter 中的圖片連結。停用時 frontmatter 區塊保持不變（'source' 鍵仍用作正文圖片的參考來源）。",
+  "Plain paths in frontmatter": "Frontmatter 中使用純檔案路徑",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "在 YAML frontmatter 中寫入純檔案路徑而非 ![[embed]] 連結。Bases 圖片屬性需要此功能。正文連結不受影響。",
   "Automatic processing interval": "自動處理間隔",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "處理更新的間隔（秒）。外掛需要一些時間來偵測筆記的變更內容。",

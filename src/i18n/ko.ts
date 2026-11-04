@@ -14,6 +14,9 @@ export default {
   "Process images in frontmatter": "프론트매터의 이미지 처리",
   "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images).":
     "YAML 프론트매터의 이미지 링크를 다운로드하고 로컬화합니다. 비활성화 시 프론트매터 블록은 그대로 유지됩니다 ('source' 키는 본문 이미지의 참조자로 계속 사용됨).",
+  "Plain paths in frontmatter": "프론트매터에서 일반 경로 사용",
+  "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected.":
+    "YAML 프론트매터에 ![[embed]] 링크 대신 일반 파일 경로를 기록합니다. Bases의 이미지 속성에 필요합니다. 본문 링크는 영향을 받지 않습니다.",
   "Automatic processing interval": "자동 처리 간격",
   "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins.":
     "처리 업데이트 간격(초). 플러그인에 변경된 노트 내용이 드러나는 데 시간이 걸립니다.",
