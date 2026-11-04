@@ -443,22 +443,29 @@ export function renderNameTemplate(
   return rendered;
 }
 
+export type ContentSource =
+  | { kind: "file"; path: string }
+  | { kind: "data"; data: ArrayBuffer };
+
 //picks a file name: base + ext, appending " (N)" on collision.
-//if the candidate exists and holds the same content (contentHash), it is reused: needWrite = false
+//if the candidate exists and holds exactly the same bytes, it is reused: needWrite = false.
+//md5Sig only samples the data, so different files can render the same name; a byte comparison
+//keeps a new file from being dropped in favor of a different existing one.
+//file sources are statted only on collision and read only for an equal-size candidate.
+//already downloaded/converted data is reused without another source read.
 export async function resolveUniqueName(
   adapter: DataAdapter,
   dir: string,
   baseName: string,
   fileExt: string,
-  contentHash: string,
-  readExisting: (filePath: string) => Promise<ArrayBuffer> = undefined
+  source: ContentSource
 ): Promise<{ fileName: string; needWrite: boolean }> {
   let ext = fileExt ? (fileExt.startsWith(".") ? fileExt : "." + fileExt) : "";
   if (ext && baseName.toLowerCase().endsWith(ext.toLowerCase())) {
     ext = "";
   }
-  const reader =
-    readExisting || ((filePath: string) => adapter.readBinary(filePath));
+  let content = source.kind === "data" ? source.data : undefined;
+  let contentSize = content?.byteLength;
 
   for (let counter = 0; counter < 10000; counter++) {
     const suffix = counter ? ` (${counter})` : "";
@@ -467,12 +474,31 @@ export async function resolveUniqueName(
       return { fileName: candidate, needWrite: true };
     }
     try {
-      const existing = await reader(candidate);
-      if (existing && md5Sig(existing) === contentHash) {
-        return { fileName: candidate, needWrite: false };
+      const candidateStat = await adapter.stat(candidate);
+      if (!candidateStat) {
+        continue;
+      }
+      if (contentSize === undefined && source.kind === "file") {
+        const sourceStat = await adapter.stat(source.path);
+        if (!sourceStat) {
+          continue;
+        }
+        contentSize = sourceStat.size;
+      }
+      if (candidateStat.size !== contentSize) {
+        continue;
+      }
+      if (content === undefined && source.kind === "file") {
+        content = await adapter.readBinary(source.path);
+      }
+      if (content !== undefined) {
+        const existing = await adapter.readBinary(candidate);
+        if (Buffer.from(existing).equals(Buffer.from(content))) {
+          return { fileName: candidate, needWrite: false };
+        }
       }
     } catch (e) {
-      logError("Cannot read existing file: " + e, false);
+      logError("Cannot compare with existing file: " + e, false);
     }
   }
 

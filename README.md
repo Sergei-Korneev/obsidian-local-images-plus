@@ -25,7 +25,7 @@ Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/)
 - Saving base64 embedded images to vault
 - Flexible file naming with templates (${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique})
 - Converting PNG images to JPEG images with various quality
-- Attachments de-duplication by using MD5 hashing algorithm
+- Attachment de-duplication by checking file sizes and exact byte equality before reusing an existing file
 - Removing orphaned attachments from vault
 
 
@@ -117,7 +117,7 @@ and
 The first one searches orphans in the folder next to the active note, while the second one searches all unused attachments for all your notes. (this requires you to set some root subfolder in Obsidian settings)
 
 
-All attachment names are generated according to MD5, therefore they are pretty unique within the vault.        
+The default filename template uses an MD5-based signature. Filename collisions are checked against the complete file contents; different files receive a numbered suffix instead of being treated as duplicates.
 
 This means you can place an attachment file anywhere within your vault, replace the absolute path in a tag with the file name and Obsidian will still show it in your note.
  
@@ -142,3 +142,7 @@ Share your  wishes and ideas about this software or buy me a coffee (or hot choc
 npm run build
 npm run dev
 ```
+
+## Regression tests
+
+Run `npm test` to check attachment deduplication using synthetic fixtures in temporary directories. The tests exercise the source with filesystem-backed Obsidian API stubs and do not require a vault or personal images.

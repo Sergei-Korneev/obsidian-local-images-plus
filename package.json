@@ -4,6 +4,7 @@
   "description": "This is a plugin for Obsidian (https://obsidian.md) that downloads media files from external links and save in local vault.",
   "main": "build/main.js",
   "scripts": {
+    "test": "node --test tests/*.test.cjs",
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js --environment BUILD:production",
     "version": "npx ts-node --compiler-options \"{\"module\":\"commonjs\"}\" src/version-bump.ts"

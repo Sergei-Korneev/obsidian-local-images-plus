@@ -398,7 +398,7 @@ async function chooseFileName(
     dir,
     baseName,
     fileExt,
-    nameCtx.md5
+    { kind: "data", data: contentData }
   );
 
   logError("File name: " + fileName, false);
