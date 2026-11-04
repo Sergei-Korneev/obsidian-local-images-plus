@@ -35,6 +35,8 @@ import {
   getFileExt,
   trimTags,
   readFromDiskB,
+  readSamples,
+  extractSamples,
   renderNameTemplate,
   resolveUniqueName,
   FileNameCtx,
@@ -1302,26 +1304,16 @@ export default class LocalImagesPlugin extends Plugin {
                 continue;
               }
 
-              const oldBinData = await readFromDiskB(
-                pathJoin([this.app.vault.adapter.basePath, oldpath]),
-                5000
+              const samples = await readSamples(
+                pathJoin([this.app.vault.adapter.basePath, oldpath])
               );
-              const oldMD5 = md5Sig(oldBinData);
-              const fileExt = await getFileExt(oldBinData, oldpath);
+              const oldMD5 = md5Sig(samples);
+              const fileExt = await getFileExt(samples[0], oldpath);
 
-              logError("oldbindata: ");
-              logError(oldBinData);
               logError("oldext: " + fileExt);
 
               let newBinData: ArrayBuffer | null = null;
               let contentHash: string = oldMD5;
-              let readExisting: (filePath: string) => Promise<ArrayBuffer> = (
-                filePath
-              ) =>
-                readFromDiskB(
-                  pathJoin([this.app.vault.adapter.basePath, filePath]),
-                  5000
-                );
               let targetExt: string = path.extname(el.link);
               if (!targetExt && fileExt && fileExt != "unknown") {
                 targetExt = "." + fileExt;
@@ -1343,10 +1335,8 @@ export default class LocalImagesPlugin extends Plugin {
                 logError(newBinData);
 
                 if (newBinData != null) {
-                  contentHash = md5Sig(newBinData);
+                  contentHash = md5Sig(extractSamples(newBinData));
                   targetExt = compExt;
-                  readExisting = (filePath) =>
-                    this.app.vault.adapter.readBinary(filePath);
                 }
               }
 
@@ -1369,7 +1359,9 @@ export default class LocalImagesPlugin extends Plugin {
                 baseName,
                 targetExt,
                 contentHash,
-                readExisting
+                newBinData !== null
+                  ? { kind: "data", data: newBinData }
+                  : { kind: "file", path: oldpath }
               );
               const newpath = resolved.fileName;
               const needWrite = resolved.needWrite;

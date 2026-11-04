@@ -61,19 +61,11 @@ export async function logError(str: any, isObj: boolean = false) {
   }
 }
 
-export function md5Sig(contentData: ArrayBuffer | Buffer = undefined) {
+export function md5Sig(samples: ArrayBuffer[]): string {
   try {
-    var dec = new TextDecoder("utf-8");
-    const arrMid = Math.round(contentData.byteLength / 2);
-    const chunk = 15000;
+    const dec = new TextDecoder("utf-8");
     const signature = md5(
-      [
-        contentData.slice(0, chunk),
-        contentData.slice(arrMid, arrMid + chunk),
-        contentData.slice(-chunk),
-      ]
-        .map((x) => dec.decode(x))
-        .join()
+      samples.map((x) => dec.decode(x)).join()
     ).toString();
 
     return signature;
@@ -257,19 +249,55 @@ export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
 
 export async function readFromDiskB(
   file: string,
-  count: number = undefined
+  count?: number,
+  offset: number = 0
 ): Promise<ArrayBuffer> {
   try {
-    const buffer = Buffer.alloc(count);
-    const fd: number = fs.openSync(file, "r+");
-    fs.readSync(fd, buffer, 0, buffer.length, 0);
-    logError(buffer);
-    fs.closeSync(fd);
+    const size = fs.statSync(file).size;
+    const length = Math.min(count ?? size, Math.max(0, size - offset));
+    if (length <= 0) return new ArrayBuffer(0);
+
+    const buffer = Buffer.alloc(length);
+    const fd = fs.openSync(file, "r");
+    try {
+      fs.readSync(fd, buffer, 0, length, offset);
+    } finally {
+      fs.closeSync(fd);
+    }
     return bufferToArrayBuffer(buffer);
   } catch (e) {
     logError("Cannot read the file: " + e, false);
     return null;
   }
+}
+
+const SAMPLE_CHUNK = 15000;
+
+//read head / middle / tail samples from a file without loading it fully
+export async function readSamples(
+  file: string,
+  chunk: number = SAMPLE_CHUNK
+): Promise<ArrayBuffer[]> {
+  const size = fs.statSync(file).size;
+  const mid = Math.round(size / 2);
+  return Promise.all([
+    readFromDiskB(file, chunk, 0),
+    readFromDiskB(file, chunk, mid),
+    readFromDiskB(file, chunk, Math.max(0, size - chunk)),
+  ]);
+}
+
+//extract head / middle / tail samples from an in-memory buffer
+export function extractSamples(
+  data: ArrayBuffer,
+  chunk: number = SAMPLE_CHUNK
+): ArrayBuffer[] {
+  const mid = Math.round(data.byteLength / 2);
+  return [
+    data.slice(0, chunk),
+    data.slice(mid, mid + chunk),
+    data.slice(Math.max(0, data.byteLength - chunk)),
+  ];
 }
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
@@ -444,21 +472,26 @@ export function renderNameTemplate(
 }
 
 //picks a file name: base + ext, appending " (N)" on collision.
-//if the candidate exists and holds the same content (contentHash), it is reused: needWrite = false
+//if the candidate exists and holds the same content, it is reused: needWrite = false
+//comparison is done in chunks to avoid loading large files into memory entirely.
 export async function resolveUniqueName(
   adapter: DataAdapter,
   dir: string,
   baseName: string,
   fileExt: string,
   contentHash: string,
-  readExisting: (filePath: string) => Promise<ArrayBuffer> = undefined
+  source: { kind: "file"; path: string } | { kind: "data"; data: ArrayBuffer }
 ): Promise<{ fileName: string; needWrite: boolean }> {
   let ext = fileExt ? (fileExt.startsWith(".") ? fileExt : "." + fileExt) : "";
   if (ext && baseName.toLowerCase().endsWith(ext.toLowerCase())) {
     ext = "";
   }
-  const reader =
-    readExisting || ((filePath: string) => adapter.readBinary(filePath));
+
+  // determine source size (stat for file sources, byteLength for data sources)
+  let sourceSize: number | undefined;
+  if (source.kind === "data") {
+    sourceSize = source.data.byteLength;
+  }
 
   for (let counter = 0; counter < 10000; counter++) {
     const suffix = counter ? ` (${counter})` : "";
@@ -467,16 +500,114 @@ export async function resolveUniqueName(
       return { fileName: candidate, needWrite: true };
     }
     try {
-      const existing = await reader(candidate);
-      if (existing && md5Sig(existing) === contentHash) {
+      // cheap check: compare file sizes first (no content read)
+      const candidateStat = await adapter.stat(candidate);
+      if (!candidateStat) {
+        continue;
+      }
+      if (sourceSize === undefined && source.kind === "file") {
+        const sourceStat = await adapter.stat(source.path);
+        if (!sourceStat) {
+          continue;
+        }
+        sourceSize = sourceStat.size;
+      }
+      if (candidateStat.size !== sourceSize) {
+        continue;
+      }
+
+      // sizes match: compare bytes in chunks (no full-file load)
+      const equal =
+        source.kind === "data"
+          ? await compareDataToFile(adapter, candidate, source.data)
+          : await compareFiles(adapter, source.path, candidate);
+
+      if (equal) {
         return { fileName: candidate, needWrite: false };
       }
     } catch (e) {
-      logError("Cannot read existing file: " + e, false);
+      logError("Cannot compare with existing file: " + e, false);
     }
   }
 
   throw new Error(`Cannot generate a unique file name: ${baseName}${ext}`);
+}
+
+const COMPARE_CHUNK_SIZE = 1024 * 1024; // 1 MiB
+
+//compare a data buffer against a file on disk, chunk by chunk (no full-file load)
+async function compareDataToFile(
+  adapter: DataAdapter,
+  filePath: string,
+  data: ArrayBuffer
+): Promise<boolean> {
+  const absPath = pathJoin([(adapter as any).basePath as string, filePath]);
+  const fh = await fs2.open(absPath, "r");
+  try {
+    const stat = await fh.stat();
+    if (stat.size !== data.byteLength) {
+      return false;
+    }
+    const fileBuf = Buffer.alloc(COMPARE_CHUNK_SIZE);
+    const dataView = new Uint8Array(data);
+    let position = 0;
+
+    for (;;) {
+      const { bytesRead } = await fh.read(
+        fileBuf,
+        0,
+        COMPARE_CHUNK_SIZE,
+        position
+      );
+      if (bytesRead === 0) return true; // EOF, all chunks matched
+      if (
+        !fileBuf
+          .subarray(0, bytesRead)
+          .equals(Buffer.from(dataView.buffer, dataView.byteOffset + position, bytesRead))
+      )
+        return false;
+      position += bytesRead;
+    }
+  } finally {
+    await fh.close().catch(() => {});
+  }
+}
+
+//compare two files on disk chunk by chunk via Node fs (no full-file read)
+async function compareFiles(
+  adapter: DataAdapter,
+  pathA: string,
+  pathB: string
+): Promise<boolean> {
+  const basePath = (adapter as any).basePath as string;
+  const absA = pathJoin([basePath, pathA]);
+  const absB = pathJoin([basePath, pathB]);
+
+  const fdA = fs2.open(absA, "r");
+  const fdB = fs2.open(absB, "r");
+  try {
+    const [a, b] = await Promise.all([fdA, fdB]);
+    const bufA = Buffer.alloc(COMPARE_CHUNK_SIZE);
+    const bufB = Buffer.alloc(COMPARE_CHUNK_SIZE);
+    let position = 0;
+
+    for (;;) {
+      const [nA, nB] = await Promise.all([
+        a.read(bufA, 0, COMPARE_CHUNK_SIZE, position),
+        b.read(bufB, 0, COMPARE_CHUNK_SIZE, position),
+      ]);
+      // different bytes read → files differ in size (should not happen after stat, but be safe)
+      if (nA.bytesRead !== nB.bytesRead) return false;
+      if (nA.bytesRead === 0) return true; // both EOF at same position
+      if (!bufA.subarray(0, nA.bytesRead).equals(bufB.subarray(0, nB.bytesRead)))
+        return false;
+      position += nA.bytesRead;
+    }
+  } finally {
+    await Promise.all([fdA, fdB])
+      .then(([a, b]) => Promise.all([a.close(), b.close()]))
+      .catch(() => {});
+  }
 }
 
 export function trimTags(link: string) {

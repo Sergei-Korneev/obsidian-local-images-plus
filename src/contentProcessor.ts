@@ -15,6 +15,7 @@ import {
   normalizePath,
   base64ToBuff,
   md5Sig,
+  extractSamples,
   getFileExt,
   blobToJpegArrayBuffer,
   trimTags,
@@ -388,7 +389,7 @@ async function chooseFileName(
 
   const nameCtx: FileNameCtx = {
     ...ctx,
-    md5: md5Sig(contentData),
+    md5: md5Sig(extractSamples(contentData)),
     originalname: originalname,
     unique: Math.random().toString(16).slice(2),
   };
@@ -404,7 +405,8 @@ async function chooseFileName(
     dir,
     baseName,
     fileExt,
-    nameCtx.md5
+    nameCtx.md5,
+    { kind: "data", data: contentData }
   );
 
   logError("File name: " + fileName, false);
