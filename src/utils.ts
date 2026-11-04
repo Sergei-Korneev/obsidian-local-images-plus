@@ -610,6 +610,10 @@ async function compareFiles(
   }
 }
 
+//builds the replacement tag for a processed image.
+//see buildImageTag.ts for the pure implementation (extracted for testability).
+export { buildImageTag, ImageTagOpts } from "./buildImageTag";
+
 export function trimTags(link: string) {
   return link.split(/[#?&\s]+/)[0];
 }

@@ -22,6 +22,7 @@ import {
   showBalloon,
   renderNameTemplate,
   resolveUniqueName,
+  buildImageTag,
   FileNameCtx,
 } from "./utils";
 import { translate } from "./i18n/index";
@@ -202,45 +203,25 @@ export function imageTagProcessor(
             link
           );
 
-          let imageTag = "";
-
           const useMd =
             settings.useMarkdownLinkFormat ||
             app.app.vault.getConfig("useMarkdownLinks");
 
-          //frontmatter values with plainFmPaths: bare path for Bases, no embed brackets
-          const isFmValue = keypart !== undefined && keypart !== "";
-          if (isFmValue && settings.plainFmPaths) {
-            imageTag = pathWiki;
-          } else if (!useMd) {
-            // image size has higher priority, otherwise the caption is kept
-            if (!settings.useCaptions) {
-              caption = "";
-            } else if (AttSize.length) {
-              caption = "|" + AttSize;
-            } else {
-              caption = caption.length ? "|" + caption : "";
-            }
-
-            imageTag = `![[${pathWiki}${caption}]]`;
-          } else {
-            !settings.useCaptions || !caption.length
-              ? (caption = "")
-              : (caption = " " + caption);
-            const mdLink = settings.useMarkdownLinkFormat
-              ? `<${pathMdAngle}>`
-              : pathMd;
-            imageTag = `![${anchor}](${mdLink}${caption})`;
-          }
-
-          //the tag without the frontmatter key: what the metadata cache reports as the embed
-          const bareImageTag = imageTag;
-
-          //frontmatter values must stay a valid yaml scalar: restore the key and the quotes
-          if (keypart !== undefined && keypart !== "") {
-            const quote = q1 || q2 || `"`;
-            imageTag = keypart + quote + imageTag + quote;
-          }
+          const { imageTag, bareImageTag } = buildImageTag({
+            pathWiki,
+            pathMd,
+            pathMdAngle,
+            anchor,
+            caption,
+            attSize: AttSize,
+            keypart,
+            q1,
+            q2,
+            useMd,
+            useCaptions: settings.useCaptions,
+            plainFmPaths: settings.plainFmPaths,
+            useMarkdownLinkFormat: settings.useMarkdownLinkFormat,
+          });
 
           return [replp, imageTag, bareImageTag];
         } else {
