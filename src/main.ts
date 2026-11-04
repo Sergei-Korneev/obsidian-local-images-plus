@@ -709,8 +709,17 @@ export default class LocalImagesPlugin extends Plugin {
       return;
     }
 
+    //drag events carry data in dataTransfer, not clipboardData;
+    //file drops are handled natively by Obsidian — nothing to process here
+    if (!evt.clipboardData) {
+      return;
+    }
+
     try {
       const activeFile = this.getCurrentNote();
+      if (!activeFile) {
+        return;
+      }
       const fItems = evt.clipboardData.files;
       const tItems = evt.clipboardData.items;
 
@@ -744,9 +753,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
       }
     } catch (e) {
-      this.Notify(
-        translate("Please select a note or click inside selected note in canvas.")
-      );
+      logError("onPasteFunc: " + e, false);
       return;
     }
   }
