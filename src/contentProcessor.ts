@@ -160,6 +160,12 @@ export function imageTagProcessor(
               );
               logError("arbuf: ");
               logError(fileData);
+
+              // If conversion failed, keep original data and log warning
+              if (fileData == null) {
+                logError("Image compression failed, using original file data", false);
+                // fileData remains the original ArrayBuffer, conversion was skipped
+              }
             }
             const { fileName, needWrite } = await chooseFileName(
               app.app.vault.adapter,

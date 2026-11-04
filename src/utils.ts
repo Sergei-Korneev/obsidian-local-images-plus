@@ -500,66 +500,97 @@ export function encObsURI(e: string) {
 }
 
 /**
- * https://github.com/mnaoumov/obsidian-dev-utils (modified)
- * @param blob - The Blob object to convert.
- * @param imgQuality - The quality of the image (0 to 1).
- * @returns A promise that resolves to an ArrayBuffer.
+ * Converts image bytes to a compressed image in the requested format (JPEG or WEBP).
+ *
+ * The image is decoded, drawn onto a white-background canvas (JPEG has no alpha),
+ * and re-encoded at the requested quality. No base64 intermediate is created:
+ * input goes through URL.createObjectURL, output through canvas.toBlob.
+ *
+ * @param data   - Image bytes (PNG, WEBP, JPEG, …).
+ * @param quality - Compression quality, 0–1. Values above 1 are treated as a
+ *                  percentage and divided by 100. Clamped to [0, 1].
+ * @param mimeType - Target MIME type, "image/jpeg" (default) or "image/webp".
+ * @returns The compressed image bytes, or null if decoding/encoding failed.
  */
 export async function blobToJpegArrayBuffer(
-  Data: ArrayBuffer,
-  imgQuality: number,
-  imgType: string
-): Promise<ArrayBuffer> {
-  try {
-    const blob = new Blob([new Uint8Array(Data)]);
-    imgType = imgType.length == 0 ? "image/jpeg" : imgType;
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = (): void => {
-        const image = new Image();
-        image.onload = (): void => {
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          if (!context) {
-            throw new Error("Could not get 2D context.");
-          }
-          const imageWidth = image.width;
-          const imageHeight = image.height;
-          let data = "";
-
-          canvas.width = imageWidth;
-          canvas.height = imageHeight;
-
-          context.fillStyle = "#fff";
-          context.fillRect(0, 0, imageWidth, imageHeight);
-          context.save();
-
-          context.translate(imageWidth / 2, imageHeight / 2);
-          context.drawImage(
-            image,
-            0,
-            0,
-            imageWidth,
-            imageHeight,
-            -imageWidth / 2,
-            -imageHeight / 2,
-            imageWidth,
-            imageHeight
-          );
-          context.restore();
-
-          data = canvas.toDataURL(imgType, imgQuality);
-
-          const arrayBuffer = base64ToBuff(data);
-          resolve(arrayBuffer);
-        };
-
-        image.src = reader.result as string;
-      };
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    logError("Cannot compress: " + e, false);
+  data: ArrayBuffer,
+  quality: number,
+  mimeType: string = "image/jpeg"
+): Promise<ArrayBuffer | null> {
+  if (!data || data.byteLength === 0) {
+    logError("blobToJpegArrayBuffer: empty input data", false);
     return null;
   }
+
+  const type = mimeType || "image/jpeg";
+  const q = Math.max(0, Math.min(1, quality > 1 ? quality / 100 : quality));
+
+  // Decode the source image via an object URL (no base64 roundtrip).
+  const sourceUrl = URL.createObjectURL(new Blob([data]));
+
+  try {
+    const image = await loadImage(sourceUrl);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Cannot get 2D canvas context");
+    }
+
+    // JPEG has no alpha channel: paint the background white first.
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+
+    // Encode directly to a Blob (no data-URL / base64 step).
+    const outBlob = await canvasToBlob(canvas, type, q);
+    return await readBlobAsArrayBuffer(outBlob);
+  } catch (e) {
+    logError("Cannot compress image: " + e, false);
+    return null;
+  } finally {
+    // Release the object URL regardless of success or failure.
+    URL.revokeObjectURL(sourceUrl);
+  }
+}
+
+/* --- Promise wrappers over browser callback APIs --- */
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Cannot load image"));
+    img.src = src;
+  });
+}
+
+function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: string,
+  quality: number
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) =>
+        blob !== null
+          ? resolve(blob)
+          : reject(new Error("canvas.toBlob returned null")),
+      type,
+      quality
+    );
+  });
+}
+
+function readBlobAsArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = () =>
+      reject(reader.error ?? new Error("FileReader failed"));
+    reader.readAsArrayBuffer(blob);
+  });
 }
