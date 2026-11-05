@@ -555,7 +555,22 @@ export default class LocalImagesPlugin extends Plugin {
     if (file == null) {
       return null;
     }
+    if (this.processingFiles.has(file.path)) {
+      return null;
+    }
+    this.processingFiles.add(file.path);
 
+    try {
+      return await this.processPageInner(file, defaultdir);
+    } finally {
+      this.processingFiles.delete(file.path);
+    }
+  }
+
+  private async processPageInner(
+    file: TFile,
+    defaultdir: boolean = false
+  ): Promise<any> {
     if (this.settings.processCanvas && this.ExemplaryOfCANVAS(file.path)) {
       const content = await this.app.vault.cachedRead(file);
       if (content.length == 0) {
@@ -735,12 +750,16 @@ export default class LocalImagesPlugin extends Plugin {
         return;
       }
 
+      //first pass: if ANY item is a file/image, skip entirely
+      //Obsidian handles file pastes natively — don't trigger processing
       for (const key in tItems) {
-        //skip file/image items — Obsidian handles those natively
         if (tItems[key].kind === "file") {
           return;
         }
-        // Check if it was a text/html
+      }
+
+      //second pass: process string items (text/html with media links)
+      for (const key in tItems) {
         if (tItems[key].kind == "string") {
           if (this.settings.realTimeUpdate) {
             const cont =
@@ -1514,9 +1533,12 @@ export default class LocalImagesPlugin extends Plugin {
     );
   };
 
+  private processingFiles = new Set<string>();
+
   processModifiedQueue = async () => {
     const iteration = this.modifiedQueue.iterationQueue();
     for (const page of iteration) {
+      if (this.processingFiles.has(page.path)) continue;
       this.processPage(page, false);
     }
   };
