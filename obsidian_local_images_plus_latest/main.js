@@ -7525,7 +7525,7 @@ isSvg$2.exports.default = isSvg;
 var isSvgExports = isSvg$2.exports;
 var isSvg$1 = /*@__PURE__*/getDefaultExportFromCjs(isSvgExports);
 
-const APP_TITLE = "Local Images Plus  0.18.8";
+const APP_TITLE = "Local Images Plus  0.18.9";
 //Option to enable debugging
 let VERBOSE = false;
 function setDebug(value = false) {
