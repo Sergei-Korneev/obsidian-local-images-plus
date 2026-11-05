@@ -1312,7 +1312,8 @@ export default class LocalImagesPlugin extends Plugin {
               }
 
               const samples = await readSamples(
-                pathJoin([this.app.vault.adapter.basePath, oldpath])
+                this.app.vault.adapter,
+                oldpath
               );
               const oldMD5 = md5Sig(samples);
               const fileExt = await getFileExt(samples[0], oldpath);

@@ -15,7 +15,7 @@ import {
   MD_LINK,
 } from "./config";
 
-import { requestUrl, Notice, TFile, DataAdapter } from "obsidian";
+import { requestUrl, Notice, TFile, DataAdapter, Platform } from "obsidian";
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
@@ -61,19 +61,9 @@ export async function logError(str: any, isObj: boolean = false) {
   }
 }
 
-export function md5Sig(samples: ArrayBuffer[]): string {
-  try {
-    const dec = new TextDecoder("utf-8");
-    const signature = md5(
-      samples.map((x) => dec.decode(x)).join()
-    ).toString();
-
-    return signature;
-  } catch (e) {
-    logError("Cannot generate md5: " + e, false);
-    return null;
-  }
-}
+//pure binary utilities — see binaryUtils.ts
+export { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
+import { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
 
 export function MarkdownLinkParser(match: RegExp | string): any {
   let link: string,
@@ -235,18 +225,6 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
   }
 }
 
-export async function base64ToBuff(data: string): Promise<ArrayBuffer> {
-  logError("base64ToBuff: \r\n", false);
-  try {
-    const BufferData = Buffer.from(data.split("base64,")[1], "base64");
-    logError(BufferData);
-    return bufferToArrayBuffer(BufferData);
-  } catch (e) {
-    logError("Cannot read base64: " + e, false);
-    return null;
-  }
-}
-
 export async function readFromDiskB(
   file: string,
   count?: number,
@@ -275,29 +253,24 @@ const SAMPLE_CHUNK = 15000;
 
 //read head / middle / tail samples from a file without loading it fully
 export async function readSamples(
-  file: string,
+  adapter: DataAdapter,
+  filePath: string,
   chunk: number = SAMPLE_CHUNK
 ): Promise<ArrayBuffer[]> {
-  const size = fs.statSync(file).size;
+  if (Platform.isMobile) {
+    // mobile: adapter reads the whole file, extractSamples slices it
+    const data = await adapter.readBinary(filePath);
+    return extractSamples(data, chunk);
+  }
+  // desktop: read 3 chunks directly from disk (45 KB I/O)
+  const absPath = pathJoin([(adapter as any).basePath as string, filePath]);
+  const size = fs.statSync(absPath).size;
   const mid = Math.round(size / 2);
   return Promise.all([
-    readFromDiskB(file, chunk, 0),
-    readFromDiskB(file, chunk, mid),
-    readFromDiskB(file, chunk, Math.max(0, size - chunk)),
+    readFromDiskB(absPath, chunk, 0),
+    readFromDiskB(absPath, chunk, mid),
+    readFromDiskB(absPath, chunk, Math.max(0, size - chunk)),
   ]);
-}
-
-//extract head / middle / tail samples from an in-memory buffer
-export function extractSamples(
-  data: ArrayBuffer,
-  chunk: number = SAMPLE_CHUNK
-): ArrayBuffer[] {
-  const mid = Math.round(data.byteLength / 2);
-  return [
-    data.slice(0, chunk),
-    data.slice(mid, mid + chunk),
-    data.slice(Math.max(0, data.byteLength - chunk)),
-  ];
 }
 
 export async function readFromDisk(file: string): Promise<ArrayBuffer> {
@@ -341,11 +314,8 @@ export async function downloadImage(
   }
 }
 
-function bufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
-  return buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + buffer.byteLength
-  );
+function bufferToArrayBuffer(data: Uint8Array): ArrayBuffer {
+  return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
 }
 
 export async function getFileExt(content: ArrayBuffer, link: string) {
@@ -471,6 +441,9 @@ export function renderNameTemplate(
   return rendered;
 }
 
+const COMPARE_CHUNK_SIZE = 1024 * 1024; // 1 MiB
+const MAX_MOBILE_COMPARE_SIZE = 100 * 1024 * 1024; // 100 MiB
+
 //picks a file name: base + ext, appending " (N)" on collision.
 //if the candidate exists and holds the same content, it is reused: needWrite = false
 //comparison is done in chunks to avoid loading large files into memory entirely.
@@ -516,7 +489,11 @@ export async function resolveUniqueName(
         continue;
       }
 
-      // sizes match: compare bytes in chunks (no full-file load)
+      // sizes match: compare bytes (mobile: full read, desktop: chunked)
+      //mobile guard: skip byte comparison for very large files to avoid OOM
+      if (Platform.isMobile && candidateStat.size > MAX_MOBILE_COMPARE_SIZE) {
+        return { fileName: candidate, needWrite: false };
+      }
       const equal =
         source.kind === "data"
           ? await compareDataToFile(adapter, candidate, source.data)
@@ -533,14 +510,19 @@ export async function resolveUniqueName(
   throw new Error(`Cannot generate a unique file name: ${baseName}${ext}`);
 }
 
-const COMPARE_CHUNK_SIZE = 1024 * 1024; // 1 MiB
-
-//compare a data buffer against a file on disk, chunk by chunk (no full-file load)
+//compare a data buffer against a file on disk
 async function compareDataToFile(
   adapter: DataAdapter,
   filePath: string,
   data: ArrayBuffer
 ): Promise<boolean> {
+  if (Platform.isMobile) {
+    //mobile: read file into memory, compare with Uint8Array
+    if (data.byteLength > MAX_MOBILE_COMPARE_SIZE) return false;
+    const fileBuf = await adapter.readBinary(filePath);
+    return compareArrayBuffers(fileBuf, data);
+  }
+  //desktop: chunk by chunk (no full-file load)
   const absPath = pathJoin([(adapter as any).basePath as string, filePath]);
   const fh = await fs2.open(absPath, "r");
   try {
@@ -573,12 +555,23 @@ async function compareDataToFile(
   }
 }
 
-//compare two files on disk chunk by chunk via Node fs (no full-file read)
+//compare two files on disk
 async function compareFiles(
   adapter: DataAdapter,
   pathA: string,
   pathB: string
 ): Promise<boolean> {
+  if (Platform.isMobile) {
+    //mobile: read both files into memory, compare with Uint8Array
+    const statA = await adapter.stat(pathA);
+    if (!statA || statA.size > MAX_MOBILE_COMPARE_SIZE) return false;
+    const [bufA, bufB] = await Promise.all([
+      adapter.readBinary(pathA),
+      adapter.readBinary(pathB),
+    ]);
+    return compareArrayBuffers(bufA, bufB);
+  }
+  //desktop: chunk by chunk via Node fs (no full-file read)
   const basePath = (adapter as any).basePath as string;
   const absA = pathJoin([basePath, pathA]);
   const absB = pathJoin([basePath, pathB]);

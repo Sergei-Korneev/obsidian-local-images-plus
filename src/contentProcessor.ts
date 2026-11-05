@@ -83,7 +83,7 @@ export function imageTagProcessor(
 
       if (protocol == "data:") {
         logError("ReadBase64: \r\n" + link, false);
-        fileData = await base64ToBuff(link);
+        fileData = base64ToBuff(link);
       } else if (protocol == "file:") {
         logError("Readlocal: \r\n" + fpath, false);
         fileData = await readFromDisk(fpath);
