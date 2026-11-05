@@ -40,9 +40,37 @@ export default class SettingTab extends PluginSettingTab {
 
     /* Buy Me a Coffee link removed as requested */
 
-    containerEl.createEl("h3", { text: translate("Interface settings") });
+    // --- tab bar ---
+    const tabDefs = [
+      translate("Interface settings"),
+      translate("Processing settings"),
+      translate("Note settings"),
+      translate("Orphaned attachments"),
+      translate("Media folder settings"),
+      translate("Troubleshooting"),
+    ];
+    const tabBar = containerEl.createDiv("settings-tab-bar");
+    const panels: HTMLElement[] = [];
+    tabDefs.forEach((title, i) => {
+      const btn = tabBar.createEl("button", {
+        text: title,
+        cls: "settings-tab-btn" + (i === 0 ? " active" : ""),
+      });
+      const panel = containerEl.createDiv("settings-tab-panel");
+      panel.style.display = i === 0 ? "" : "none";
+      panels.push(panel);
+      btn.addEventListener("click", () => {
+        panels.forEach((p, j) => {
+          p.style.display = j === i ? "" : "none";
+          tabBar.children[j].classList.toggle("active", j === i);
+        });
+      });
+    });
 
-    new Setting(containerEl)
+    // --- Section 1: Interface settings ---
+    const elInterface = panels[0];
+
+    new Setting(elInterface)
       .setName(translate("Show notifications"))
       .setDesc(translate("Show notifications when pages were processed."))
       .addToggle((toggle) =>
@@ -54,7 +82,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elInterface)
       .setName(translate("Context menu: download single image"))
       .setDesc(
         translate(
@@ -70,7 +98,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elInterface)
       .setName(translate("Disable additional commands"))
       .setDesc(
         translate(
@@ -86,9 +114,10 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: translate("Processing settings") });
+    // --- Section 2: Processing settings ---
+    const elProcessing = panels[1];
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Automatic processing"))
       .setDesc(translate("Process notes on create/copy/paste."))
 
@@ -102,7 +131,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Process images in frontmatter"))
       .setDesc(
         translate(
@@ -118,7 +147,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Plain paths in frontmatter"))
       .setDesc(
         translate(
@@ -134,7 +163,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Automatic processing interval"))
       .setDesc(
         translate(
@@ -169,7 +198,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Number of retries for every single attachment"))
       .setDesc(
         translate(
@@ -199,7 +228,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Process all new markdown files"))
       .setDesc(
         translate(
@@ -215,7 +244,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Process all new attachments"))
       .setDesc(
         translate(
@@ -231,7 +260,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("File name template"))
       .setDesc(
         translate(
@@ -261,7 +290,7 @@ export default class SettingTab extends PluginSettingTab {
         )
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(
         translate("Use markdown link format with angle brackets ![](<link>)")
       )
@@ -279,7 +308,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Process Canvas files"))
       .setDesc(translate("Process images in Obsidian Canvas (.canvas files)"))
       .addToggle((toggle) =>
@@ -291,7 +320,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("URL exclude regexps"))
       .setDesc(
         translate(
@@ -309,7 +338,7 @@ export default class SettingTab extends PluginSettingTab {
         text.inputEl.cols = 50;
       });
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Download unknown filetypes"))
       .setDesc(
         translate(
@@ -324,7 +353,7 @@ export default class SettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Compress images (Web Images)"))
       .setDesc(
         translate(
@@ -340,7 +369,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Compress images (Pasted Images)"))
       .setDesc(
         translate(
@@ -356,7 +385,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Compression type"))
       .setDesc(
         translate(
@@ -374,7 +403,7 @@ export default class SettingTab extends PluginSettingTab {
           });
       });
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Excluded folders"))
       .setDesc(
         translate(
@@ -411,7 +440,7 @@ export default class SettingTab extends PluginSettingTab {
         text.inputEl.style.width = "100%";
       });
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Image Quality"))
       .setDesc(translate("Image quality selection (30 to 100)."))
       .addText((text) =>
@@ -437,7 +466,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("File size lower limit in Kb"))
       .setDesc(
         translate(
@@ -468,7 +497,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(translate("Exclusions"))
       .setDesc(
         translate(
@@ -484,7 +513,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elProcessing)
       .setName(
         translate(
           "Do not create Obsidian attachment folder (For compatibility with other plugins)"
@@ -504,9 +533,10 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: translate("Note settings") });
+    // --- Section 3: Note settings ---
+    const elNote = panels[2];
 
-    new Setting(containerEl)
+    new Setting(elNote)
       .setName(translate("Preserve link captions"))
       .setDesc(translate("Add media links captions to converted tags."))
       .addToggle((toggle) =>
@@ -518,7 +548,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elNote)
       .setName(translate("Include pattern"))
       .setDesc(
         translate(
@@ -562,9 +592,10 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: translate("Orphaned attachments") });
+    // --- Section 4: Orphaned attachments ---
+    const elOrphans = panels[3];
 
-    new Setting(containerEl)
+    new Setting(elOrphans)
       .setName(translate("Remove files completely"))
       .setDesc(translate("Do not move orphaned files into the garbage can."))
       .addToggle((toggle) =>
@@ -576,9 +607,10 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: translate("Media folder settings") });
+    // --- Section 5: Media folder settings ---
+    const elMedia = panels[4];
 
-    new Setting(containerEl)
+    new Setting(elMedia)
       .setName(translate("How to write paths in tags"))
       .setDesc(translate("Select whether to write full paths in tags or not."))
       .addDropdown((text) =>
@@ -593,7 +625,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elMedia)
       .setName(translate("Date format"))
       .setDesc(
         translate(
@@ -622,7 +654,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elMedia)
       .setName(translate("Folder to save new attachments"))
       .setDesc(
         translate(
@@ -650,7 +682,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elMedia)
       .setName(translate("Move/delete/rename media folder"))
       .setDesc(
         translate(
@@ -670,7 +702,7 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    new Setting(containerEl)
+    new Setting(elMedia)
       .setName(translate("Media folder"))
       .setDesc(translate("Folder to keep all downloaded media files."))
       .setClass("media_folder_set")
@@ -693,8 +725,9 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: translate("Troubleshooting") });
-    new Setting(containerEl)
+    // --- Section 6: Troubleshooting ---
+    const elTroubleshoot = panels[5];
+    new Setting(elTroubleshoot)
       .setName(translate("Debug"))
       .setDesc(translate("Enable debug output to console."))
       .addToggle((toggle) =>
