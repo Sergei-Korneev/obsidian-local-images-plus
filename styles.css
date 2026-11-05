@@ -16,21 +16,27 @@
 .settings-tab-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--background-modifier-border);
-  padding-bottom: 8px;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid var(--interactive-accent);
+  position: relative;
+  z-index: 1;
 }
 
 .settings-tab-btn {
-  padding: 6px 14px;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 6px;
+  padding: 8px 18px;
+  border: 2px solid transparent;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
   background: var(--background-secondary);
   color: var(--text-muted);
   cursor: pointer;
   font-size: 0.9em;
+  font-weight: 500;
   transition: all 0.15s ease;
+  position: relative;
+  top: 2px;
+  margin-right: 2px;
 }
 
 .settings-tab-btn:hover {
@@ -39,12 +45,20 @@
 }
 
 .settings-tab-btn.active {
-  background: var(--interactive-accent);
-  color: var(--text-on-accent);
+  background: var(--background-primary);
+  color: var(--text-accent);
   border-color: var(--interactive-accent);
+  border-bottom: 2px solid var(--background-primary);
+  margin-bottom: -2px;
+  z-index: 2;
 }
 
 .settings-tab-panel {
+  background: var(--background-primary);
+  border: 2px solid var(--interactive-accent);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 16px;
   min-height: 100px;
 }
 
