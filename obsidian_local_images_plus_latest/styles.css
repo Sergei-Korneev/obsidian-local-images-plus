@@ -15,12 +15,16 @@
 /* settings tabs */
 .settings-tab-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0;
   margin-bottom: 0;
   border-bottom: 2px solid var(--interactive-accent);
   position: relative;
   z-index: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
 .settings-tab-btn {
@@ -37,6 +41,8 @@
   position: relative;
   top: 2px;
   margin-right: 2px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .settings-tab-btn:hover {
