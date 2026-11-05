@@ -81,6 +81,8 @@ export default class LocalImagesPlugin extends Plugin {
   ctxMenuImageFile: TFile | null = null;
   origMenuShow: ((evt?: MouseEvent) => any) | null = null;
 
+  private ribbonIconEl: HTMLElement | null = null;
+
   async onload() {
     await this.loadSettings();
 
@@ -97,7 +99,7 @@ export default class LocalImagesPlugin extends Plugin {
     });
 
     if (!this.settings.disAddCom) {
-      this.addRibbonIcon(
+      this.ribbonIconEl = this.addRibbonIcon(
         "dice",
         APP_TITLE + "\r\nLocalize attachments (plugin folder)",
         () => {
@@ -1524,14 +1526,38 @@ export default class LocalImagesPlugin extends Plugin {
 
   // ------------  Load / Save settings -----------------
   async onunload() {
+    //remove ribbon icon
+    if (this.ribbonIconEl) {
+      this.ribbonIconEl.remove();
+      this.ribbonIconEl = null;
+    }
+
+    //restore patched Menu prototype
     if (this.origMenuShow) {
       Menu.prototype.showAtMouseEvent = this.origMenuShow;
       this.origMenuShow = null;
     }
+
+    //clear all timers
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId);
+      this.intervalId = 0;
+    }
+    if (this.newfProcInt) {
+      window.clearInterval(this.newfProcInt);
+      this.newfProcInt = 0;
+    }
+
+    //remove workspace event listeners
     this.app.workspace.off("editor-drop", null);
     this.app.workspace.off("editor-paste", null);
     this.app.workspace.off("file-menu", null);
-    //this.app.vault.off("create",  null)
+
+    //clear processing state
+    this.noteModified = [];
+    this.newfCreated = [];
+    this.newfCreatedByDownloader = [];
+
     logError(" unloaded.");
   }
 
