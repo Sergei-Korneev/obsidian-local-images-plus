@@ -655,11 +655,7 @@ export default class LocalImagesPlugin extends Plugin {
         translate("WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...", [file.path])
       );
     } else {
-      if (this.settings.showNotifications) {
-        this.Notify(
-          translate("Page '{p}' has been processed, but nothing was changed.", [file.path])
-        );
-      }
+      //suppress "nothing changed" for automatic processing — it's noise
     }
   }
 
@@ -1469,9 +1465,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
         if (itemcount > 0) {
           await this.app.vault.modify(note, filedata);
-          this.Notify(
-            translate("{p} attachments for note {p} were processed.", [String(itemcount), note.path])
-          );
+          logError(`processMdFilesOnTimer: ${itemcount} attachments for ${note.path} processed`);
           itemcount = 0;
         }
       }
