@@ -72,6 +72,7 @@ export default class LocalImagesPlugin extends Plugin {
   modifiedQueue = new UniqueQueue<TFile>();
   intervalId = 0;
   newfProcInt: number = 0;
+  private isProcessingTimer = false;
   newfCreated: Array<string> = [];
   noteModified: Array<TFile> = [];
   newfMoveReq: boolean = true;
@@ -326,7 +327,7 @@ export default class LocalImagesPlugin extends Plugin {
       ) {
         return;
       } else {
-        if (this.settings.processAll) {
+        if (this.settings.processAll && !this.isProcessingTimer) {
           if (!this.noteModified.includes(file)) {
             this.noteModified.push(file);
           }
@@ -1263,6 +1264,11 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
   private processMdFilesOnTimer = async () => {
+    //prevent re-entry: vault.modify inside this handler triggers on("modify")
+    //which restarts the timer and causes duplicate "note processed" notifications
+    if (this.isProcessingTimer) return;
+    this.isProcessingTimer = true;
+
     logError("processMdFilesOnTimer: \r\nNote:\r\n");
 
     try {
@@ -1442,6 +1448,7 @@ export default class LocalImagesPlugin extends Plugin {
       this.onRet();
     }
     this.onRet();
+    this.isProcessingTimer = false;
   };
 
   private setTitleAsName = async () => {
