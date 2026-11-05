@@ -1,5 +1,5 @@
-import { URL } from "url";
-import path from "path";
+import { nodePath } from "./nodeShim";
+const path = nodePath;
 import { App, DataAdapter, TFile, Plugin } from "obsidian";
 
 import {

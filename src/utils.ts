@@ -1,9 +1,10 @@
-import path, { resolve } from "path";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import md5 from "crypto-js/md5";
-const fs2 = require("fs").promises;
-import fs from "fs";
+import { nodeFs, nodePath } from "./nodeShim";
+const path = nodePath;
+const fs = nodeFs;
+const fs2 = nodeFs?.promises;
 
 import {
   USER_AGENT,

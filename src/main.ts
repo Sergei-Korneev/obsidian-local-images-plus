@@ -58,10 +58,11 @@ import {
 } from "./config";
 
 import { UniqueQueue } from "./uniqueQueue";
-import path from "path";
+import { nodePath, nodeFs } from "./nodeShim";
+const path = nodePath;
+const fs = nodeFs?.promises;
 import moment from "moment";
 import { ModalW1 } from "./modal";
-const fs = require("fs").promises;
 
 //import { count, log } from "console"
 

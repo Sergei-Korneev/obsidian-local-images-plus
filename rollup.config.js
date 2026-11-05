@@ -15,6 +15,46 @@ if you want to view the source visit the plugins github repository
 */
 `;
 
+// Stub Node.js built-in modules for mobile compatibility.
+// file-type/strtok3 imports fs at the top level but never uses it
+// for in-memory buffer operations (fromBuffer). An empty stub
+// prevents require('fs') from crashing in Obsidian Mobile.
+const NODE_STUBS = [
+  "fs",
+  "path",
+  "url",
+  "stream",
+  "buffer",
+  "events",
+  "util",
+  "crypto",
+  "os",
+  "zlib",
+  "http",
+  "https",
+  "net",
+  "tls",
+  "child_process",
+];
+
+function stubNodeModules() {
+  return {
+    name: "stub-node-modules",
+    resolveId(id) {
+      if (NODE_STUBS.includes(id)) {
+        return "\0node-stub:" + id;
+      }
+      return null;
+    },
+    load(id) {
+      if (id.startsWith("\0node-stub:")) {
+        return "export default {}; export const promises = {};";
+      }
+      return null;
+    },
+  };
+}
+
 export default {
   input: "src/main.ts",
   output: {
@@ -32,6 +72,7 @@ export default {
       ` cp -u ${currentDir}/manifest.json ${currentDir}/obsidian_local_images_plus_latest/manifest.json`,
       ` cp -u ${currentDir}/styles.css ${currentDir}/obsidian_local_images_plus_latest/styles.css`,
     ]),
+    stubNodeModules(),
     typescript(),
     nodeResolve({ browser: true }),
     rollupJson(),
