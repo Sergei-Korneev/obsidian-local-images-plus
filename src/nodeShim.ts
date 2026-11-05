@@ -7,6 +7,13 @@
  * to the top of the bundle (which would crash on mobile at load time).
  */
 
+// Buffer polyfill — must run before any code that uses Buffer
+// (file-type/strtok3 depend on the global Buffer).
+import { Buffer as BufferPolyfill } from "buffer";
+if (typeof globalThis.Buffer === "undefined") {
+  (globalThis as any).Buffer = BufferPolyfill;
+}
+
 // Hide require from rollup's static analysis — keeps it inside try/catch
 function safeRequire(id: string): any {
   try {

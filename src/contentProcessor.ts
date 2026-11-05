@@ -4,6 +4,7 @@ import { App, DataAdapter, TFile, Plugin } from "obsidian";
 
 import {
   isUrl,
+  safeGetConfig,
   downloadImage,
   readFromDisk,
   cFileName,
@@ -205,7 +206,7 @@ export function imageTagProcessor(
 
           const useMd =
             settings.useMarkdownLinkFormat ||
-            app.app.vault.getConfig("useMarkdownLinks");
+            safeGetConfig(app.app.vault, "useMarkdownLinks", false);
 
           const { imageTag, bareImageTag } = buildImageTag({
             pathWiki,
@@ -304,7 +305,7 @@ export async function getMDir(
   const notePath = noteFile.parent.path;
   const date = new Date();
   const current_date = moment().format(settings.DateFormat);
-  const obsmediadir = app.vault.getConfig("attachmentFolderPath");
+  const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./");
   const mediadir = settings.mediaRootDir;
   var attdir = settings.saveAttE;
   if (defaultdir) {

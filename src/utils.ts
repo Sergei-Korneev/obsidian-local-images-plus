@@ -1,7 +1,8 @@
+//nodeShim must load first: installs Buffer polyfill before file-type/strtok3 use it
+import { nodeFs, nodePath } from "./nodeShim";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
 import md5 from "crypto-js/md5";
-import { nodeFs, nodePath } from "./nodeShim";
 const path = nodePath;
 const fs = nodeFs;
 const fs2 = nodeFs?.promises;
@@ -209,6 +210,16 @@ export function isUrl(link: string) {
     return Boolean(new URL(link));
   } catch (_) {
     return false;
+  }
+}
+
+//safe wrapper for vault.getConfig (internal API, may not exist on mobile)
+export function safeGetConfig(vault: any, key: string, defaultValue: any = undefined): any {
+  try {
+    const val = vault?.getConfig?.(key);
+    return val !== undefined ? val : defaultValue;
+  } catch (e) {
+    return defaultValue;
   }
 }
 

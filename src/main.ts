@@ -39,6 +39,7 @@ import {
   extractSamples,
   renderNameTemplate,
   resolveUniqueName,
+  safeGetConfig,
   FileNameCtx,
   MarkdownLinkParser,
 } from "./utils";
@@ -223,7 +224,7 @@ export default class LocalImagesPlugin extends Plugin {
       }
 
       let rootdir = this.settings.mediaRootDir;
-      const useSysTrash = this.app.vault.getConfig("trashOption") === "system";
+      const useSysTrash = safeGetConfig(this.app.vault, "trashOption") === "system";
 
       if (
         this.settings.saveAttE !== "obsFolder" &&
@@ -766,7 +767,7 @@ export default class LocalImagesPlugin extends Plugin {
       noteFile: TFile = undefined
     ) =>
     async () => {
-      const obsmediadir = app.vault.getConfig("attachmentFolderPath");
+      const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./");
       const allFiles = this.app.vault.getFiles();
       let oldRootdir = this.settings.mediaRootDir;
 
@@ -1148,7 +1149,7 @@ export default class LocalImagesPlugin extends Plugin {
 
       if (type == "execremove") {
         const useSysTrash =
-          this.app.vault.getConfig("trashOption") === "system";
+          safeGetConfig(this.app.vault, "trashOption") === "system";
         const remcompl = this.settings.removeOrphansCompl;
         let msg = "";
 
@@ -1412,7 +1413,7 @@ export default class LocalImagesPlugin extends Plugin {
               // const vvv = MarkdownLinkParser(el.link);
               const useMdLinks =
                 this.settings.useMarkdownLinkFormat ||
-                this.app.vault.getConfig("useMarkdownLinks");
+                safeGetConfig(this.app.vault, "useMarkdownLinks", false);
 
               let newtag = oldtag.replace(el.link, pathWiki);
 
