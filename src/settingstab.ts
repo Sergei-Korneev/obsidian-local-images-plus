@@ -48,6 +48,7 @@ export default class SettingTab extends PluginSettingTab {
       translate("Orphaned attachments"),
       translate("Media folder settings"),
       translate("Troubleshooting"),
+      translate("Support"),
     ];
     const tabWrapper = containerEl.createDiv("settings-tab-wrapper");
     const btnLeft = tabWrapper.createEl("button", { text: "◀", cls: "settings-tab-arrow" });
@@ -747,6 +748,28 @@ export default class SettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         })
       );
+
+    // --- Section 7: Support ---
+    const elSupport = panels[6];
+    const supportCard = elSupport.createDiv("settings-support-card");
+    supportCard.createEl("div", {
+      cls: "settings-support-icon",
+      text: "☕",
+    });
+    supportCard.createEl("h2", {
+      cls: "settings-support-title",
+      text: translate("Enjoying this plugin?"),
+    });
+    supportCard.createEl("p", {
+      cls: "settings-support-desc",
+      text: translate("If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!"),
+    });
+    const bmcLink = supportCard.createEl("a", {
+      cls: "settings-support-btn",
+      href: "https://www.buymeacoffee.com/sergeikorneev",
+    });
+    bmcLink.setAttribute("target", "_blank");
+    bmcLink.setText("☕  " + translate("Buy me a coffee"));
 
     this.displSw(containerEl);
   }

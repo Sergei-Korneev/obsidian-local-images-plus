@@ -102,3 +102,53 @@
   min-height: 100px;
 }
 
+/* support card */
+.settings-support-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--background-secondary), var(--background-modifier-hover));
+  border: 1px solid var(--background-modifier-border);
+}
+
+.settings-support-icon {
+  font-size: 3em;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 8px rgba(255, 180, 0, 0.3));
+}
+
+.settings-support-title {
+  margin: 0 0 8px 0;
+  font-size: 1.3em;
+  color: var(--text-normal);
+}
+
+.settings-support-desc {
+  margin: 0 0 20px 0;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.settings-support-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #FFDD00, #FFA500);
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 1.05em;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 180, 0, 0.35);
+}
+
+.settings-support-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 180, 0, 0.5);
+  color: #1a1a1a;
+}
+
