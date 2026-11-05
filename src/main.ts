@@ -743,15 +743,22 @@ export default class LocalImagesPlugin extends Plugin {
       const fItems = evt.clipboardData.files;
       const tItems = evt.clipboardData.items;
 
-      if (
-        fItems.length != 0 ||
-        this.ThePathExcluded(String(activeFile.parent?.path))
-      ) {
+      //skip if clipboard contains ANY non-text content (files, images, etc.)
+      //Obsidian handles all file pastes natively — plugin only processes
+      //pure text/html pastes containing media URLs
+      const clipTypes = Array.from(evt.clipboardData.types);
+      const hasNonText = clipTypes.some(
+        (t) => t !== "text/plain" && t !== "text/html"
+      );
+      if (fItems.length != 0 || hasNonText) {
         return;
       }
 
-      //first pass: if ANY item is a file/image, skip entirely
-      //Obsidian handles file pastes natively — don't trigger processing
+      if (this.ThePathExcluded(String(activeFile.parent?.path))) {
+        return;
+      }
+
+      //also check individual items for file kind
       for (const key in tItems) {
         if (tItems[key].kind === "file") {
           return;
