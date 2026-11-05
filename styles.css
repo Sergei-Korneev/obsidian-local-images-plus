@@ -13,18 +13,52 @@
 }
 
 /* settings tabs */
-.settings-tab-bar {
+.settings-tab-wrapper {
   display: flex;
-  flex-wrap: nowrap;
+  align-items: center;
   gap: 0;
   margin-bottom: 0;
   border-bottom: 2px solid var(--interactive-accent);
   position: relative;
   z-index: 1;
+}
+
+.settings-tab-arrow {
+  flex-shrink: 0;
+  width: 28px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  font-size: 1.1em;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.settings-tab-arrow:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.settings-tab-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
+  scroll-behavior: smooth;
+}
+
+.settings-tab-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .settings-tab-btn {

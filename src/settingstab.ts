@@ -40,7 +40,7 @@ export default class SettingTab extends PluginSettingTab {
 
     /* Buy Me a Coffee link removed as requested */
 
-    // --- tab bar ---
+    // --- tab bar with scroll arrows ---
     const tabDefs = [
       translate("Interface settings"),
       translate("Processing settings"),
@@ -49,7 +49,18 @@ export default class SettingTab extends PluginSettingTab {
       translate("Media folder settings"),
       translate("Troubleshooting"),
     ];
-    const tabBar = containerEl.createDiv("settings-tab-bar");
+    const tabWrapper = containerEl.createDiv("settings-tab-wrapper");
+    const btnLeft = tabWrapper.createEl("button", { text: "◀", cls: "settings-tab-arrow" });
+    const tabBar = tabWrapper.createDiv("settings-tab-bar");
+    const btnRight = tabWrapper.createEl("button", { text: "▶", cls: "settings-tab-arrow" });
+
+    btnLeft.addEventListener("click", () => {
+      tabBar.scrollBy({ left: -200, behavior: "smooth" });
+    });
+    btnRight.addEventListener("click", () => {
+      tabBar.scrollBy({ left: 200, behavior: "smooth" });
+    });
+
     const panels: HTMLElement[] = [];
     tabDefs.forEach((title, i) => {
       const btn = tabBar.createEl("button", {
