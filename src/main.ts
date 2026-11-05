@@ -736,6 +736,10 @@ export default class LocalImagesPlugin extends Plugin {
       }
 
       for (const key in tItems) {
+        //skip file/image items — Obsidian handles those natively
+        if (tItems[key].kind === "file") {
+          return;
+        }
         // Check if it was a text/html
         if (tItems[key].kind == "string") {
           if (this.settings.realTimeUpdate) {
