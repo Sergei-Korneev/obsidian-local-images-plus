@@ -183,4 +183,11 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "ATTENZIONE!\r\nGli allegati per \'{p}\' sono stati elaborati, ma alcuni allegati non sono stati scaricati/sostituiti...",
 
   "{p} attachments for note {p} were processed.": "{p} allegati per la nota {p} elaborati.",
+  "Troubleshooting": "Risoluzione problemi",
+  "Support": "Supporto",
+  "Exclusions": "Esclusioni",
+  "Enjoying this plugin?": "Ti piace questo plugin?",
+  "Buy me a coffee": "Offrimi un caffè",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Se Local Images Plus migliora il tuo flusso di lavoro in Obsidian, considera di supportarne lo sviluppo. Ogni caffè aiuta a mantenere vivo questo progetto!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Modello per i nuomi nomi degli allegati. Variabili: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Predefinito: ${md5}_MD5 (retrocompatibile). Esempi: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Usa 'Cartella per salvare i nuovi allegati' per le sottocartelle.",
 };

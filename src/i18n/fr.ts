@@ -187,4 +187,11 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "ATTENTION!\r\nLes pièces jointes pour \'{p}\' ont été traitées, mais certaines pièces jointes n'ont pas été téléchargées/remplacées...",
 
   "{p} attachments for note {p} were processed.": "{p} pièces jointes pour la note {p} ont été traitées.",
+  "Troubleshooting": "Dépannage",
+  "Support": "Soutien",
+  "Debug": "Débogage",
+  "Enjoying this plugin?": "Vous aimez ce plugin ?",
+  "Buy me a coffee": "Offrez-moi un café",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Si Local Images Plus améliore votre flux de travail Obsidian, envisagez de soutenir son développement. Chaque café aide à maintenir ce projet en vie !",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Modèle pour les nouveaux noms de pièces jointes. Variables : ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Par défaut : ${md5}_MD5 (rétrocompatible). Exemples : ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Utilisez 'Dossier pour enregistrer les nouvelles pièces jointes' pour les sous-dossiers.",
 };

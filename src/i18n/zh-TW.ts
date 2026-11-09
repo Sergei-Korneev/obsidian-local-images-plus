@@ -170,4 +170,12 @@ export default {
   "{p} attachments for note {p} were processed.": "已處理筆記 {p} 的 {p} 個附件。",
 
   "{p} file(s) {p}": "{p} 個檔案 {p}",
+  "Troubleshooting": "疑難排解",
+  "Support": "支援",
+  "Exclusions": "排除項",
+  "Debug": "除錯",
+  "Enjoying this plugin?": "喜歡此外掛嗎？",
+  "Buy me a coffee": "請我喝杯咖啡",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "如果 Local Images Plus 讓您的 Obsidian 工作流程更順暢，請考慮支持開發。每杯咖啡都讓這個專案保持活力！",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "新附件名稱的範本。變數：${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}。預設：${md5}_MD5（向後相容）。範例：${originalname}, ${notename}-${originalname}, ${date}-${md5:8}。使用「儲存新附件的資料夾」設定子資料夾。",
 };

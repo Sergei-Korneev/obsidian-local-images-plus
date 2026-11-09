@@ -177,4 +177,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "경고!\r\n\'{p}\'의 첨부 파일이 처리되었으나 일부 첨부 파일이 다운로드/교체되지 않았습니다...",
 
   "{p} attachments for note {p} were processed.": "노트 {p}의 {p}개 첨부 파일이 처리되었습니다.",
+  "Troubleshooting": "문제 해결",
+  "Support": "지원",
+  "Exclusions": "제외",
+  "Debug": "디버그",
+  "Enjoying this plugin?": "이 플러그인이 마음에 드시나요?",
+  "Buy me a coffee": "커피 한 잔 사주세요",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Local Images Plus가 Obsidian 워크플로우를 개선하고 있다면 개발을 지원해 주세요. 커피 한 잔이 이 프로젝트를 살아 있게 합니다!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "새 첨부 파일 이름 템플릿. 변수: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. 기본값: ${md5}_MD5 (하위 호환성). 예시: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. 하위 폴더에는 '새 첨부 파일 저장 폴더'를 사용하세요.",
 };

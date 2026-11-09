@@ -185,4 +185,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "WAARSCHUWING!\r\nBijlagen voor \'{p}\' zijn verwerkt, maar sommige bijlagen zijn niet gedownload/vervangen...",
 
   "{p} attachments for note {p} were processed.": "{p} bijlagen voor notitie {p} zijn verwerkt.",
+  "Troubleshooting": "Probleemoplossing",
+  "Support": "Ondersteuning",
+  "Exclusions": "Uitzonderingen",
+  "Debug": "Debuggen",
+  "Enjoying this plugin?": "Bevalt deze plugin?",
+  "Buy me a coffee": "Koop me een kopje koffie",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Als Local Images Plus je Obsidian-workflow verbetert, overweeg dan de ontwikkeling te ondersteunen. Elke koffie helpt dit project levend te houden!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Sjabloon voor nieuwe bijlagenamen. Variabelen: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Standaard: ${md5}_MD5 (achterwaarts compatibel). Voorbeelden: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Gebruik 'Map om nieuwe bijlagen op te slaan' voor submappen.",
 };

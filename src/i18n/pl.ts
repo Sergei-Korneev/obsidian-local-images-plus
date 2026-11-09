@@ -182,4 +182,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "OSTRZEŻENIE!\r\nZałączniki dla \'{p}\' zostały przetworzone, ale niektóre załączniki nie zostały pobrane/zastąpione...",
 
   "{p} attachments for note {p} were processed.": "{p} załączników dla notatki {p} przetworzono.",
+  "Troubleshooting": "Rozwiązywanie problemów",
+  "Support": "Wsparcie",
+  "Exclusions": "Wykluczenia",
+  "Debug": "Debugowanie",
+  "Enjoying this plugin?": "Podoba Ci się ta wtyczka?",
+  "Buy me a coffee": "Postaw mi kawę",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Jeśli Local Images Plus ulepsza Twój przepływ pracy w Obsidian, rozważ wsparcie rozwoju. Każda kawa pomaga utrzymać ten projekt przy życiu!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Szablon dla nowych nazw załączników. Zmienne: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Domyślnie: ${md5}_MD5 (wstecznie kompatybilne). Przykłady: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Użyj 'Folder do zapisywania nowych załączników' dla podfolderów.",
 };

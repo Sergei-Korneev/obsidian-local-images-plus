@@ -184,4 +184,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "UYARI!\r\n\'{p}\' için ekler işlendi ancak bazı ekler indirilmedi/değiştirilmedi...",
 
   "{p} attachments for note {p} were processed.": "{p} not için {p} ek işlendi.",
+  "Troubleshooting": "Sorun giderme",
+  "Support": "Destek",
+  "Exclusions": "Hariç tutmalar",
+  "Debug": "Hata ayıklama",
+  "Enjoying this plugin?": "Bu eklentiyi beğendiniz mi?",
+  "Buy me a coffee": "Bana bir kahve ısmarla",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Local Images Plus Obsidian iş akışınızı geliştiriyorsa, geliştirmeyi desteklemeyi düşünün. Her fincan kahve bu projeyi ayakta tutmaya yardımcı olur!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Yeni ek adları için şablon. Değişkenler: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Varsayılan: ${md5}_MD5 (geriye dönük uyumlu). Örnekler: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Alt klasörler için 'Yeni ekleri kaydetme klasörü'nü kullanın.",
 };

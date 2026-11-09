@@ -183,4 +183,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "AVISO!\r\nAnexos para \'{p}\' foram processados, mas alguns anexos não foram baixados/substituídos...",
 
   "{p} attachments for note {p} were processed.": "{p} anexos para a nota {p} foram processados.",
+  "Troubleshooting": "Solução de problemas",
+  "Support": "Apoio",
+  "Exclusions": "Exclusões",
+  "Debug": "Depuração",
+  "Enjoying this plugin?": "Gostando deste plugin?",
+  "Buy me a coffee": "Pague-me um café",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Se o Local Images Plus torna seu fluxo de trabalho no Obsidian melhor, considere apoiar seu desenvolvimento. Cada café ajuda a manter este projeto vivo!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Modelo para novos nomes de anexos. Variáveis: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Padrão: ${md5}_MD5 (compatível com versões anteriores). Exemplos: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use 'Pasta para salvar novos anexos' para subpastas.",
 };

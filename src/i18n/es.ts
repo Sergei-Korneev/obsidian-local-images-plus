@@ -185,4 +185,12 @@ export default {
   "WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...": "¡ADVERTENCIA!\r\nLos adjuntos para \'{p}\' fueron procesados, pero algunos adjuntos no fueron descargados/reemplazados...",
 
   "{p} attachments for note {p} were processed.": "{p} adjuntos para la nota {p} fueron procesados.",
+  "Troubleshooting": "Solución de problemas",
+  "Support": "Apoyo",
+  "Exclusions": "Exclusiones",
+  "Debug": "Depuración",
+  "Enjoying this plugin?": "¿Te gusta este plugin?",
+  "Buy me a coffee": "Cómprame un café",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Si Local Images Plus mejora tu flujo de trabajo en Obsidian, considera apoyar su desarrollo. ¡Cada café ayuda a mantener vivo este proyecto!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Plantilla para nuevos nombres de archivos adjuntos. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Por defecto: ${md5}_MD5 (compatible con versiones anteriores). Ejemplos: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Usa 'Carpeta para guardar nuevos archivos adjuntos' para subcarpetas.",
 };

@@ -175,4 +175,11 @@ export default {
   "{p} attachments for note {p} were processed.": "{p} Anhänge für Notiz {p} wurden verarbeitet.",
 
   "{p} file(s) {p}": "{p} Datei(en) {p}",
+  "Troubleshooting": "Fehlerbehebung",
+  "Support": "Unterstützung",
+  "Exclusions": "Ausschlüsse",
+  "Enjoying this plugin?": "Gefällt Ihnen dieses Plugin?",
+  "Buy me a coffee": "Kauf mir einen Kaffee",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Wenn Local Images Plus Ihren Obsidian-Workflow verbessert, unterstützen Sie die Entwicklung. Jeder Kaffee hilft, dieses Projekt am Leben zu erhalten!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Vorlage für neue Anhangsnamen. Variablen: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Standard: ${md5}_MD5 (abwärtskompatibel). Beispiele: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Verwenden Sie 'Ordner zum Speichern neuer Anhänge' für Unterordner.",
 };

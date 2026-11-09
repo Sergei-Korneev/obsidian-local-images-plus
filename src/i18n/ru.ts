@@ -198,4 +198,12 @@ export default {
   "You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.": "Ваша папка медиа Obsidian установлена на {p} и создана плагином. Пожалуйста, попробуйте снова.",
 
   "{p} attachments for note {p} were processed.": "{p} вложений для заметки {p} обработано.",
+  "Troubleshooting": "Диагностика",
+  "Support": "Поддержка",
+  "Exclusions": "Исключения",
+  "Debug": "Отладка",
+  "Enjoying this plugin?": "Нравится этот плагин?",
+  "Buy me a coffee": "Купи мне кофе",
+  "If Local Images Plus makes your Obsidian workflow better, consider supporting its development. Every coffee helps keep this project alive!": "Если Local Images Plus делает вашу работу в Obsidian удобнее, поддержите разработку. Каждая чашка кофе помогает проекту жить!",
+  "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.": "Шаблон для имён новых вложений. Переменные: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. По умолчанию: ${md5}_MD5 (обратная совместимость). Примеры: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Используйте папку для сохранения новых вложений для подпапок.",
 };
