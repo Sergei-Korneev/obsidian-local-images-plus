@@ -1467,7 +1467,9 @@ export default class LocalImagesPlugin extends Plugin {
         }
         if (itemcount > 0) {
           await this.app.vault.modify(note, filedata);
-          logError(`processMdFilesOnTimer: ${itemcount} attachments for ${note.path} processed`);
+          this.Notify(
+            translate("{p} attachments for note {p} were processed.", [String(itemcount), note.path])
+          );
           itemcount = 0;
         }
       }
