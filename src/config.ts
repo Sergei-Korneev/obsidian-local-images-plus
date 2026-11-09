@@ -27,6 +27,9 @@ export const ANCHOR_S = /(?<anchor>.+)\|(?<size>[0-9]+)/g
 
 const MD_CORE_SEARCH_PATTERN =
 [
+//linked image: [![alt](thumb "title")](full_url) — must match BEFORE regular images
+/\[!\[(?<anchor>[^\]]*)\]\((?<innerLink>[^\s\)]+)(?:\s+"[^"]*")?\)\]\((?<link>[^\s\)]+)\)/gm,
+
 //file link
 /\!\[(?<anchor>(.{0}|(?!^file\:\/)+?))\]\((?<link>((file\:\/)[^\!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
 
@@ -130,6 +133,7 @@ export interface ISettings {
   processCanvas: boolean;
   UrlExcludeRegexps: string;
   plainFmPaths: boolean;
+  saveSourceUrl: "none" | "link" | "text" | "caption";
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -165,5 +169,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   useMarkdownLinkFormat: false,
   processCanvas: true,
   UrlExcludeRegexps: "",
-  plainFmPaths: false
+  plainFmPaths: false,
+  saveSourceUrl: "link"
 };

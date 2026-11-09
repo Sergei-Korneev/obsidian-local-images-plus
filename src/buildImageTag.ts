@@ -18,6 +18,8 @@ export interface ImageTagOpts {
   useCaptions: boolean;
   plainFmPaths: boolean;
   useMarkdownLinkFormat: boolean;
+  sourceUrl?: string;
+  saveSourceUrl?: "none" | "link" | "text" | "caption";
 }
 
 export function buildImageTag(
@@ -26,6 +28,11 @@ export function buildImageTag(
   let caption = o.caption;
   let imageTag = "";
   const isFmValue = o.keypart !== undefined && o.keypart !== "";
+
+  //caption mode: use source URL as caption instead of alt text
+  if (o.saveSourceUrl === "caption" && o.sourceUrl) {
+    caption = o.sourceUrl;
+  }
 
   if (isFmValue && o.plainFmPaths) {
     //plain path for Bases: no embed brackets, no caption/size
@@ -52,6 +59,16 @@ export function buildImageTag(
   if (isFmValue) {
     const quote = o.q1 || o.q2 || `"`;
     imageTag = o.keypart + quote + imageTag + quote;
+  }
+
+  //append source URL below the tag if configured
+  if (o.saveSourceUrl && o.saveSourceUrl !== "none" && o.sourceUrl) {
+    if (o.saveSourceUrl === "link") {
+      imageTag += `\n[Source](${o.sourceUrl})`;
+    } else if (o.saveSourceUrl === "text") {
+      imageTag += `\n${o.sourceUrl}`;
+    }
+    //"caption" mode replaces caption inside the tag — handled above
   }
 
   return { imageTag, bareImageTag };

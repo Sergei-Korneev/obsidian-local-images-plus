@@ -104,8 +104,10 @@ export function MarkdownLinkParser(match: RegExp | string): any {
       : ""
   );
   //keep the exact match text for frontmatter keys and wiki brackets: replaceAll searches for it literally
+  //linked images [![alt](thumb)](full) also need the exact match — trimAny would strip the outer [
+  const isLinkedImage = match[0].startsWith("[![");
   replp =
-    keypart !== undefined || isWikiEmbed
+    keypart !== undefined || isWikiEmbed || isLinkedImage
       ? match[0]
       : trimAny(match[0], ["[", "(", "]"]);
 

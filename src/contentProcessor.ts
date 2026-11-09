@@ -222,6 +222,8 @@ export function imageTagProcessor(
             useCaptions: settings.useCaptions,
             plainFmPaths: settings.plainFmPaths,
             useMarkdownLinkFormat: settings.useMarkdownLinkFormat,
+            sourceUrl: link,
+            saveSourceUrl: settings.saveSourceUrl,
           });
 
           return [replp, imageTag, bareImageTag];

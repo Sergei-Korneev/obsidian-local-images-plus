@@ -176,6 +176,26 @@ export default class SettingTab extends PluginSettingTab {
       );
 
     new Setting(elProcessing)
+      .setName(translate("Save source URL"))
+      .setDesc(
+        translate(
+          "Keep the original URL after processing. 'Link below image' adds a [Source](url) line under the tag."
+        )
+      )
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("none", translate("Don't save"))
+          .addOption("link", translate("Link below image"))
+          .addOption("text", translate("Text below image"))
+          .addOption("caption", translate("As caption"))
+          .setValue(this.plugin.settings.saveSourceUrl)
+          .onChange(async (value: any) => {
+            this.plugin.settings.saveSourceUrl = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(elProcessing)
       .setName(translate("Automatic processing interval"))
       .setDesc(
         translate(
