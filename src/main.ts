@@ -507,9 +507,11 @@ export default class LocalImagesPlugin extends Plugin {
       const target = this.normalizeRemoteUrl(targetUrl);
 
       const onlyTarget = (replPattern: any) => {
-        if (
-          this.normalizeRemoteUrl(String(replPattern.link ?? "")) !== target
-        ) {
+        const linkMatch =
+          this.normalizeRemoteUrl(String(replPattern.link ?? "")) === target;
+        const innerMatch =
+          this.normalizeRemoteUrl(String(replPattern.innerLink ?? "")) === target;
+        if (!linkMatch && !innerMatch) {
           return replPattern.replp;
         }
         return processor(replPattern);

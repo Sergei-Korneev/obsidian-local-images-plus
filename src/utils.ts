@@ -138,6 +138,7 @@ export function MarkdownLinkParser(match: RegExp | string): any {
     replp: replp,
     anchor: anchor,
     link: link,
+    innerLink: match.groups?.innerLink ?? link,
     protocol: protocol,
     caption: caption,
     AttSize: AttSize,
