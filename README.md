@@ -1,6 +1,6 @@
 # Obsidian Local Images Plus
 
-> **📱 Mobile support (experimental):** Starting from version **0.18.0** the plugin works on Obsidian Mobile (Android & iOS). Downloading, link replacement, frontmatter processing and image conversion are supported. Mobile support is **experimental** — please report any issues or unexpected behaviour in [Issues](https://github.com/Sergei-Korneev/obsidian-local-images-plus/issues).
+> **📱 Mobile support:** The plugin works on Obsidian Mobile (Android & iOS). If you encounter any problems, please report them in [Issues](https://github.com/Sergei-Korneev/obsidian-local-images-plus/issues).
 
 Obsidian Local Images Plus is a plugin for [Obsidian](https://obsidian.md/) 
 
