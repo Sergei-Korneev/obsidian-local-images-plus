@@ -21,26 +21,23 @@ export class ModalW1 extends Modal {
 			text: this.messg
 		})
 
+		const btnContainer = contentEl.createDiv({ cls: "modal-btn-container" });
 
-		contentEl.createEl("button", {
-			cls: ["mod-cta"],
+		btnContainer.createEl("button", {
+			cls: ["mod-cta", "modal-btn"],
 			text: "Cancel"
 		}).addEventListener("click", async () => {
 			this.close();
 		});
 
-
-		contentEl.createEl("button", {
-			cls: ["mod-cta"],
+		btnContainer.createEl("button", {
+			cls: ["mod-cta", "modal-btn", "modal-btn-primary"],
 			text: "Confirm"
 		}).addEventListener("click", async () => {
-			 
 			this.close();
-			
 			if (this.callbackFunc) {
 				this.callbackFunc();
 			}
-
 		});
 	}
 
@@ -68,14 +65,13 @@ export class ModalW2 extends Modal {
 			text: this.messg
 		})
 
- 		contentEl.createEl("button", {
-			cls: ["mod-cta"],
+		const btnContainer = contentEl.createDiv({ cls: "modal-btn-container" });
+
+		btnContainer.createEl("button", {
+			cls: ["mod-cta", "modal-btn", "modal-btn-primary"],
 			text: "OK"
 		}).addEventListener("click", async () => {
-			 
 			this.close();
- 
-
 		});
 	}
 

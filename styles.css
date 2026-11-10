@@ -152,3 +152,37 @@
   color: #1a1a1a;
 }
 
+/* modal buttons */
+.modal-btn-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 90px;
+  text-align: center;
+}
+
+.modal-btn:hover {
+  transform: translateY(-1px);
+}
+
+.modal-btn-primary {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+}
+
+.modal-btn-primary:hover {
+  background: var(--interactive-accent-hover);
+}
+
