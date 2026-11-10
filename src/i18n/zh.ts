@@ -186,4 +186,6 @@ export default {
   "As caption": "作为标题",
   "Support": "支持",
   "Enjoying this plugin?": "喜欢这个插件吗？",
+  "Searching for orphaned attachments...": "正在搜索孤立附件...",
+  "Searching": "搜索",
 };

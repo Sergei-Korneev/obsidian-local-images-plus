@@ -1004,8 +1004,20 @@ export default class LocalImagesPlugin extends Plugin {
         let orphanedAttachments = [];
         let allAttachmentsLinks = [];
 
+        const progressNotice = new Notice(
+          translate("Searching for orphaned attachments..."),
+          0
+        );
+        let processed = 0;
+
         if (allFiles) {
           for (const file of allFiles) {
+            processed++;
+            if (processed % 25 === 0) {
+              progressNotice.setMessage(
+                `${APP_TITLE}\n${translate("Searching")}... ${processed}/${allFiles.length}`
+              );
+            }
             //Fix for canvas files
             if (file !== null && this.ExemplaryOfCANVAS(file.path)) {
               logError(file);
@@ -1141,6 +1153,7 @@ export default class LocalImagesPlugin extends Plugin {
             }
           }
 
+          progressNotice.hide();
           logError(allAttachments);
 
           for (const attach of allAttachments) {

@@ -193,4 +193,6 @@ export default {
   "As caption": "Jako podpis",
   "Support": "Wsparcie",
   "Enjoying this plugin?": "Podoba Ci się ta wtyczka?",
+  "Searching for orphaned attachments...": "Szukanie osieroconych załączników...",
+  "Searching": "Szukanie",
 };

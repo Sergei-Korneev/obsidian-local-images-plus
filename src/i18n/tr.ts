@@ -195,4 +195,6 @@ export default {
   "As caption": "Açıklama olarak",
   "Support": "Destek",
   "Enjoying this plugin?": "Bu eklentiyi beğendiniz mi?",
+  "Searching for orphaned attachments...": "Yetim ekler aranıyor...",
+  "Searching": "Arama",
 };

@@ -196,4 +196,6 @@ export default {
   "As caption": "Als bijschrift",
   "Support": "Ondersteuning",
   "Enjoying this plugin?": "Bevalt deze plugin?",
+  "Searching for orphaned attachments...": "Zoeken naar weesbijlagen...",
+  "Searching": "Zoeken",
 };

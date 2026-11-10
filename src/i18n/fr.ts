@@ -198,4 +198,6 @@ export default {
   "As caption": "En légende",
   "Support": "Soutien",
   "Enjoying this plugin?": "Vous aimez ce plugin ?",
+  "Searching for orphaned attachments...": "Recherche de pièces jointes orphelines...",
+  "Searching": "Recherche",
 };

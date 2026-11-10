@@ -195,4 +195,6 @@ export default {
   "As caption": "Як підпис",
   "Support": "Підтримка",
   "Enjoying this plugin?": "Подобається цей плагін?",
+  "Searching for orphaned attachments...": "Пошук осиротілих вкладень...",
+  "Searching": "Пошук",
 };

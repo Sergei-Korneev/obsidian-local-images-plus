@@ -194,4 +194,6 @@ export default {
   "As caption": "Come didascalia",
   "Support": "Supporto",
   "Enjoying this plugin?": "Ti piace questo plugin?",
+  "Searching for orphaned attachments...": "Ricerca allegati orfani...",
+  "Searching": "Ricerca",
 };

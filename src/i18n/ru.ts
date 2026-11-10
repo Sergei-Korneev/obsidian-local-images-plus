@@ -209,4 +209,6 @@ export default {
   "As caption": "Как подпись",
   "Support": "Поддержка",
   "Enjoying this plugin?": "Нравится этот плагин?",
+  "Searching for orphaned attachments...": "Поиск осиротевших вложений...",
+  "Searching": "Поиск",
 };

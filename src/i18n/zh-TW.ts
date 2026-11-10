@@ -181,4 +181,6 @@ export default {
   "As caption": "作為標題",
   "Support": "支援",
   "Enjoying this plugin?": "喜歡此外掛嗎？",
+  "Searching for orphaned attachments...": "正在搜尋孤立附件...",
+  "Searching": "搜尋",
 };

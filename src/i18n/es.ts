@@ -196,4 +196,6 @@ export default {
   "As caption": "Como pie de foto",
   "Support": "Apoyo",
   "Enjoying this plugin?": "¿Te gusta este plugin?",
+  "Searching for orphaned attachments...": "Buscando archivos adjuntos huérfanos...",
+  "Searching": "Búsqueda",
 };

@@ -194,4 +194,6 @@ export default {
   "As caption": "Como legenda",
   "Support": "Apoio",
   "Enjoying this plugin?": "Gostando deste plugin?",
+  "Searching for orphaned attachments...": "Procurando anexos órfãos...",
+  "Searching": "Pesquisa",
 };

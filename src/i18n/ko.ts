@@ -188,4 +188,6 @@ export default {
   "As caption": "캡션으로",
   "Support": "지원",
   "Enjoying this plugin?": "이 플러그인이 마음에 드시나요?",
+  "Searching for orphaned attachments...": "고아 첨부 파일 검색 중...",
+  "Searching": "검색",
 };

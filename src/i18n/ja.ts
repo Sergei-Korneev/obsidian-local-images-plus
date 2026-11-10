@@ -192,4 +192,6 @@ export default {
   "As caption": "キャプションとして",
   "Support": "サポート",
   "Enjoying this plugin?": "このプラグインは気に入っていますか？",
+  "Searching for orphaned attachments...": "孤立した添付ファイルを検索中...",
+  "Searching": "検索",
 };

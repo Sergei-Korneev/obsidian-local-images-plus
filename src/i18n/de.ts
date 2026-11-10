@@ -186,4 +186,6 @@ export default {
   "As caption": "Als Bildunterschrift",
   "Support": "Unterstützung",
   "Enjoying this plugin?": "Gefällt Ihnen dieses Plugin?",
+  "Searching for orphaned attachments...": "Suche nach verwaisten Anhängen...",
+  "Searching": "Suche",
 };
