@@ -160,3 +160,42 @@ describe("markdown link format in frontmatter", () => {
     assert.strictEqual(imageTag, 'cover: "![](_resources/note/img.jpg)"');
   });
 });
+
+describe("saveSourceUrl in frontmatter (#140)", () => {
+  test("source URL is NOT appended to frontmatter values", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "cover: ",
+      sourceUrl: "https://example.com/orig.jpg",
+      saveSourceUrl: "link",
+      plainFmPaths: false,
+    });
+    // must be valid YAML: no newline, no [Source] inside
+    assert.ok(!imageTag.includes("[Source]"));
+    assert.ok(!imageTag.includes("\n"));
+    assert.ok(imageTag.startsWith("cover: "));
+    assert.ok(imageTag.endsWith('"'));
+  });
+
+  test("source URL IS appended in body (no keypart)", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      sourceUrl: "https://example.com/orig.jpg",
+      saveSourceUrl: "link",
+    });
+    assert.ok(imageTag.includes("\n[Source](https://example.com/orig.jpg)"));
+  });
+
+  test("frontmatter + plainFmPaths + saveSourceUrl stays valid YAML", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "cover: ",
+      sourceUrl: "https://example.com/orig.jpg",
+      saveSourceUrl: "text",
+      plainFmPaths: true,
+    });
+    assert.ok(!imageTag.includes("\n"));
+    assert.ok(!imageTag.includes("https://example.com"));
+    assert.strictEqual(imageTag, 'cover: "_resources/note/img.jpg"');
+  });
+});

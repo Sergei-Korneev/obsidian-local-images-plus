@@ -62,7 +62,8 @@ export function buildImageTag(
   }
 
   //append source URL below the tag if configured
-  if (o.saveSourceUrl && o.saveSourceUrl !== "none" && o.sourceUrl) {
+  //skip for frontmatter values: a newline inside YAML breaks parsing
+  if (!isFmValue && o.saveSourceUrl && o.saveSourceUrl !== "none" && o.sourceUrl) {
     if (o.saveSourceUrl === "link") {
       imageTag += `\n[Source](${o.sourceUrl})`;
     } else if (o.saveSourceUrl === "text") {
