@@ -183,4 +183,5 @@ export default {
   "Enjoying this plugin?": "喜歡此外掛嗎？",
   "Searching for orphaned attachments...": "正在搜尋孤立附件...",
   "Searching": "搜尋",
+  "Download this image": "下載此圖片",
 };

@@ -211,4 +211,5 @@ export default {
   "Enjoying this plugin?": "Нравится этот плагин?",
   "Searching for orphaned attachments...": "Поиск осиротевших вложений...",
   "Searching": "Поиск",
+  "Download this image": "Скачать это изображение",
 };

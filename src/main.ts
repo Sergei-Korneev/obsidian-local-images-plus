@@ -187,7 +187,7 @@ export default class LocalImagesPlugin extends Plugin {
       if (src && file && plugin.settings.contextMenuDownload) {
         this.addItem((item: MenuItem) => {
           item
-            .setTitle("Download this image")
+            .setTitle(translate("Download this image"))
             .setSection("image")
             .setIcon("download")
             .onClick(() => {

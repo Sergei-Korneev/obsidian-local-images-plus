@@ -198,4 +198,5 @@ export default {
   "Enjoying this plugin?": "Bevalt deze plugin?",
   "Searching for orphaned attachments...": "Zoeken naar weesbijlagen...",
   "Searching": "Zoeken",
+  "Download this image": "Deze afbeelding downloaden",
 };

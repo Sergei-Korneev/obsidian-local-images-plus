@@ -197,4 +197,5 @@ export default {
   "Enjoying this plugin?": "Подобається цей плагін?",
   "Searching for orphaned attachments...": "Пошук осиротілих вкладень...",
   "Searching": "Пошук",
+  "Download this image": "Завантажити це зображення",
 };

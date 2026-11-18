@@ -188,4 +188,5 @@ export default {
   "Enjoying this plugin?": "喜欢这个插件吗？",
   "Searching for orphaned attachments...": "正在搜索孤立附件...",
   "Searching": "搜索",
+  "Download this image": "下载此图片",
 };

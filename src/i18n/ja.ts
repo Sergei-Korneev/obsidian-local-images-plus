@@ -194,4 +194,5 @@ export default {
   "Enjoying this plugin?": "このプラグインは気に入っていますか？",
   "Searching for orphaned attachments...": "孤立した添付ファイルを検索中...",
   "Searching": "検索",
+  "Download this image": "この画像をダウンロード",
 };

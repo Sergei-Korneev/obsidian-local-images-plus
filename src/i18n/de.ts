@@ -188,4 +188,5 @@ export default {
   "Enjoying this plugin?": "Gefällt Ihnen dieses Plugin?",
   "Searching for orphaned attachments...": "Suche nach verwaisten Anhängen...",
   "Searching": "Suche",
+  "Download this image": "Dieses Bild herunterladen",
 };

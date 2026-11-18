@@ -197,4 +197,5 @@ export default {
   "Enjoying this plugin?": "Bu eklentiyi beğendiniz mi?",
   "Searching for orphaned attachments...": "Yetim ekler aranıyor...",
   "Searching": "Arama",
+  "Download this image": "Bu resmi indir",
 };

@@ -195,4 +195,5 @@ export default {
   "Enjoying this plugin?": "Podoba Ci się ta wtyczka?",
   "Searching for orphaned attachments...": "Szukanie osieroconych załączników...",
   "Searching": "Szukanie",
+  "Download this image": "Pobierz ten obrazek",
 };
