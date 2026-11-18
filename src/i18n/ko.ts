@@ -194,4 +194,5 @@ export default {
   "Convert HTML to Markdown": "HTML을 Markdown으로 변환",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "첨부 파일을 처리하기 전에 HTML 콘텐츠를 Markdown으로 변환합니다. 먼저 노트 전체가 변환된 다음 첨부 파일이 평소처럼 검색됩니다. 변환 시 알림이 표시됩니다.",
   "Note was converted from HTML to Markdown.": "노트가 HTML에서 Markdown으로 변환되었습니다.",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p}개의 첨부 파일을 다운로드할 수 없습니다. frontmatter의 'source' 필드에 referer를 추가해 보세요.",
 };

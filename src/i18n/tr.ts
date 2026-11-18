@@ -201,4 +201,5 @@ export default {
   "Convert HTML to Markdown": "HTML'yi Markdown'a dönüştür",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Ekleri işlemeden önce HTML içeriğini Markdown'a dönüştürün. Önce tüm not dönüştürülür, sonra ekler her zamanki gibi aranır. Dönüştürme olduğunda bildirim gösterilir.",
   "Note was converted from HTML to Markdown.": "Not HTML'den Markdown'a dönüştürüldü.",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} ek indirilemedi. Frontmatter 'source' alanına referer eklemeyi deneyin.",
 };

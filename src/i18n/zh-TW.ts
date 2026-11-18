@@ -187,4 +187,5 @@ export default {
   "Convert HTML to Markdown": "將HTML轉換為Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "在處理附件之前將HTML內容轉換為Markdown。首先轉換整個筆記，然後照常搜尋附件。轉換時會顯示通知。",
   "Note was converted from HTML to Markdown.": "筆記已從HTML轉換為Markdown。",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} 個附件無法下載。請嘗試在 frontmatter 的 'source' 欄位中新增 referer。",
 };

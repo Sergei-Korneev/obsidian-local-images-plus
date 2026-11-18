@@ -201,4 +201,5 @@ export default {
   "Convert HTML to Markdown": "Конвертувати HTML в Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Конвертувати HTML-вміст у Markdown перед обробкою вкладень. Спочатку нотатка конвертується повністю, потім вкладення шукаються як зазвичай. Під час конвертації показується сповіщення.",
   "Note was converted from HTML to Markdown.": "Нотатку було конвертовано з HTML у Markdown.",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "Вкладення ({p}) не вдалося завантажити. Спробуйте додати реферер у поле 'source' у frontmatter.",
 };

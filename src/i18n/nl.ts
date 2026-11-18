@@ -202,4 +202,5 @@ export default {
   "Convert HTML to Markdown": "HTML naar Markdown converteren",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "HTML-inhoud naar Markdown converteren voordat bijlagen worden verwerkt. De hele notitie wordt eerst geconverteerd, dan worden bijlagen zoals gebruikelijk gezocht. Er wordt een melding weergegeven bij conversie.",
   "Note was converted from HTML to Markdown.": "Notitie is van HTML naar Markdown geconverteerd.",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} bijlage(n) kon(den) niet worden gedownload. Probeer een referer toe te voegen in het 'source'-veld van de frontmatter.",
 };

@@ -456,9 +456,14 @@ export default class LocalImagesPlugin extends Plugin {
   private normalizeRemoteUrl(link: string): string {
     const value = String(link ?? "").trim();
     try {
-      return decodeURI(value);
+      //URL parser normalizes default ports (:443, :80), encoding, etc.
+      return new URL(value).href;
     } catch (e) {
-      return value;
+      try {
+        return decodeURI(value);
+      } catch (e2) {
+        return value;
+      }
     }
   }
 
@@ -641,11 +646,14 @@ export default class LocalImagesPlugin extends Plugin {
       processor
     );
 
-    const fixedContent: [string, boolean, Array<string>] = [
+    const fixedContent: [string, boolean, Array<string>, string[]] = [
       fmFixed[0] + bodyFixed[0],
       fmFixed[1] || bodyFixed[1],
       [...fmFixed[2], ...bodyFixed[2]],
+      [...(fmFixed[3] ?? []), ...(bodyFixed[3] ?? [])],
     ];
+
+    const failedCount = fixedContent[3].length;
 
     if (content != fixedContent[0] && fixedContent[1] === false) {
       this.modifiedQueue.remove(file);
@@ -665,7 +673,8 @@ export default class LocalImagesPlugin extends Plugin {
       });
 
       this.Notify(
-        translate("WARNING!\r\nAttachments for \'{p}\' were processed, but some attachments were not downloaded/replaced...", [file.path])
+        translate("{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.", [String(failedCount)]) +
+        "\n" + file.path
       );
     } else {
       //suppress "nothing changed" for automatic processing — it's noise

@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.19.4";
+export const APP_TITLE = "Local Images Plus  0.19.5";
 
 
 
@@ -171,6 +171,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   processCanvas: true,
   UrlExcludeRegexps: "",
   plainFmPaths: false,
-  saveSourceUrl: "link",
+  saveSourceUrl: "none",
   convertHtmlToMd: false
 };

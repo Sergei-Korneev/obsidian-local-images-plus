@@ -111,6 +111,13 @@ export function MarkdownLinkParser(match: RegExp | string): any {
       ? match[0]
       : trimAny(match[0], ["[", "(", "]"]);
 
+  //for linked images [![alt](img)](page) download from innerLink (the image),
+  //not from the outer link (which may be an HTML page like GitHub blob)
+  const outerLink = link;
+  if (isLinkedImage && match.groups?.innerLink) {
+    link = CtagsBrcks(match.groups.innerLink);
+  }
+
   if (protocol == "file:") {
     SUPPORTED_OS.win.includes(process.platform)
       ? link.replace("file:///", "")
@@ -139,6 +146,7 @@ export function MarkdownLinkParser(match: RegExp | string): any {
     anchor: anchor,
     link: link,
     innerLink: match.groups?.innerLink ?? link,
+    outerLink: isLinkedImage ? outerLink : link,
     protocol: protocol,
     caption: caption,
     AttSize: AttSize,
@@ -158,11 +166,12 @@ export async function replaceAsync(
 
   let errorflag = false;
   const promises: Promise<any>[] = [];
+  const promiseReplps: string[] = [];
   let filesArr: Array<string> = [];
   const seen = new Set<string>();
 
   regex.forEach((regex_pattern) => {
-    //a shared /g regex may keep lastIndex from an earlier .test() call
+    //a shared /g regex keeps lastIndex from an earlier .test() call
     regex_pattern.lastIndex = 0;
     const matches = str.matchAll(regex_pattern);
     for (const match of matches) {
@@ -176,16 +185,17 @@ export async function replaceAsync(
       const promise = asyncFn(ReplaceObj);
       logError(promise, true);
       promises.push(promise);
+      promiseReplps.push(ReplaceObj.replp);
     }
   });
 
   const data = await Promise.all(promises);
   logError("Promises: ");
   logError(data, true);
-  //  return str.replace((reg: RegExp, str: String) => {
 
   const replaced = new Set<string>();
-  data.forEach((element) => {
+  const errors: string[] = [];
+  data.forEach((element, idx) => {
     if (Array.isArray(element)) {
       if (replaced.has(element[0])) {
         return;
@@ -199,10 +209,11 @@ export async function replaceAsync(
       );
     } else if (element === null) {
       errorflag = true;
+      errors.push(promiseReplps[idx] ?? "unknown");
     }
   });
 
-  return [str, errorflag, filesArr];
+  return [str, errorflag, filesArr, errors];
 
   //  return str.replace( () => data.shift());
 }

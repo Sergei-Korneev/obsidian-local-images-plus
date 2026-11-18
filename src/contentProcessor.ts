@@ -52,7 +52,7 @@ export function imageTagProcessor(
   const lock = new AsyncLock();
 
   async function processImageTag(replPattern: any) {
-    let { replp, anchor, link, protocol, caption, AttSize, keypart, q1, q2 } =
+    let { replp, anchor, link, outerLink, protocol, caption, AttSize, keypart, q1, q2 } =
       replPattern;
 
     logError("processImageTag: " + replp);
@@ -125,11 +125,6 @@ export function imageTagProcessor(
         logError(
           "Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field.",
           false
-        );
-        showBalloon(
-          translate("Cannot copy/download an attachment! Try to add referer in frontmatter 'source' field."),
-          settings.showNotifications,
-          NOTICE_TIMEOUT
         );
         return null;
       }
@@ -222,7 +217,7 @@ export function imageTagProcessor(
             useCaptions: settings.useCaptions,
             plainFmPaths: settings.plainFmPaths,
             useMarkdownLinkFormat: settings.useMarkdownLinkFormat,
-            sourceUrl: link,
+            sourceUrl: outerLink ?? link,
             saveSourceUrl: settings.saveSourceUrl,
           });
 

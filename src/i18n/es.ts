@@ -202,4 +202,5 @@ export default {
   "Convert HTML to Markdown": "Convertir HTML a Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Convertir contenido HTML a Markdown antes de procesar los archivos adjuntos. Primero se convierte la nota completa, luego se buscan los archivos adjuntos como de costumbre. Se muestra una notificación cuando ocurre la conversión.",
   "Note was converted from HTML to Markdown.": "La nota fue convertida de HTML a Markdown.",
+  "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} archivo(s) adjunto(s) no se pudo(ieron) descargar. Intente agregar un referer en el campo 'source' del frontmatter.",
 };
