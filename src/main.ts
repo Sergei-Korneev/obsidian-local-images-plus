@@ -601,10 +601,20 @@ export default class LocalImagesPlugin extends Plugin {
       return content;
     }
 
-    const content = await this.app.vault.cachedRead(file);
+    let content = await this.app.vault.cachedRead(file);
 
     if (content.length == 0) {
       return null;
+    }
+
+    //convert HTML to Markdown before processing if enabled
+    if (this.settings.convertHtmlToMd) {
+      const converted = htmlToMarkdown(content);
+      if (converted !== content) {
+        await this.app.vault.modify(file, converted);
+        this.Notify(translate("Note was converted from HTML to Markdown."));
+        content = converted;
+      }
     }
 
     const [fmPart, bodyPart] = splitFrontmatter(content);

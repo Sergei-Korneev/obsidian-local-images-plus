@@ -196,6 +196,22 @@ export default class SettingTab extends PluginSettingTab {
       );
 
     new Setting(elProcessing)
+      .setName(translate("Convert HTML to Markdown"))
+      .setDesc(
+        translate(
+          "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs."
+        )
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.convertHtmlToMd)
+          .onChange(async (value) => {
+            this.plugin.settings.convertHtmlToMd = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(elProcessing)
       .setName(translate("Automatic processing interval"))
       .setDesc(
         translate(

@@ -195,4 +195,7 @@ export default {
   "Searching for orphaned attachments...": "孤立した添付ファイルを検索中...",
   "Searching": "検索",
   "Download this image": "この画像をダウンロード",
+  "Convert HTML to Markdown": "HTMLをMarkdownに変換",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "添付ファイルを処理する前にHTMLコンテンツをMarkdownに変換します。まずノート全体が変換され、その後いつものように添付ファイルが検索されます。変換時には通知が表示されます。",
+  "Note was converted from HTML to Markdown.": "ノートがHTMLからMarkdownに変換されました。",
 };

@@ -198,4 +198,7 @@ export default {
   "Searching for orphaned attachments...": "Пошук осиротілих вкладень...",
   "Searching": "Пошук",
   "Download this image": "Завантажити це зображення",
+  "Convert HTML to Markdown": "Конвертувати HTML в Markdown",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Конвертувати HTML-вміст у Markdown перед обробкою вкладень. Спочатку нотатка конвертується повністю, потім вкладення шукаються як зазвичай. Під час конвертації показується сповіщення.",
+  "Note was converted from HTML to Markdown.": "Нотатку було конвертовано з HTML у Markdown.",
 };

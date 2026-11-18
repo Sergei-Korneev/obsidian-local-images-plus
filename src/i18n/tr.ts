@@ -198,4 +198,7 @@ export default {
   "Searching for orphaned attachments...": "Yetim ekler aranıyor...",
   "Searching": "Arama",
   "Download this image": "Bu resmi indir",
+  "Convert HTML to Markdown": "HTML'yi Markdown'a dönüştür",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Ekleri işlemeden önce HTML içeriğini Markdown'a dönüştürün. Önce tüm not dönüştürülür, sonra ekler her zamanki gibi aranır. Dönüştürme olduğunda bildirim gösterilir.",
+  "Note was converted from HTML to Markdown.": "Not HTML'den Markdown'a dönüştürüldü.",
 };

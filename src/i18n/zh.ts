@@ -189,4 +189,7 @@ export default {
   "Searching for orphaned attachments...": "正在搜索孤立附件...",
   "Searching": "搜索",
   "Download this image": "下载此图片",
+  "Convert HTML to Markdown": "将HTML转换为Markdown",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "在处理附件之前将HTML内容转换为Markdown。首先转换整个笔记，然后照常搜索附件。转换时会显示通知。",
+  "Note was converted from HTML to Markdown.": "笔记已从HTML转换为Markdown。",
 };

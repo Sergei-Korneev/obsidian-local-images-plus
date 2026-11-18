@@ -199,4 +199,7 @@ export default {
   "Searching for orphaned attachments...": "Zoeken naar weesbijlagen...",
   "Searching": "Zoeken",
   "Download this image": "Deze afbeelding downloaden",
+  "Convert HTML to Markdown": "HTML naar Markdown converteren",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "HTML-inhoud naar Markdown converteren voordat bijlagen worden verwerkt. De hele notitie wordt eerst geconverteerd, dan worden bijlagen zoals gebruikelijk gezocht. Er wordt een melding weergegeven bij conversie.",
+  "Note was converted from HTML to Markdown.": "Notitie is van HTML naar Markdown geconverteerd.",
 };

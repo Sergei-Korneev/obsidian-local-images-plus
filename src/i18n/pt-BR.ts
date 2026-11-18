@@ -197,4 +197,7 @@ export default {
   "Searching for orphaned attachments...": "Procurando anexos órfãos...",
   "Searching": "Pesquisa",
   "Download this image": "Baixar esta imagem",
+  "Convert HTML to Markdown": "Converter HTML para Markdown",
+  "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Converter conteúdo HTML para Markdown antes de processar anexos. A nota inteira é convertida primeiro, depois os anexos são procurados normalmente. Uma notificação é exibida quando a conversão ocorre.",
+  "Note was converted from HTML to Markdown.": "A nota foi convertida de HTML para Markdown.",
 };

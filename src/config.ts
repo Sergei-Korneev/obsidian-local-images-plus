@@ -134,6 +134,7 @@ export interface ISettings {
   UrlExcludeRegexps: string;
   plainFmPaths: boolean;
   saveSourceUrl: "none" | "link" | "text" | "caption";
+  convertHtmlToMd: boolean;
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
@@ -170,5 +171,6 @@ export const DEFAULT_SETTINGS: ISettings = {
   processCanvas: true,
   UrlExcludeRegexps: "",
   plainFmPaths: false,
-  saveSourceUrl: "link"
+  saveSourceUrl: "link",
+  convertHtmlToMd: false
 };
