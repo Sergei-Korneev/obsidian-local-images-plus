@@ -607,17 +607,18 @@ export default class LocalImagesPlugin extends Plugin {
       return null;
     }
 
-    //convert HTML to Markdown before processing if enabled
+    let [fmPart, bodyPart] = splitFrontmatter(content);
+
+    //convert HTML to Markdown in body only (frontmatter stays untouched)
     if (this.settings.convertHtmlToMd) {
-      const converted = htmlToMarkdown(content);
-      if (converted !== content) {
-        await this.app.vault.modify(file, converted);
+      const converted = htmlToMarkdown(bodyPart);
+      if (converted !== bodyPart) {
+        content = fmPart + converted;
+        await this.app.vault.modify(file, content);
         this.Notify(translate("Note was converted from HTML to Markdown."));
-        content = converted;
+        [fmPart, bodyPart] = [fmPart, converted];
       }
     }
-
-    const [fmPart, bodyPart] = splitFrontmatter(content);
 
     const source = this.noteSource(file, fmPart);
 
@@ -777,13 +778,16 @@ export default class LocalImagesPlugin extends Plugin {
       for (const key in tItems) {
         if (tItems[key].kind == "string") {
           if (this.settings.realTimeUpdate) {
-            const cont =
-              htmlToMarkdown(evt.clipboardData.getData("text/html")) +
-              htmlToMarkdown(evt.clipboardData.getData("text"));
+            //check patterns in RAW text (what will be in the note),
+            //not in htmlToMarkdown-converted text — otherwise HTML img tags
+            //trigger 'processing...' but processPage finds nothing to do
+            const rawCont =
+              evt.clipboardData.getData("text/html") +
+              evt.clipboardData.getData("text");
 
             for (const reg_p of MD_SEARCH_PATTERN) {
-              if (reg_p.test(cont)) {
-                logError("content: " + cont);
+              if (reg_p.test(rawCont)) {
+                logError("content: " + rawCont);
                 this.Notify(translate("Media links were found, processing..."));
 
                 this.enqueueActivePage(activeFile);
