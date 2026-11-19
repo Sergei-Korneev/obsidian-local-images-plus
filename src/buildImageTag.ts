@@ -65,9 +65,9 @@ export function buildImageTag(
   //skip for frontmatter values: a newline inside YAML breaks parsing
   if (!isFmValue && o.saveSourceUrl && o.saveSourceUrl !== "none" && o.sourceUrl) {
     if (o.saveSourceUrl === "link") {
-      imageTag += `\n\n[Source](${o.sourceUrl})`;
+      imageTag += `\n[Source](${o.sourceUrl})`;
     } else if (o.saveSourceUrl === "text") {
-      imageTag += `\n\n${o.sourceUrl}`;
+      imageTag += `\n${o.sourceUrl}`;
     }
     //"caption" mode replaces caption inside the tag — handled above
   }

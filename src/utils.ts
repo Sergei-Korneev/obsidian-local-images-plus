@@ -17,7 +17,7 @@ import {
   MD_LINK,
 } from "./config";
 
-import { requestUrl, Notice, TFile, DataAdapter, Platform } from "obsidian";
+import { requestUrl, Notice, TFile, DataAdapter, Platform, htmlToMarkdown } from "obsidian";
 
 //import { TIMEOUT } from "dns";
 //import fs from "fs";
@@ -235,6 +235,16 @@ export function safeGetConfig(vault: any, key: string, defaultValue: any = undef
   } catch (e) {
     return defaultValue;
   }
+}
+
+const HTML_TAG_PATTERN = /<[a-z][\s\S]*>/i;
+
+//convert only lines containing HTML tags; pure markdown lines are untouched
+export function convertHtmlLines(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => (HTML_TAG_PATTERN.test(line) ? htmlToMarkdown(line) : line))
+    .join("\n");
 }
 
 export async function copyFromDisk(src: string, dest: string): Promise<null> {

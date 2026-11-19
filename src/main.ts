@@ -40,6 +40,7 @@ import {
   renderNameTemplate,
   resolveUniqueName,
   safeGetConfig,
+  convertHtmlLines,
   FileNameCtx,
   MarkdownLinkParser,
 } from "./utils";
@@ -614,9 +615,9 @@ export default class LocalImagesPlugin extends Plugin {
 
     let [fmPart, bodyPart] = splitFrontmatter(content);
 
-    //convert HTML to Markdown in body only (frontmatter stays untouched)
+    //convert HTML to Markdown line-by-line (frontmatter untouched, markdown preserved)
     if (this.settings.convertHtmlToMd) {
-      const converted = htmlToMarkdown(bodyPart);
+      const converted = convertHtmlLines(bodyPart);
       if (converted !== bodyPart) {
         content = fmPart + converted;
         await this.app.vault.modify(file, content);
