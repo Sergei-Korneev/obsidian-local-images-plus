@@ -205,4 +205,6 @@ export default {
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Convertir le contenu HTML en Markdown avant de traiter les pièces jointes. La note entière est d'abord convertie, puis les pièces jointes sont recherchées comme d'habitude. Une notification est affichée lors de la conversion.",
   "Note was converted from HTML to Markdown.": "La note a été convertie du HTML en Markdown.",
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} pièce(s) jointe(s) n'a(n'ont) pas pu être téléchargée(s). Essayez d'ajouter un référent dans le champ 'source' du frontmatter.",
+  "Downloading attachments...": "Téléchargement des pièces jointes...",
+  "Downloading": "Téléchargement",
 };

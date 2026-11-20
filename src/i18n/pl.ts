@@ -200,4 +200,6 @@ export default {
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Konwertuj zawartość HTML na Markdown przed przetwarzaniem załączników. Najpierw cała notatka jest konwertowana, potem załączniki są szukane jak zwykle. Po konwersji wyświetlane jest powiadomienie.",
   "Note was converted from HTML to Markdown.": "Notatka została skonwertowana z HTML na Markdown.",
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} załącznik(ów) nie udało się pobrać. Spróbuj dodać referer w polu 'source' we frontmatter.",
+  "Downloading attachments...": "Pobieranie załączników...",
+  "Downloading": "Pobieranie",
 };

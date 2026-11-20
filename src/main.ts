@@ -645,16 +645,32 @@ export default class LocalImagesPlugin extends Plugin {
       source
     );
 
+    //progress notification: update count as each attachment downloads
+    const progressNotice = new Notice(
+      translate("Downloading attachments..."), 0
+    );
+    let doneCount = 0;
+    const wrappedProcessor = async (replPattern: any) => {
+      const result = await processor(replPattern);
+      doneCount++;
+      progressNotice.setMessage(
+        APP_TITLE + "\n" + translate("Downloading") + ": " + doneCount
+      );
+      return result;
+    };
+
     //the frontmatter is processed first: a bare url match inside the body must not touch the yaml header
     const fmFixed: [string, boolean, string[], string[]] = this.settings.processFrontmatter
-      ? await replaceAsync(fmPart, FRONTMATTER_DOWNLOAD_PATTERN, processor)
+      ? await replaceAsync(fmPart, FRONTMATTER_DOWNLOAD_PATTERN, wrappedProcessor)
       : [fmPart, false, []];
 
     const bodyFixed = await replaceAsync(
       bodyPart,
       MD_SEARCH_PATTERN,
-      processor
+      wrappedProcessor
     );
+
+    progressNotice.hide();
 
     const fixedContent: [string, boolean, Array<string>, string[]] = [
       fmFixed[0] + bodyFixed[0],
