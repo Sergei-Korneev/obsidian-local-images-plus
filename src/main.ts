@@ -631,7 +631,7 @@ export default class LocalImagesPlugin extends Plugin {
         content = fmPart + converted;
         await this.app.vault.modify(file, content);
         this.Notify(translate("Note was converted from HTML to Markdown."));
-        [fmPart, bodyPart] = [fmPart, converted];
+        bodyPart = converted;
       }
     }
 
@@ -738,7 +738,7 @@ export default class LocalImagesPlugin extends Plugin {
       // dum @ts-expect-error
       notice.setMessage(APP_TITLE + `\n${pagesCount} pages were processed.`);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         notice.hide();
       }, NOTICE_TIMEOUT);
     }
