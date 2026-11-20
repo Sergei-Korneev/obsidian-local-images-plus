@@ -184,6 +184,7 @@ export default class LocalImagesPlugin extends Plugin {
       true
     );
 
+    // capture plugin 'this' — inside showAtMouseEvent, 'this' refers to Menu instance
     const plugin = this;
     this.origMenuShow = Menu.prototype.showAtMouseEvent;
     Menu.prototype.showAtMouseEvent = function (evt?: MouseEvent) {
@@ -348,6 +349,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.on(
       "editor-paste",
       (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
+        if (evt.defaultPrevented) return;
         this.onPasteFunc(evt, editor, info);
       }
     );
@@ -355,6 +357,7 @@ export default class LocalImagesPlugin extends Plugin {
     this.app.workspace.on(
       "editor-drop",
       (evt: DragEvent, editor: Editor, info: MarkdownView) => {
+        if (evt.defaultPrevented) return;
         this.onPasteFunc(evt as any, editor, info);
       }
     );
