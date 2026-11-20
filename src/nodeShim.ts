@@ -10,27 +10,34 @@
 // Buffer polyfill — must run before any code that uses Buffer
 // (file-type/strtok3 depend on the global Buffer).
 import { Buffer as BufferPolyfill } from "buffer";
-if (typeof globalThis.Buffer === "undefined") {
-  (globalThis as any).Buffer = BufferPolyfill;
+
+interface GlobalWithNode {
+  Buffer?: typeof BufferPolyfill;
+  require?: (id: string) => unknown;
+}
+
+const g = globalThis as GlobalWithNode;
+
+if (typeof g.Buffer === "undefined") {
+  g.Buffer = BufferPolyfill;
 }
 
 // Access Node's require at runtime without eval (Obsidian review rejects eval).
-// globalThis.require exists in Electron (desktop) and is undefined on mobile.
-function safeRequire(id: string): any {
+// g.require exists in Electron (desktop) and is undefined on mobile.
+function safeRequire(id: string): unknown {
   try {
-    const req = (globalThis as any).require;
-    return req ? req(id) : null;
+    return g.require ? g.require(id) : null;
   } catch (e) {
     return null;
   }
 }
 
 // --- fs ---
-const _fs: any = safeRequire("fs");
+const _fs = safeRequire("fs") as Record<string, unknown> | null;
 
 // --- path: use Node's if available, otherwise a minimal shim ---
-const _path: any = (() => {
-  const nodePath = safeRequire("path");
+const _path = (() => {
+  const nodePath = safeRequire("path") as Record<string, unknown> | null;
   if (nodePath) return nodePath;
 
   // mobile: browser-compatible path shim

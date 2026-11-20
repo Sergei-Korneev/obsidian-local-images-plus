@@ -17,6 +17,7 @@ import {
   getMDir,
   getRDir,
   FrontMatterParser,
+  FrontMatterEmbeds,
   splitFrontmatter,
   getFrontmatterSource,
 } from "./contentProcessor";
@@ -42,6 +43,7 @@ import {
   safeGetConfig,
   convertHtmlLines,
   FileNameCtx,
+  ParsedLink,
   MarkdownLinkParser,
 } from "./utils";
 import { translate } from "./i18n/index";
@@ -80,7 +82,7 @@ export default class LocalImagesPlugin extends Plugin {
   newfCreatedByDownloader: Array<string> = [];
   ctxMenuImageSrc: string = "";
   ctxMenuImageFile: TFile | null = null;
-  origMenuShow: ((evt?: MouseEvent) => any) | null = null;
+  origMenuShow: ((evt?: MouseEvent) => void) | null = null;
 
   private ribbonIconEl: HTMLElement | null = null;
 
@@ -512,7 +514,7 @@ export default class LocalImagesPlugin extends Plugin {
       );
       const target = this.normalizeRemoteUrl(targetUrl);
 
-      const onlyTarget = (replPattern: any) => {
+      const onlyTarget = (replPattern: ParsedLink) => {
         const linkMatch =
           this.normalizeRemoteUrl(String(replPattern.link ?? "")) === target;
         const innerMatch =
@@ -559,7 +561,7 @@ export default class LocalImagesPlugin extends Plugin {
   private async processPage(
     file: TFile,
     defaultdir: boolean = false
-  ): Promise<any> {
+  ): Promise<string | null> {
     if (file == null) {
       return null;
     }
@@ -578,7 +580,7 @@ export default class LocalImagesPlugin extends Plugin {
   private async processPageInner(
     file: TFile,
     defaultdir: boolean = false
-  ): Promise<any> {
+  ): Promise<string | null> {
     if (this.settings.processCanvas && this.ExemplaryOfCANVAS(file.path)) {
       const content = await this.app.vault.cachedRead(file);
       if (content.length == 0) {
@@ -591,7 +593,7 @@ export default class LocalImagesPlugin extends Plugin {
         defaultdir,
         "markdown"
       );
-      let fixed: any = await replaceAsync(
+      const fixed: [string, boolean, string[], string[]] = await replaceAsync(
         content,
         MD_SEARCH_PATTERN,
         processor
@@ -637,7 +639,7 @@ export default class LocalImagesPlugin extends Plugin {
     );
 
     //the frontmatter is processed first: a bare url match inside the body must not touch the yaml header
-    const fmFixed: any = this.settings.processFrontmatter
+    const fmFixed: [string, boolean, string[], string[]] = this.settings.processFrontmatter
       ? await replaceAsync(fmPart, FRONTMATTER_DOWNLOAD_PATTERN, processor)
       : [fmPart, false, []];
 
@@ -874,7 +876,7 @@ export default class LocalImagesPlugin extends Plugin {
           const metaCache = this.app.metadataCache.getFileCache(noteFile);
           const embeds = metaCache?.embeds;
           const links = metaCache?.links;
-          let frembeds: { files: any[]; urls: any[] } = { files: [], urls: [] };
+          let frembeds: FrontMatterEmbeds = { files: [], urls: [] };
           try {
             frembeds = await FrontMatterParser(
               this,
@@ -1133,7 +1135,7 @@ export default class LocalImagesPlugin extends Plugin {
               const metaCache = this.app.metadataCache.getCache(file.path);
               const embeds = metaCache?.embeds;
               const links = metaCache?.links;
-              let frembeds: { files: any[]; urls: any[] } = {
+              let frembeds: FrontMatterEmbeds = {
                 files: [],
                 urls: [],
               };

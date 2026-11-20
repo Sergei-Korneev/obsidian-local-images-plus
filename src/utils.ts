@@ -51,7 +51,7 @@ export function displayError(error: Error | string, file?: TFile): void {
   logError(`LocalImagesPlus: error: ${error}`, false);
 }
 
-export function logError(str: any, isObj: boolean = false) {
+export function logError(str: unknown, isObj: boolean = false) {
   if (VERBOSE) {
     console.log(APP_TITLE + ":  ");
 
@@ -67,10 +67,24 @@ export function logError(str: any, isObj: boolean = false) {
 export { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
 import { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
 
-export function MarkdownLinkParser(match: RegExp | string): any {
+export interface ParsedLink {
+  replp: string;
+  anchor: string;
+  link: string;
+  innerLink: string;
+  outerLink: string;
+  protocol: string;
+  caption: string;
+  AttSize: string;
+  keypart: string | undefined;
+  q1: string | undefined;
+  q2: string | undefined;
+}
+
+export function MarkdownLinkParser(match: RegExp | string): ParsedLink {
   let link: string,
     anchor: string,
-    replp: any,
+    replp: string,
     caption = "",
     AttSize = "";
   const keypart = match.groups?.keypart;
@@ -157,10 +171,10 @@ export function MarkdownLinkParser(match: RegExp | string): any {
 }
 
 export async function replaceAsync(
-  str: any,
+  str: string,
   regex: Array<RegExp>,
-  asyncFn: any
-) {
+  asyncFn: (replPattern: ParsedLink) => Promise<[string, string, string] | null>
+): Promise<[string, boolean, string[], string[]]> {
   logError("replaceAsync: \r\nstr: " + str + "\r\nregex: ");
   logError(regex, true);
 
@@ -228,7 +242,7 @@ export function isUrl(link: string) {
 }
 
 //safe wrapper for vault.getConfig (internal API, may not exist on mobile)
-export function safeGetConfig(vault: any, key: string, defaultValue: any = undefined): any {
+export function safeGetConfig(vault: { getConfig?: (key: string) => unknown }, key: string, defaultValue?: unknown): unknown {
   try {
     const val = vault?.getConfig?.(key);
     return val !== undefined ? val : defaultValue;

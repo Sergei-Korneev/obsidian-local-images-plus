@@ -25,6 +25,7 @@ import {
   resolveUniqueName,
   buildImageTag,
   FileNameCtx,
+  ParsedLink,
 } from "./utils";
 import { translate } from "./i18n/index";
 
@@ -46,12 +47,12 @@ export function imageTagProcessor(
   settings: ISettings,
   defaultdir: boolean,
   source: string = ""
-) {
+): (replPattern: ParsedLink) => Promise<[string, string, string] | null> {
   //////////??????????????????????????????
   const unique = Math.random().toString(16).slice(2);
   const lock = new AsyncLock();
 
-  async function processImageTag(replPattern: any) {
+  async function processImageTag(replPattern: ParsedLink): Promise<[string, string, string] | null> {
     let { replp, anchor, link, outerLink, protocol, caption, AttSize, keypart, q1, q2 } =
       replPattern;
 
@@ -429,12 +430,23 @@ export function getFrontmatterSource(fmPart: string): string {
     .trim();
 }
 
+export interface FrontMatterEmbed {
+  key: string;
+  match: string;
+  link: string;
+}
+
+export interface FrontMatterEmbeds {
+  files: FrontMatterEmbed[];
+  urls: FrontMatterEmbed[];
+}
+
 export async function FrontMatterParser(
   app: Plugin,
   noteFile: TFile,
   SearchPattern: Array<RegExp>
-) {
-  const FrontMatterEmbeds = { files: new Array(), urls: new Array() };
+): Promise<FrontMatterEmbeds> {
+  const FrontMatterEmbeds: FrontMatterEmbeds = { files: [], urls: [] };
 
   await app.app.fileManager.processFrontMatter(
     noteFile,

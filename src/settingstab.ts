@@ -16,8 +16,8 @@ export default class SettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  displSw(cont: any): void {
-    cont.findAll(".setting-item").forEach((el: any) => {
+  displSw(cont: HTMLElement): void {
+    cont.findAll(".setting-item").forEach((el: HTMLElement) => {
       if (el.getAttr("class").includes("media_folder_set")) {
         if (
           this.plugin.settings.saveAttE === "obsFolder" ||
@@ -189,7 +189,7 @@ export default class SettingTab extends PluginSettingTab {
           .addOption("text", translate("Text below image"))
           .addOption("caption", translate("As caption"))
           .setValue(this.plugin.settings.saveSourceUrl)
-          .onChange(async (value: any) => {
+          .onChange(async (value: "none" | "link" | "text" | "caption") => {
             this.plugin.settings.saveSourceUrl = value;
             await this.plugin.saveSettings();
           })
