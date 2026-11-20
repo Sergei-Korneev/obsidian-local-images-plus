@@ -784,15 +784,15 @@ export default class LocalImagesPlugin extends Plugin {
       }
 
       //also check individual items for file kind
-      for (const key in tItems) {
-        if (tItems[key].kind === "file") {
+      for (const item of Array.from(tItems)) {
+        if (item.kind === "file") {
           return;
         }
       }
 
       //second pass: process string items (text/html with media links)
-      for (const key in tItems) {
-        if (tItems[key].kind == "string") {
+      for (const item of Array.from(tItems)) {
+        if (item.kind == "string") {
           if (this.settings.realTimeUpdate) {
             //check patterns in RAW text (what will be in the note),
             //not in htmlToMarkdown-converted text — otherwise HTML img tags
