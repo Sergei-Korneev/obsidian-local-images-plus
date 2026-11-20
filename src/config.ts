@@ -31,25 +31,25 @@ const MD_CORE_SEARCH_PATTERN =
 /\[!\[(?<anchor>[^\]]*)\]\((?<innerLink>[^\s\)]+)(?:\s+"[^"]*")?\)\]\((?<link>[^\s\)]+)\)/gm,
 
 //file link
-/\!\[(?<anchor>(.{0}|(?!^file\:\/)+?))\]\((?<link>((file\:\/)[^\!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
+/!\[(?<anchor>(.{0}|(?!^file:\/)+?))\]\((?<link>((file:\/)[^!]+?(\.{1}.{3,4}\) {0,1}|\)$|\)\n|\)])))/gm,
 
 //hypertext link
-//\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
-/\!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}\:).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[|\/[^(]+?\))))/gm,
+//!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+/!\[(?<anchor>([^\]]*))\]\((?<link>((http(s){0,1}:).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[|\/[^(]+?\))))/gm,
 
 //Base64 encoded data
-/\!\[[^\[](?<anchor>(.{0}|[^\[]+?))\]\((?<link>((data\:.+?base64\,).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
-/\!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}|(data\:.+?base64\,)).+?\)))/gm,
+/!\[[^\[](?<anchor>(.{0}|[^\[]+?))\]\((?<link>((data:.+?base64\,).+?(\) |\..{3,4}\)|\)$|\)\n|\)\]|\)\[)))/gm,
+/!\[(?<anchor>(.{0}|[^\[]+?))\]\((?<link>((http(s){0,1}|(data:.+?base64\,)).+?\)))/gm,
 
 ]
 
 //wikilink embed with remote url: ![[https://host/path.png]] or ![[https://host/path.png|300]]
 const WIKILINK_SEARCH_PATTERN =
-/\!\[\[(?<anchor>(?<link>https?:\/\/[^\]\|]+)(?:\|[^\]\|]*)?)\]\]/gm
+/!\[\[(?<anchor>(?<link>https?:\/\/[^\]\|]+)(?:\|[^\]\|]*)?)\]\]/gm
 
 //wikilink embed with local files: ![[filename.png]] or ![[path/filename.png|300]]
 const WIKILINK_LOCAL_SEARCH_PATTERN =
-/\!\[\[(?<anchor>(?<link>(?!https?:\/\/)[^\]\|]+?)(?:\|[^\]\|]*)?)\]\]/gm
+/!\[\[(?<anchor>(?<link>(?!https?:\/\/)[^\]\|]+?)(?:\|[^\]\|]*)?)\]\]/gm
 
 const SOURCE_KEY_EXCLUSION = "(?!(?:[sS][oO][uU][rR][cC][eE])[ \\t]*:)"
 

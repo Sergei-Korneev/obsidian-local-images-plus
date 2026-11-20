@@ -411,7 +411,7 @@ export function CtagsWhS(str: string) {
 
 export function cFileName(name: string, sep: string = " ") {
   const cleanedName = name.replace(
-    /(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g,
+    /(\)|\(|\"|\'|\#|\]|\[|:|\>|\<|\*|\|)/g,
     sep
   );
   return cleanedName;

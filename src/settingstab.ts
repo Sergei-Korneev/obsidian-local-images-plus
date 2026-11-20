@@ -688,7 +688,7 @@ export default class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.DateFormat)
           .onChange(async (value) => {
             if (
-              value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g) !== null
+              value.match(/(\)|\(|\"|\'|\#|\]|\[|:|\>|\<|\*|\|)/g) !== null
             ) {
               displayError(
                 translate(
@@ -759,7 +759,7 @@ export default class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.mediaRootDir)
           .onChange(async (value) => {
             if (
-              value.match(/(\)|\(|\"|\'|\#|\]|\[|\:|\>|\<|\*|\|)/g) !== null
+              value.match(/(\)|\(|\"|\'|\#|\]|\[|:|\>|\<|\*|\|)/g) !== null
             ) {
               displayError(
                 translate(
