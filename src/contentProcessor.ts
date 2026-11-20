@@ -39,7 +39,7 @@ import {
 } from "./config";
 
 import AsyncLock from "async-lock";
-import moment from "moment";
+import { moment } from "obsidian";
 
 export function imageTagProcessor(
   app: Plugin,

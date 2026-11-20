@@ -63,9 +63,9 @@ import {
 
 import { UniqueQueue } from "./uniqueQueue";
 import { nodePath, nodeFs } from "./nodeShim";
+import { moment } from "obsidian";
 const path = nodePath;
 const fs = nodeFs?.promises;
-import moment from "moment";
 import { ModalW1 } from "./modal";
 
 //import { count, log } from "console"
