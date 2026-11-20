@@ -228,6 +228,7 @@ export function imageTagProcessor(
         }
       } catch (error) {
         if (error.message === "File already exists.") {
+          // file was created by a concurrent operation — not an error
         } else {
           throw error;
         }
@@ -369,7 +370,9 @@ async function chooseFileName(
   let rawName = parsedUrl.pathname;
   try {
     rawName = decodeURI(parsedUrl.pathname);
-  } catch (e) {}
+  } catch (e) {
+    // use undecoded pathname if URI is malformed
+  }
   const originalname = rawName.endsWith("/") ? "" : path.parse(rawName).name;
 
   const nameCtx: FileNameCtx = {
