@@ -16,7 +16,9 @@ interface GlobalWithNode {
   require?: (id: string) => unknown;
 }
 
-const g = globalThis as GlobalWithNode;
+// Use window (not activeWindow): Buffer/require are Node.js globals,
+// identical in all Obsidian windows including popouts.
+const g = window as unknown as GlobalWithNode;
 
 if (typeof g.Buffer === "undefined") {
   g.Buffer = BufferPolyfill;
