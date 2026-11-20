@@ -355,7 +355,7 @@ async function chooseFileName(
   const ignoredExt = settings.ignoredExt.split("|");
   let fileExt = await getFileExt(contentData, parsedUrl.pathname);
   logError(
-    "file: " + link + " content: " + contentData + " file ext: " + fileExt,
+    "file: " + link + " content size: " + contentData.byteLength + " bytes, ext: " + fileExt,
     false
   );
 
