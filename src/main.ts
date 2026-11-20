@@ -86,7 +86,11 @@ export default class LocalImagesPlugin extends Plugin {
 
   private ribbonIconEl: HTMLElement | null = null;
 
-  async onload() {
+  onload(): void {
+    void this.initPlugin();
+  }
+
+  private async initPlugin(): Promise<void> {
     await this.loadSettings();
 
     this.addCommand({
@@ -1595,7 +1599,7 @@ export default class LocalImagesPlugin extends Plugin {
   }
 
   // ------------  Load / Save settings -----------------
-  async onunload() {
+  onunload(): void {
     //remove ribbon icon
     if (this.ribbonIconEl) {
       this.ribbonIconEl.remove();
