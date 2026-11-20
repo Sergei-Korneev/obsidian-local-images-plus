@@ -248,7 +248,7 @@ export default class LocalImagesPlugin extends Plugin {
             this.app.vault.getAbstractFileByPath(rootdir) instanceof TFolder
           ) {
             this.app.vault.trash(
-              app.vault.getAbstractFileByPath(rootdir),
+              this.app.vault.getAbstractFileByPath(rootdir),
               useSysTrash
             );
             this.Notify(translate("Attachment folder {p} was moved to trash can.", [rootdir]));
@@ -383,7 +383,7 @@ export default class LocalImagesPlugin extends Plugin {
 
   private getCurrentNote(): TFile | null {
     try {
-      const leaf: any = app.workspace.activeLeaf;
+      const leaf: any = this.app.workspace.activeLeaf;
       if (leaf?.view) {
         try {
           const vtype = leaf.view.getViewType
@@ -399,10 +399,10 @@ export default class LocalImagesPlugin extends Plugin {
           return leaf.view.file;
         }
       }
-      if (app.workspace.activeEditor?.file) {
-        return app.workspace.activeEditor.file;
+      if (this.app.workspace.activeEditor?.file) {
+        return this.app.workspace.activeEditor.file;
       }
-      const activeFile = app.workspace.getActiveFile();
+      const activeFile = this.app.workspace.getActiveFile();
       if (activeFile) {
         return activeFile;
       }
@@ -917,7 +917,7 @@ export default class LocalImagesPlugin extends Plugin {
           if (this.ExemplaryOfCANVAS(noteFile.path)) {
             let canvasData;
             try {
-              canvasData = JSON.parse(await app.vault.cachedRead(noteFile));
+              canvasData = JSON.parse(await this.app.vault.cachedRead(noteFile));
             } catch (e) {
               logError("Parse canvas data error");
             }
@@ -973,7 +973,7 @@ export default class LocalImagesPlugin extends Plugin {
             }
             // Also scan raw canvas content for any links not caught by structured parsing
             try {
-              const canvasContent = await app.vault.cachedRead(noteFile);
+              const canvasContent = await this.app.vault.cachedRead(noteFile);
               const extra = this.collectBasenamesFromContent(canvasContent);
               for (const b of extra) {
                 if (!allAttachmentsLinks.includes(b)) {
@@ -1052,7 +1052,7 @@ export default class LocalImagesPlugin extends Plugin {
 
               let canvasData;
               try {
-                canvasData = JSON.parse(await app.vault.cachedRead(file));
+                canvasData = JSON.parse(await this.app.vault.cachedRead(file));
               } catch (e) {
                 logError("Parse canvas data error");
                 continue;
@@ -1119,7 +1119,7 @@ export default class LocalImagesPlugin extends Plugin {
               }
               // Also scan raw canvas content
               try {
-                const canvasContent = await app.vault.cachedRead(file);
+                const canvasContent = await this.app.vault.cachedRead(file);
                 const extra = this.collectBasenamesFromContent(canvasContent);
                 for (const b of extra) {
                   if (!allAttachmentsLinks.includes(b)) {
