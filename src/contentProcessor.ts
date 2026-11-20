@@ -74,7 +74,7 @@ export function imageTagProcessor(
             return replp;
           }
         } catch (e) {
-          logError("Bad exclude regexp: " + r + " " + e);
+          logError("Bad exclude regexp: " + r + " " + String(e));
         }
       }
     }
@@ -235,7 +235,7 @@ export function imageTagProcessor(
 
       return null;
     } catch (error) {
-      logError("Image processing failed: " + error, false);
+      logError("Image processing failed: " + String(error), false);
       return null;
     }
   }

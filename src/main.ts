@@ -553,7 +553,7 @@ export default class LocalImagesPlugin extends Plugin {
         this.Notify(translate("Remote image not found in '{p}' or it is already local.", [file.path]));
       }
     } catch (e) {
-      logError("Single image download failed: " + e, false);
+      logError("Single image download failed: " + String(e), false);
       this.Notify(translate("Single image download failed: {p}", [e.message]));
     }
   }
@@ -812,7 +812,7 @@ export default class LocalImagesPlugin extends Plugin {
         }
       }
     } catch (e) {
-      logError("onPasteFunc: " + e, false);
+      logError("onPasteFunc: " + String(e), false);
       return;
     }
   }
@@ -884,7 +884,7 @@ export default class LocalImagesPlugin extends Plugin {
               FRONTMATTER_SEARCH_PATTERN
             );
           } catch (e) {
-            logError("Frontmatter of " + noteFile.path + " skipped: " + e);
+            logError("Frontmatter of " + noteFile.path + " skipped: " + String(e));
             this.Notify(
               translate("Frontmatter of '{p}' skipped (parse error)", [noteFile.path])
             );
@@ -1146,7 +1146,7 @@ export default class LocalImagesPlugin extends Plugin {
                   FRONTMATTER_SEARCH_PATTERN
                 );
               } catch (e) {
-                logError("Frontmatter of " + file.path + " skipped: " + e);
+                logError("Frontmatter of " + file.path + " skipped: " + String(e));
                 this.Notify(
                   translate("Frontmatter of '{p}' skipped (parse error)", [file.path])
                 );

@@ -270,7 +270,7 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
       }
     });
   } catch (e) {
-    logError("Cannot copy: " + e, false);
+    logError("Cannot copy: " + String(e), false);
     return null;
   }
 }
@@ -294,7 +294,7 @@ export async function readFromDiskB(
     }
     return bufferToArrayBuffer(buffer);
   } catch (e) {
-    logError("Cannot read the file: " + e, false);
+    logError("Cannot read the file: " + String(e), false);
     return null;
   }
 }
@@ -330,7 +330,7 @@ export async function readFromDisk(file: string): Promise<ArrayBuffer> {
     const data = await fs2.readFile(file, null);
     return bufferToArrayBuffer(Buffer.from(data));
   } catch (e) {
-    logError("Cannot read the file: " + e, false);
+    logError("Cannot read the file: " + String(e), false);
     return null;
   }
 }
@@ -359,7 +359,7 @@ export async function downloadImage(
     }
     return res.arrayBuffer;
   } catch (e) {
-    logError("Cannot download the file: " + e, false);
+    logError("Cannot download the file: " + String(e), false);
     return null;
   }
 }
@@ -553,7 +553,7 @@ export async function resolveUniqueName(
         return { fileName: candidate, needWrite: false };
       }
     } catch (e) {
-      logError("Cannot compare with existing file: " + e, false);
+      logError("Cannot compare with existing file: " + String(e), false);
     }
   }
 
@@ -727,7 +727,7 @@ export async function blobToJpegArrayBuffer(
     const outBlob = await canvasToBlob(canvas, type, q);
     return await readBlobAsArrayBuffer(outBlob);
   } catch (e) {
-    logError("Cannot compress image: " + e, false);
+    logError("Cannot compress image: " + String(e), false);
     return null;
   } finally {
     // Release the object URL regardless of success or failure.
