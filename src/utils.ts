@@ -266,7 +266,7 @@ export async function copyFromDisk(src: string, dest: string): Promise<null> {
   try {
     await fs.copyFile(src, dest, null, (err: Error) => {
       if (err) {
-        logError("Error:" + err, false);
+        logError("Error:" + String(err), false);
       }
     });
   } catch (e) {
