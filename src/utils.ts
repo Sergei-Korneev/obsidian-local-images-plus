@@ -391,7 +391,7 @@ export async function getFileExt(content: ArrayBuffer, link: string) {
 //https://stackoverflow.com/questions/26156292/trim-specific-character-from-a-string
 
 export function trimAny(str: string, chars: Array<string>) {
-  var start = 0,
+  let start = 0,
     end = str.length;
 
   while (start < end && chars.indexOf(str[start]) >= 0) ++start;

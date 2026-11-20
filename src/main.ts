@@ -1265,7 +1265,7 @@ export default class LocalImagesPlugin extends Plugin {
     logError("func onMdCreateFunc: " + file.path);
     logError(file, true);
 
-    var cont = await this.app.vault.cachedRead(file);
+    const cont = await this.app.vault.cachedRead(file);
 
     logError(cont);
 
@@ -1523,23 +1523,23 @@ export default class LocalImagesPlugin extends Plugin {
       const noteFile = this.getCurrentNote();
       const fileData = await this.app.vault.cachedRead(noteFile);
       const title = fileData.match(/^#{1,6} .+?($|\n)/gm);
-      var ind = 0;
+      let ind = 0;
       if (title !== null) {
         const newName = cFileName(
           trimAny(title[0].toString(), ["#", " "])
         ).slice(0, 200);
-        var fullPath = pathJoin([noteFile.parent.path, newName + ".md"]);
-        var fExist = await this.app.vault.exists(fullPath);
+        let fullPath = pathJoin([noteFile.parent.path, newName + ".md"]);
+        let fExist = await this.app.vault.exists(fullPath);
         if (
           trimAny(noteFile.path, ["\\", "/"]) != trimAny(fullPath, ["\\", "/"])
         ) {
           while (fExist) {
             ind++;
-            var fullPath = pathJoin([
+            let fullPath = pathJoin([
               noteFile.parent.path,
               newName + " (" + ind + ")" + ".md",
             ]);
-            var fExist = await this.app.vault.exists(fullPath);
+            let fExist = await this.app.vault.exists(fullPath);
           }
           await this.app.vault.rename(noteFile, fullPath);
 
