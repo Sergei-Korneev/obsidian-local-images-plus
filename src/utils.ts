@@ -27,7 +27,7 @@ https://stackoverflow.com/a/48032528/1020973
 It will be better to do it type-correct.
 */
 
-export async function showBalloon(
+export function showBalloon(
   str: string,
   show: boolean = true,
   timeout = NOTICE_TIMEOUT
@@ -51,7 +51,7 @@ export function displayError(error: Error | string, file?: TFile): void {
   logError(`LocalImagesPlus: error: ${error}`, false);
 }
 
-export async function logError(str: any, isObj: boolean = false) {
+export function logError(str: any, isObj: boolean = false) {
   if (VERBOSE) {
     console.log(APP_TITLE + ":  ");
 

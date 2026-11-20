@@ -375,7 +375,7 @@ export default class LocalImagesPlugin extends Plugin {
     }
   }
 
-  private async Notify(message: string) {
+  private Notify(message: string) {
     showBalloon(message, this.settings.showNotifications);
   }
 
