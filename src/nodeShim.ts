@@ -14,11 +14,12 @@ if (typeof globalThis.Buffer === "undefined") {
   (globalThis as any).Buffer = BufferPolyfill;
 }
 
-// Hide require from rollup's static analysis — keeps it inside try/catch
+// Access Node's require at runtime without eval (Obsidian review rejects eval).
+// globalThis.require exists in Electron (desktop) and is undefined on mobile.
 function safeRequire(id: string): any {
   try {
-    // eslint-disable-next-line no-eval
-    return eval("require")(id);
+    const req = (globalThis as any).require;
+    return req ? req(id) : null;
   } catch (e) {
     return null;
   }
