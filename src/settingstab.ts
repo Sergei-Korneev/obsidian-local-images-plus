@@ -36,7 +36,7 @@ export default class SettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h1", { text: APP_TITLE });
+    new Setting(containerEl).setName(APP_TITLE).setHeading();
 
     /* Buy Me a Coffee link removed as requested */
 
@@ -792,6 +792,7 @@ export default class SettingTab extends PluginSettingTab {
       cls: "settings-support-icon",
       text: "☕",
     });
+    // h2 inside custom support card — Setting.setHeading() would break the card layout
     supportCard.createEl("h2", {
       cls: "settings-support-title",
       text: translate("Enjoying this plugin?"),
