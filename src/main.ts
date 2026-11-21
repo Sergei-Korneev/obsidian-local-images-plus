@@ -35,7 +35,6 @@ import {
   blobToJpegArrayBuffer,
   getFileExt,
   trimTags,
-  readFromDiskB,
   readSamples,
   extractSamples,
   renderNameTemplate,
@@ -65,7 +64,6 @@ import { UniqueQueue } from "./uniqueQueue";
 import { nodePath, nodeFs } from "./nodeShim";
 import { moment } from "obsidian";
 const path = nodePath;
-const fs = nodeFs?.promises;
 import { ModalW1 } from "./modal";
 
 //import { count, log } from "console"
@@ -471,7 +469,7 @@ export default class LocalImagesPlugin extends Plugin {
     } catch (e) {
       try {
         return decodeURI(value);
-      } catch (e2) {
+      } catch (_e2) {
         return value;
       }
     }

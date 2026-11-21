@@ -7,7 +7,6 @@ import {
   safeGetConfig,
   downloadImage,
   readFromDisk,
-  cFileName,
   logError,
   trimAny,
   CtagsBrcks,
@@ -19,23 +18,16 @@ import {
   extractSamples,
   getFileExt,
   blobToJpegArrayBuffer,
-  trimTags,
-  showBalloon,
   renderNameTemplate,
   resolveUniqueName,
   buildImageTag,
   FileNameCtx,
   ParsedLink,
 } from "./utils";
-import { translate } from "./i18n/index";
 
 import {
   ISettings,
-  SUPPORTED_OS,
-  ATT_SIZE_ACHOR,
-  MD_LINK,
   URL_PATTERN,
-  NOTICE_TIMEOUT,
 } from "./config";
 
 import AsyncLock from "async-lock";
@@ -144,7 +136,7 @@ export function imageTagProcessor(
           unique
         );
 
-        const { fileName, needWrite } = await lock.acquire(
+        const { fileName } = await lock.acquire(
           link,
           async function () {
             const parsedUrl = new URL(link);
@@ -301,8 +293,6 @@ export async function getMDir(
   defaultdir: boolean = false,
   unique: string = ""
 ): Promise<string> {
-  const notePath = noteFile.parent.path;
-  const date = new Date();
   const current_date = moment().format(settings.DateFormat);
   const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./");
   const mediadir = settings.mediaRootDir;
