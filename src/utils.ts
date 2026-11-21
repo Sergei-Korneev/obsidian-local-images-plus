@@ -2,7 +2,6 @@
 import { nodeFs, nodePath } from "./nodeShim";
 import { fromBuffer } from "file-type";
 import isSvg from "is-svg";
-import md5 from "crypto-js/md5";
 const path = nodePath;
 const fs = nodeFs;
 const fs2 = nodeFs?.promises;
@@ -65,7 +64,6 @@ export function logError(str: unknown, isObj: boolean = false) {
 
 //pure binary utilities — see binaryUtils.ts
 export { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
-import { base64ToBuff, extractSamples, compareArrayBuffers, md5Sig } from "./binaryUtils";
 
 export interface ParsedLink {
   replp: string;

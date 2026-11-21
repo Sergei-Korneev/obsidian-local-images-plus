@@ -1500,12 +1500,6 @@ export default class LocalImagesPlugin extends Plugin {
                 }
               }
 
-              const TagsParams = {
-                OldTag: oldtag,
-                pathMd: pathMd,
-                pathWiki: pathWiki,
-              };
-
               // const vvv = MarkdownLinkParser(el.link);
               const useMdLinks =
                 this.settings.useMarkdownLinkFormat ||
@@ -1562,7 +1556,7 @@ export default class LocalImagesPlugin extends Plugin {
               noteFile.parent.path,
               newName + " (" + ind + ")" + ".md",
             ]);
-            let fExist = await this.app.vault.exists(fullPath);
+            await this.app.vault.exists(fullPath);
           }
           await this.app.vault.rename(noteFile, fullPath);
 
