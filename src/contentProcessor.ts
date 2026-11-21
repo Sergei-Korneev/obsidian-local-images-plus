@@ -395,7 +395,7 @@ async function chooseFileName(
   return { fileName, needWrite };
 }
 
-export function NoteContentReplacer(NoteData: string, Patterns: Object) {}
+export function NoteContentReplacer(NoteData: string, Patterns: object) {}
 
 //frontmatter block only: from the leading "---" line up to and including the closing "---" line
 const FRONTMATTER_SPLIT_PATTERN =
@@ -443,7 +443,7 @@ export async function FrontMatterParser(
 
   await app.app.fileManager.processFrontMatter(
     noteFile,
-    (frontmatter: Object): Object => {
+    (frontmatter: object): object => {
       if (!frontmatter) {
         return FrontMatterEmbeds;
       }
