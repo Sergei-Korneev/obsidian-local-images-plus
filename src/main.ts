@@ -845,7 +845,7 @@ export default class LocalImagesPlugin extends Plugin {
       noteFile: TFile = undefined
     ) =>
     async () => {
-      const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./");
+      const obsmediadir = safeGetConfig(this.app.vault, "attachmentFolderPath", "./");
       const allFiles = this.app.vault.getFiles();
       let oldRootdir = this.settings.mediaRootDir;
 
