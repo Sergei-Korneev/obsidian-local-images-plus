@@ -294,7 +294,7 @@ export async function getMDir(
   unique: string = ""
 ): Promise<string> {
   const current_date = moment().format(settings.DateFormat);
-  const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./");
+  const obsmediadir = safeGetConfig(app.vault, "attachmentFolderPath", "./") as string;
   const mediadir = settings.mediaRootDir;
   let attdir = settings.saveAttE;
   if (defaultdir) {

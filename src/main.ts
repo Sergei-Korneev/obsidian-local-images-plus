@@ -1224,7 +1224,7 @@ export default class LocalImagesPlugin extends Plugin {
             "Confirm remove " +
             orphanedAttachments.length +
             " orphan(s) from '" +
-            obsmediadir +
+            String(obsmediadir) +
             "  '\r\n \
           NOTE: Be careful when running this command on Obsidian attachments folder, since some html-linked files may also be moved.\r\n      ";
           mod.plugin = this;
