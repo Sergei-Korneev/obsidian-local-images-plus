@@ -110,7 +110,7 @@ export default class LocalImagesPlugin extends Plugin {
         "dice",
         APP_TITLE + "\r\nLocalize attachments (plugin folder)",
         () => {
-          this.processActivePage(false)();
+          void this.processActivePage(false)();
         }
       );
 
@@ -142,7 +142,7 @@ export default class LocalImagesPlugin extends Plugin {
         id: "remove-orphans-from-obsidian-folder",
         name: "Remove all orphaned attachments (Obsidian folder)",
         callback: () => {
-          this.removeOrphans("obsidian")();
+          void this.removeOrphans("obsidian")();
         },
       });
 
@@ -150,7 +150,7 @@ export default class LocalImagesPlugin extends Plugin {
         id: "remove-orphans-from-plugin-folder",
         name: "Remove all orphaned attachments (Plugin folder)",
         callback: () => {
-          this.removeOrphans("plugin")();
+          void this.removeOrphans("plugin")();
         },
       });
     }
@@ -199,7 +199,7 @@ export default class LocalImagesPlugin extends Plugin {
             .setSection("image")
             .setIcon("download")
             .onClick(() => {
-              plugin.downloadSingleImage(file, src);
+              void plugin.downloadSingleImage(file, src);
             });
         });
       }
@@ -215,9 +215,9 @@ export default class LocalImagesPlugin extends Plugin {
         this.ExemplaryOfMD(file.path) &&
         !this.ThePathExcluded(String(file.parent?.path))
       ) {
-        this.onMdCreateFunc(file);
+        void this.onMdCreateFunc(file);
       } else {
-        this.onFCreateFunc(file);
+        void this.onFCreateFunc(file);
       }
     });
 
@@ -252,7 +252,7 @@ export default class LocalImagesPlugin extends Plugin {
           if (
             this.app.vault.getAbstractFileByPath(rootdir) instanceof TFolder
           ) {
-            this.app.vault.trash(
+            void this.app.vault.trash(
               this.app.vault.getAbstractFileByPath(rootdir),
               useSysTrash
             );
@@ -319,7 +319,7 @@ export default class LocalImagesPlugin extends Plugin {
             "](" + encodeURI(newRootDir)
           )
           .replaceAll("[" + oldRootdir, "[" + newRootDir);
-        this.app.vault.modify(file, content);
+        void this.app.vault.modify(file, content);
       }
     });
 
@@ -350,7 +350,7 @@ export default class LocalImagesPlugin extends Plugin {
       "editor-paste",
       (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
         if (evt.defaultPrevented) return;
-        this.onPasteFunc(evt, editor, info);
+        void this.onPasteFunc(evt, editor, info);
       }
     );
 
@@ -358,7 +358,7 @@ export default class LocalImagesPlugin extends Plugin {
       "editor-drop",
       (evt: DragEvent, editor: Editor, info: MarkdownView) => {
         if (evt.defaultPrevented) return;
-        this.onPasteFunc(evt as any, editor, info);
+        void this.onPasteFunc(evt as any, editor, info);
       }
     );
 
@@ -1250,14 +1250,14 @@ export default class LocalImagesPlugin extends Plugin {
           filesToRemove.forEach((el: TFile) => {
             if (remcompl) {
               msg = "were deleted completely.";
-              this.app.vault.delete(el, true);
+              void this.app.vault.delete(el, true);
             } else {
               if (useSysTrash) {
                 msg = "were moved to the system garbage can.";
               } else {
                 msg = "were moved to the Obsidian garbage can.";
               }
-              this.app.vault.trash(el, useSysTrash);
+              void this.app.vault.trash(el, useSysTrash);
             }
           });
         }
@@ -1378,7 +1378,7 @@ export default class LocalImagesPlugin extends Plugin {
 
         if (obsmdir != "" && !(await this.app.vault.adapter.exists(obsmdir))) {
           if (!this.settings.DoNotCreateObsFolder) {
-            this.ensureFolderExists(obsmdir);
+            void this.ensureFolderExists(obsmdir);
             this.Notify(
               translate("You obsidian media folder set to {p}, and has been created by the plugin. Please, try again.", [obsmdir])
             );
@@ -1606,7 +1606,7 @@ export default class LocalImagesPlugin extends Plugin {
     const iteration = this.modifiedQueue.iterationQueue();
     for (const page of iteration) {
       if (this.processingFiles.has(page.path)) continue;
-      this.processPage(page, false);
+      void this.processPage(page, false);
     }
   };
 
