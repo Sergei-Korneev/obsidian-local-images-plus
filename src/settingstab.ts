@@ -485,7 +485,7 @@ export default class SettingTab extends PluginSettingTab {
           });
 
         text.inputEl.rows = 4;
-        text.inputEl.style.width = "100%";
+        text.inputEl.addClass("full-width-input");
       });
 
     new Setting(elProcessing)
