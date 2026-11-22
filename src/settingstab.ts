@@ -40,47 +40,9 @@ export default class SettingTab extends PluginSettingTab {
 
     /* Buy Me a Coffee link removed as requested */
 
-    // --- tab bar with scroll arrows ---
-    const tabDefs = [
-      translate("Interface settings"),
-      translate("Processing settings"),
-      translate("Note settings"),
-      translate("Orphaned attachments"),
-      translate("Media folder settings"),
-      translate("Troubleshooting"),
-      translate("Support"),
-    ];
-    const tabWrapper = containerEl.createDiv("settings-tab-wrapper");
-    const btnLeft = tabWrapper.createEl("button", { text: "◀", cls: "settings-tab-arrow" });
-    const tabBar = tabWrapper.createDiv("settings-tab-bar");
-    const btnRight = tabWrapper.createEl("button", { text: "▶", cls: "settings-tab-arrow" });
-
-    btnLeft.addEventListener("click", () => {
-      tabBar.scrollBy({ left: -200, behavior: "smooth" });
-    });
-    btnRight.addEventListener("click", () => {
-      tabBar.scrollBy({ left: 200, behavior: "smooth" });
-    });
-
-    const panels: HTMLElement[] = [];
-    tabDefs.forEach((title, i) => {
-      const btn = tabBar.createEl("button", {
-        text: title,
-        cls: "settings-tab-btn" + (i === 0 ? " active" : ""),
-      });
-      const panel = containerEl.createDiv("settings-tab-panel");
-      panel.style.display = i === 0 ? "" : "none";
-      panels.push(panel);
-      btn.addEventListener("click", () => {
-        panels.forEach((p, j) => {
-          p.style.display = j === i ? "" : "none";
-          tabBar.children[j].classList.toggle("active", j === i);
-        });
-      });
-    });
-
     // --- Section 1: Interface settings ---
-    const elInterface = panels[0];
+    new Setting(containerEl).setName(translate("Interface settings")).setHeading();
+    const elInterface = containerEl;
 
     new Setting(elInterface)
       .setName(translate("Show notifications"))
@@ -126,8 +88,8 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    // --- Section 2: Processing settings ---
-    const elProcessing = panels[1];
+    new Setting(containerEl).setName(translate("Processing settings")).setHeading();
+    const elProcessing = containerEl;
 
     new Setting(elProcessing)
       .setName(translate("Automatic processing"))
@@ -581,8 +543,8 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    // --- Section 3: Note settings ---
-    const elNote = panels[2];
+    new Setting(containerEl).setName(translate("Note settings")).setHeading();
+    const elNote = containerEl;
 
     new Setting(elNote)
       .setName(translate("Preserve link captions"))
@@ -640,8 +602,8 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    // --- Section 4: Orphaned attachments ---
-    const elOrphans = panels[3];
+    new Setting(containerEl).setName(translate("Orphaned attachments")).setHeading();
+    const elOrphans = containerEl;
 
     new Setting(elOrphans)
       .setName(translate("Remove files completely"))
@@ -655,8 +617,8 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    // --- Section 5: Media folder settings ---
-    const elMedia = panels[4];
+    new Setting(containerEl).setName(translate("Media folder settings")).setHeading();
+    const elMedia = containerEl;
 
     new Setting(elMedia)
       .setName(translate("How to write paths in tags"))
@@ -773,8 +735,8 @@ export default class SettingTab extends PluginSettingTab {
           })
       );
 
-    // --- Section 6: Troubleshooting ---
-    const elTroubleshoot = panels[5];
+    new Setting(containerEl).setName(translate("Troubleshooting")).setHeading();
+    const elTroubleshoot = containerEl;
     new Setting(elTroubleshoot)
       .setName(translate("Debug"))
       .setDesc(translate("Enable debug output to console."))
@@ -785,8 +747,8 @@ export default class SettingTab extends PluginSettingTab {
         })
       );
 
-    // --- Section 7: Support ---
-    const elSupport = panels[6];
+    new Setting(containerEl).setName(translate("Support")).setHeading();
+    const elSupport = containerEl;
     const supportCard = elSupport.createDiv("settings-support-card");
     supportCard.createEl("div", {
       cls: "settings-support-icon",
