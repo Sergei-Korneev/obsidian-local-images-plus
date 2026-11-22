@@ -203,4 +203,12 @@ export default {
   "Downloading": "ダウンロード",
   "In folder below": "下のフォルダー",
   "Troubleshooting": "トラブルシューティング",
+  "Controls how file paths are written in generated tags.": "生成されたタグにファイルパスがどのように書き込まれるかを制御します。",
+  "Debug": "デバッグ",
+  "Exclusions": "除外設定",
+  "Image Compression Type": "画像圧縮タイプ",
+  "Rename/remove media folder": "メディアフォルダーの名前変更/削除",
+  "Select the image compression type.": "画像圧縮タイプを選択してください。",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "これらの正規表現に一致するURLは処理から除外されます。1行に1つの式。",
+  "Where to save new attachments.": "新しい添付ファイルの保存先。",
 };

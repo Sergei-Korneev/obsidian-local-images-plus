@@ -206,4 +206,12 @@ export default {
   "Downloading": "İndirme",
   "In folder below": "Aşağıdaki klasörde",
   "Troubleshooting": "Sorun giderme",
+  "Controls how file paths are written in generated tags.": "Oluşturulan etiketlerde dosya yollarının nasıl yazılacağını kontrol eder.",
+  "Debug": "Hata ayıklama",
+  "Exclusions": "Hariç tutmalar",
+  "Image Compression Type": "Görsel sıkıştırma türü",
+  "Rename/remove media folder": "Medya klasörünü yeniden adlandır/kaldır",
+  "Select the image compression type.": "Görsel sıkıştırma türünü seçin.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "Bu normal ifadelere uyan URL'ler işlemden hariç tutulacaktır. Satır başına bir ifade.",
+  "Where to save new attachments.": "Yeni eklerin nereye kaydedileceği.",
 };

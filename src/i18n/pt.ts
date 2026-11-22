@@ -205,4 +205,12 @@ export default {
   "Downloading": "Baixando",
   "In folder below": "Na pasta abaixo",
   "Troubleshooting": "Solução de problemas",
+  "Controls how file paths are written in generated tags.": "Controla como os caminhos de arquivos são escritos nas tags geradas.",
+  "Debug": "Depuração",
+  "Exclusions": "Exclusões",
+  "Image Compression Type": "Tipo de compressão de imagem",
+  "Rename/remove media folder": "Renomear/remover pasta de mídia",
+  "Select the image compression type.": "Selecione o tipo de compressão de imagem.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "URLs que correspondem a estas expressões regulares serão excluídas do processamento. Uma expressão por linha.",
+  "Where to save new attachments.": "Onde salvar novos anexos.",
 };

@@ -220,4 +220,12 @@ export default {
   "Downloading": "Загрузка",
   "In folder below": "В папке ниже",
   "Troubleshooting": "Диагностика",
+  "Controls how file paths are written in generated tags.": "Определяет, как пути к файлам записываются в сгенерированных тегах.",
+  "Debug": "Отладка",
+  "Exclusions": "Исключения",
+  "Image Compression Type": "Тип сжатия изображения",
+  "Rename/remove media folder": "Переименовать/удалить медиа-папку",
+  "Select the image compression type.": "Выберите тип сжатия изображения.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "URL, соответствующие этим регулярным выражениям, будут исключены из обработки. Одно выражение на строку.",
+  "Where to save new attachments.": "Где сохранять новые вложения.",
 };

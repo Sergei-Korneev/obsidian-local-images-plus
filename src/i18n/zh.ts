@@ -197,4 +197,12 @@ export default {
   "Downloading": "下载",
   "In folder below": "在下方文件夹中",
   "Troubleshooting": "故障排除",
+  "Controls how file paths are written in generated tags.": "控制生成标签中文件路径的写入方式。",
+  "Debug": "调试",
+  "Exclusions": "排除项",
+  "Image Compression Type": "图片压缩类型",
+  "Rename/remove media folder": "重命名/删除媒体文件夹",
+  "Select the image compression type.": "选择图片压缩类型。",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "匹配这些正则表达式的URL将被排除在处理之外。每行一个表达式。",
+  "Where to save new attachments.": "新附件的保存位置。",
 };

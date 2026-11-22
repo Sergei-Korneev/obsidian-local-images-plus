@@ -209,4 +209,11 @@ export default {
   "Downloading": "Téléchargement",
   "In folder below": "Dans le dossier ci-dessous",
   "Troubleshooting": "Dépannage",
+  "Controls how file paths are written in generated tags.": "Contrôle comment les chemins de fichiers sont écrits dans les balises générées.",
+  "Debug": "Débogage",
+  "Image Compression Type": "Type de compression d'image",
+  "Rename/remove media folder": "Renommer/supprimer le dossier média",
+  "Select the image compression type.": "Sélectionnez le type de compression d'image.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "Les URL correspondant à ces expressions régulières seront exclues du traitement. Une expression par ligne.",
+  "Where to save new attachments.": "Où enregistrer les nouvelles pièces jointes.",
 };

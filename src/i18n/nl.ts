@@ -207,4 +207,12 @@ export default {
   "Downloading": "Downloaden",
   "In folder below": "In onderstaande map",
   "Troubleshooting": "Probleemoplossing",
+  "Controls how file paths are written in generated tags.": "Bepaalt hoe bestandspaden worden geschreven in gegenereerde tags.",
+  "Debug": "Debuggen",
+  "Exclusions": "Uitzonderingen",
+  "Image Compression Type": "Afbeeldingscomprimeringstype",
+  "Rename/remove media folder": "Mediamap hernoemen/verwijderen",
+  "Select the image compression type.": "Selecteer het afbeeldingscomprimeringstype.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "URL's die overeenkomen met deze reguliere expressies worden uitgesloten van verwerking. Eén expressie per regel.",
+  "Where to save new attachments.": "Waar nieuwe bijlagen opgeslagen worden.",
 };

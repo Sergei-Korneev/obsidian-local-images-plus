@@ -197,4 +197,11 @@ export default {
   "Downloading": "Herunterladen",
   "In folder below": "Im Ordner darunter",
   "Troubleshooting": "Fehlerbehebung",
+  "Controls how file paths are written in generated tags.": "Steuert, wie Dateipfade in generierten Tags geschrieben werden.",
+  "Exclusions": "Ausschlüsse",
+  "Image Compression Type": "Bildkomprimierungstyp",
+  "Rename/remove media folder": "Medienordner umbenennen/entfernen",
+  "Select the image compression type.": "Wählen Sie den Bildkomprimierungstyp.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "URLs, die diesen regulären Ausdrücken entsprechen, werden von der Verarbeitung ausgeschlossen. Ein Ausdruck pro Zeile.",
+  "Where to save new attachments.": "Wo neue Anhänge gespeichert werden.",
 };

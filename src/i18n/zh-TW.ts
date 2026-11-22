@@ -192,4 +192,12 @@ export default {
   "Downloading": "下載",
   "In folder below": "在下方資料夾中",
   "Troubleshooting": "疑難排解",
+  "Controls how file paths are written in generated tags.": "控制產生標籤中檔案路徑的寫入方式。",
+  "Debug": "除錯",
+  "Exclusions": "排除項",
+  "Image Compression Type": "圖片壓縮類型",
+  "Rename/remove media folder": "重新命名/刪除媒體資料夾",
+  "Select the image compression type.": "選擇圖片壓縮類型。",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "符合這些正則表達式的URL將被排除在處理之外。每行一個表達式。",
+  "Where to save new attachments.": "新附件的儲存位置。",
 };

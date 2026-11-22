@@ -206,4 +206,12 @@ export default {
   "Downloading": "Завантаження",
   "In folder below": "У папці нижче",
   "Troubleshooting": "Діагностика",
+  "Controls how file paths are written in generated tags.": "Визначає, як шляхи до файлів записуються у згенерованих тегах.",
+  "Debug": "Налагодження",
+  "Exclusions": "Виключення",
+  "Image Compression Type": "Тип стиснення зображення",
+  "Rename/remove media folder": "Перейменувати/видалити медіа-папку",
+  "Select the image compression type.": "Виберіть тип стиснення зображення.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "URL, що відповідають цим регулярним виразам, будуть виключені з обробки. Один вираз на рядок.",
+  "Where to save new attachments.": "Де зберігати нові вкладення.",
 };

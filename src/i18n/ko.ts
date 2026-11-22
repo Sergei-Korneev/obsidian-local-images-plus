@@ -199,4 +199,12 @@ export default {
   "Downloading": "다운로드",
   "In folder below": "아래 폴더",
   "Troubleshooting": "문제 해결",
+  "Controls how file paths are written in generated tags.": "생성된 태그에 파일 경로가 어떻게 기록되는지 제어합니다.",
+  "Debug": "디버그",
+  "Exclusions": "제외",
+  "Image Compression Type": "이미지 압축 유형",
+  "Rename/remove media folder": "미디어 폴더 이름 변경/삭제",
+  "Select the image compression type.": "이미지 압축 유형을 선택하세요.",
+  "URLs matching these regular expressions will be excluded from processing. One expression per line.": "이 정규식과 일치하는 URL은 처리에서 제외됩니다. 한 줄에 하나의 식.",
+  "Where to save new attachments.": "새 첨부 파일 저장 위치.",
 };
