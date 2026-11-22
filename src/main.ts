@@ -41,6 +41,7 @@ import {
   resolveUniqueName,
   safeGetConfig,
   convertHtmlLines,
+  extractSvgBlocks,
   FileNameCtx,
   ParsedLink,
   MarkdownLinkParser,
@@ -631,6 +632,30 @@ export default class LocalImagesPlugin extends Plugin {
         this.Notify(translate("Note was converted from HTML to Markdown."));
         bodyPart = converted;
       }
+    }
+
+    //extract inline SVG blocks and save as .svg files
+    const svgResult = extractSvgBlocks(bodyPart);
+    if (svgResult.svgs.length > 0) {
+      let svgText = svgResult.text;
+      for (let i = 0; i < svgResult.svgs.length; i++) {
+        const svgContent = svgResult.svgs[i];
+        const svgName = `svg_${Date.now()}_${i}.svg`;
+        const mediaDir = await getMDir(this.app, file, this.settings, defaultdir);
+        const svgPath = pathJoin([mediaDir, svgName]);
+        await this.ensureFolderExists(mediaDir);
+        await this.app.vault.adapter.writeBinary(
+          svgPath,
+          new TextEncoder().encode(svgContent).buffer as ArrayBuffer
+        );
+        svgText = svgText.replace(
+          `\x00SVG_PLACEHOLDER_${i}\x00`,
+          `![[${svgPath}]]`
+        );
+      }
+      bodyPart = svgText;
+      content = fmPart + bodyPart;
+      await this.app.vault.modify(file, content);
     }
 
     const source = this.noteSource(file, fmPart);

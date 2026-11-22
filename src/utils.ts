@@ -250,13 +250,33 @@ export function safeGetConfig(vault: { getConfig?: (key: string) => unknown }, k
 }
 
 const HTML_TAG_PATTERN = /<[a-z][\s\S]*>/i;
+const SVG_BLOCK_PATTERN = /<svg[\s\S]*?<\/svg>/gi;
 
-//convert only lines containing HTML tags; pure markdown lines are untouched
+//convert only lines containing HTML tags; SVG blocks and pure markdown are untouched
 export function convertHtmlLines(text: string): string {
   return text
     .split("\n")
-    .map((line) => (HTML_TAG_PATTERN.test(line) ? htmlToMarkdown(line) : line))
+    .map((line) => {
+      if (HTML_TAG_PATTERN.test(line) && !line.includes("<svg") && !line.includes("</svg>")) {
+        return htmlToMarkdown(line);
+      }
+      return line;
+    })
     .join("\n");
+}
+
+//extract inline SVG blocks from text, replace each with a placeholder
+export function extractSvgBlocks(text: string): {
+  text: string;
+  svgs: string[];
+} {
+  const svgs: string[] = [];
+  const result = text.replace(SVG_BLOCK_PATTERN, (match) => {
+    const index = svgs.length;
+    svgs.push(match);
+    return `\x00SVG_PLACEHOLDER_${index}\x00`;
+  });
+  return { text: result, svgs };
 }
 
 export async function copyFromDisk(src: string, dest: string): Promise<null> {
