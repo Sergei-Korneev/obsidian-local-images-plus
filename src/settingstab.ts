@@ -16,6 +16,125 @@ export default class SettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
+  // --- Declarative settings API (Obsidian 1.13+) ---
+  // Provides global search and grouped display.
+
+  getControlValue(key: string): unknown {
+    if (key === "__debug") return VERBOSE;
+    return (this.plugin.settings as any)[key];
+  }
+
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    if (key === "__debug") {
+      setDebug(value as boolean);
+      await this.plugin.saveSettings();
+      return;
+    }
+    (this.plugin.settings as any)[key] = value;
+    await this.plugin.saveSettings();
+  }
+
+  getSettingDefinitions() {
+    const s = (key: string, name: string, desc: string, control: any) => ({
+      name: translate(name),
+      desc: translate(desc),
+      control: { key, ...control },
+    });
+    const toggle = (key: string, name: string, desc: string) =>
+      s(key, name, desc, { type: "toggle" });
+    const text = (key: string, name: string, desc: string, placeholder?: string) =>
+      s(key, name, desc, { type: "text", placeholder });
+    const dropdown = (key: string, name: string, desc: string, options: Record<string, string>) =>
+      s(key, name, desc, { type: "dropdown", options });
+
+    return [
+      {
+        type: "group" as const,
+        heading: translate("Interface settings"),
+        items: [
+          toggle("showNotifications", "Show notifications", "Show notifications when pages were processed."),
+          toggle("contextMenuDownload", "Context menu: download single image", "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link."),
+          toggle("disAddCom", "Disable additional commands", "Hide additional commands from the command palette."),
+        ],
+      },
+      {
+        type: "group" as const,
+        heading: translate("Processing settings"),
+        items: [
+          toggle("processCreated", "Automatic processing", "Process notes on create/copy/paste."),
+          toggle("processFrontmatter", "Process images in frontmatter", "Download and localize image links in the YAML frontmatter. When disabled the frontmatter block is left untouched ('source' key is still used as referer for body images)."),
+          toggle("plainFmPaths", "Plain paths in frontmatter", "Write plain file paths in YAML frontmatter instead of ![[embed]] links. Required for image properties in Bases. Body links are not affected."),
+          dropdown("saveSourceUrl", "Save source URL", "Keep the original URL after processing. 'Link below image' adds a [Source](url) line under the tag.", {
+            "none": translate("Don't save"),
+            "link": translate("Link below image"),
+            "text": translate("Text below image"),
+            "caption": translate("As caption"),
+          }),
+          toggle("convertHtmlToMd", "Convert HTML to Markdown", "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs."),
+          text("realTimeUpdateInterval", "Automatic processing interval", "Interval in seconds for processing update. It takes some time to reveal changed content of a note to plugins."),
+          text("tryCount", "Number of retries for every single attachment", "How many times to retry downloading a single attachment before giving up."),
+          toggle("processAll", "Process all new markdown files", "Automatically process all new markdown files created in the vault."),
+          toggle("processCreated", "Process all new attachments", "Automatically process all new attachments added to the vault."),
+          text("FileNameTemplate", "File name template", "Template for new attachment names. Variables: ${md5}, ${md5:N}, ${originalname}, ${notename}, ${date}, ${unique}. Default: ${md5}_MD5 (backward compatible). Examples: ${originalname}, ${notename}-${originalname}, ${date}-${md5:8}. Use Folder to save new attachments for subfolders.", "${md5}_MD5"),
+          toggle("useMarkdownLinkFormat", "Use markdown link format with angle brackets ![](<link>)", "Force using markdown link format with angle brackets instead of encoded URI when generating links."),
+          toggle("processCanvas", "Process Canvas files", "Process images in Obsidian Canvas (.canvas files)"),
+          s("UrlExcludeRegexps", "URL exclude regexps", "URLs matching these regular expressions will be excluded from processing. One expression per line.", { type: "textarea" }),
+          toggle("downUnknown", "Download unknown filetypes", "Download files with unknown or unrecognized extensions."),
+          toggle("PngToJpeg", "Compress images (Web Images)", "Convert and compress PNG images to JPEG for images downloaded from the web."),
+          toggle("PngToJpegLocal", "Compress images (Pasted Images)", "Convert and compress PNG images to JPEG for pasted images."),
+          text("JpegQuality", "Image Quality", "Image quality selection (30 to 100).", "80"),
+          dropdown("ImgCompressionType", "Image Compression Type", "Select the image compression type.", {
+            "image/jpeg": "JPEG",
+            "image/webp": "WebP",
+          }),
+          text("ignoredExt", "Exclusions", "Include only files with extensions only matching this pattern. Example: md|canvas"),
+          toggle("removeMediaFolder", "Rename/remove media folder", "Rename or move this folder to the obsidian or system garbage can when the associated note is deleted/renamed/moved. This setting takes effect only if the path contains ${notename} template at the end and the options 'Next to note in the folder specified below' / 'Relative to note' are selected. Use this setting at your own risk."),
+        ],
+      },
+      {
+        type: "group" as const,
+        heading: translate("Note settings"),
+        items: [
+          toggle("useCaptions", "Preserve link captions", "Keep the original caption/alt text when replacing links."),
+          text("includepattern", "Include pattern", "Include only files with extensions matching this pattern. Example: (?<md>.*\\.md)|(?<canvas>.*\\.canvas)"),
+        ],
+      },
+      {
+        type: "group" as const,
+        heading: translate("Orphaned attachments"),
+        items: [
+          toggle("removeOrphansCompl", "Remove files completely", "When removing orphaned attachments, delete them permanently instead of moving to trash."),
+        ],
+      },
+      {
+        type: "group" as const,
+        heading: translate("Media folder settings"),
+        items: [
+          dropdown("pathInTags", "How to write paths in tags", "Controls how file paths are written in generated tags.", {
+            "baseFileName": translate("Only filename"),
+            "onlyRelative": translate("Relative to note"),
+            "fullDirPath": translate("Full path"),
+          }),
+          text("DateFormat", "Date format", "Date format used in file names. Uses moment.js format tokens.", "YYYY MM DD"),
+          dropdown("saveAttE", "Folder to save new attachments", "Where to save new attachments.", {
+            "obsFolder": translate("Copy Obsidian settings"),
+            "nextToNoteS": translate("Next to note in the folder specified below"),
+            "inFolderBelow": translate("In folder below"),
+          }),
+          toggle("removeMediaFolder", "Move/delete/rename media folder", "Rename or move this folder to the obsidian or system garbage can when the associated note is deleted/renamed/moved. This setting takes effect only if the path contains ${notename} template at the end and the options 'Next to note in the folder specified below' / 'Relative to note' are selected. Use this setting at your own risk."),
+          text("mediaRootDir", "Media folder", "Folder to keep all downloaded media files."),
+        ],
+      },
+      {
+        type: "group" as const,
+        heading: translate("Troubleshooting"),
+        items: [
+          toggle("__debug", "Debug", "Enable debug output to console."),
+        ],
+      },
+    ];
+  }
+
   displSw(cont: HTMLElement): void {
     cont.findAll(".setting-item").forEach((el: HTMLElement) => {
       if (el.getAttr("class").includes("media_folder_set")) {
