@@ -204,4 +204,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} ek indirilemedi. Frontmatter 'source' alanına referer eklemeyi deneyin.",
   "Downloading attachments...": "Ekler indiriliyor...",
   "Downloading": "İndirme",
+  "In folder below": "Aşağıdaki klasörde",
+  "Troubleshooting": "Sorun giderme",
 };

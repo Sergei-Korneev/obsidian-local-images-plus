@@ -197,4 +197,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p}개의 첨부 파일을 다운로드할 수 없습니다. frontmatter의 'source' 필드에 referer를 추가해 보세요.",
   "Downloading attachments...": "첨부 파일 다운로드 중...",
   "Downloading": "다운로드",
+  "In folder below": "아래 폴더",
+  "Troubleshooting": "문제 해결",
 };

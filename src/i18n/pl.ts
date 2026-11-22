@@ -202,4 +202,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} załącznik(ów) nie udało się pobrać. Spróbuj dodać referer w polu 'source' we frontmatter.",
   "Downloading attachments...": "Pobieranie załączników...",
   "Downloading": "Pobieranie",
+  "In folder below": "W folderze poniżej",
+  "Troubleshooting": "Rozwiązywanie problemów",
 };

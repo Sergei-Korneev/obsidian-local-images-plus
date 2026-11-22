@@ -195,4 +195,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} Anhang/Anhänge konnten nicht heruntergeladen werden. Versuchen Sie, einen Referer im Frontmatter-'source'-Feld hinzuzufügen.",
   "Downloading attachments...": "Anhänge werden heruntergeladen...",
   "Downloading": "Herunterladen",
+  "In folder below": "Im Ordner darunter",
+  "Troubleshooting": "Fehlerbehebung",
 };

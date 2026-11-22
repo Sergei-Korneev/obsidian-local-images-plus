@@ -204,4 +204,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "Вкладення ({p}) не вдалося завантажити. Спробуйте додати реферер у поле 'source' у frontmatter.",
   "Downloading attachments...": "Завантаження вкладень...",
   "Downloading": "Завантаження",
+  "In folder below": "У папці нижче",
+  "Troubleshooting": "Діагностика",
 };

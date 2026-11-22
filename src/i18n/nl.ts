@@ -205,4 +205,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} bijlage(n) kon(den) niet worden gedownload. Probeer een referer toe te voegen in het 'source'-veld van de frontmatter.",
   "Downloading attachments...": "Bijlagen downloaden...",
   "Downloading": "Downloaden",
+  "In folder below": "In onderstaande map",
+  "Troubleshooting": "Probleemoplossing",
 };

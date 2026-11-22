@@ -207,4 +207,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} pièce(s) jointe(s) n'a(n'ont) pas pu être téléchargée(s). Essayez d'ajouter un référent dans le champ 'source' du frontmatter.",
   "Downloading attachments...": "Téléchargement des pièces jointes...",
   "Downloading": "Téléchargement",
+  "In folder below": "Dans le dossier ci-dessous",
+  "Troubleshooting": "Dépannage",
 };

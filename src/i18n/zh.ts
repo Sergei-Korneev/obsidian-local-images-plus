@@ -195,4 +195,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} 个附件无法下载。请尝试在 frontmatter 的 'source' 字段中添加 referer。",
   "Downloading attachments...": "正在下载附件...",
   "Downloading": "下载",
+  "In folder below": "在下方文件夹中",
+  "Troubleshooting": "故障排除",
 };

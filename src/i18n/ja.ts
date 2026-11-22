@@ -201,4 +201,6 @@ export default {
   "{p} attachment(s) could not be downloaded. Try adding a referer in frontmatter 'source' field.": "{p} 件の添付ファイルをダウンロードできませんでした。frontmatter の 'source' フィールドにリファラーを追加してみてください。",
   "Downloading attachments...": "添付ファイルをダウンロード中...",
   "Downloading": "ダウンロード",
+  "In folder below": "下のフォルダー",
+  "Troubleshooting": "トラブルシューティング",
 };
