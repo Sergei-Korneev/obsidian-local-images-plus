@@ -88,13 +88,13 @@ export default class LocalImagesPlugin extends Plugin {
 
   onload(): void {
     this.isLoaded = true;
+    this.registerCommands();
     void this.initPlugin();
   }
 
-  private async initPlugin(): Promise<void> {
-    await this.loadSettings();
-    if (!this.isLoaded) return;
-
+  //commands must be registered synchronously — before any async gap —
+  //so Obsidian's plugin lifecycle can clean them up on unload
+  private registerCommands(): void {
     this.addCommand({
       id: "download-images",
       name: "Localize attachments for the current note (plugin folder)",
@@ -156,6 +156,11 @@ export default class LocalImagesPlugin extends Plugin {
         },
       });
     }
+  }
+
+  private async initPlugin(): Promise<void> {
+    await this.loadSettings();
+    if (!this.isLoaded) return;
 
     //the image widget builds its own context menu and never triggers workspace "editor-menu",
     //so remember the clicked remote image here and inject the item when the menu is about to show
