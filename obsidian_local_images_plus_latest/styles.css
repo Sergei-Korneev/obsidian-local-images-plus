@@ -186,3 +186,8 @@
   background: var(--interactive-accent-hover);
 }
 
+
+/* full-width textarea in settings */
+.full-width-input {
+  width: 100%;
+}

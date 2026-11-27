@@ -84,14 +84,18 @@ export default class LocalImagesPlugin extends Plugin {
   origMenuShow: ((evt?: MouseEvent) => void) | null = null;
 
   private ribbonIconEl: HTMLElement | null = null;
+  private isLoaded = false;
 
   onload(): void {
+    this.isLoaded = true;
+    this.settings = { ...DEFAULT_SETTINGS };
+    this.registerCommands();
     void this.initPlugin();
   }
 
-  private async initPlugin(): Promise<void> {
-    await this.loadSettings();
-
+  // Commands registered synchronously — before any async gap —
+  // so Obsidian can properly clean them up on unload.
+  private registerCommands(): void {
     this.addCommand({
       id: "download-images",
       name: "Localize attachments for the current note (plugin folder)",
@@ -153,6 +157,11 @@ export default class LocalImagesPlugin extends Plugin {
         },
       });
     }
+  }
+
+  private async initPlugin(): Promise<void> {
+    await this.loadSettings();
+    if (!this.isLoaded) return;
 
     //the image widget builds its own context menu and never triggers workspace "editor-menu",
     //so remember the clicked remote image here and inject the item when the menu is about to show
@@ -1636,38 +1645,44 @@ export default class LocalImagesPlugin extends Plugin {
 
   // ------------  Load / Save settings -----------------
   onunload(): void {
-    //remove ribbon icon
-    if (this.ribbonIconEl) {
-      this.ribbonIconEl.remove();
-      this.ribbonIconEl = null;
+    this.isLoaded = false;
+
+    // Official Plugin.removeCommand API (Obsidian 1.7.2+)
+    const cmdIds = [
+      "download-images", "download-images-def",
+      "set-title-as-name", "download-images-all",
+      "convert-selection-to-URI", "convert-selection-to-md",
+      "remove-orphans-from-obsidian-folder",
+      "remove-orphans-from-plugin-folder",
+    ];
+    for (const id of cmdIds) {
+      try { this.removeCommand(id); } catch (_) {}
     }
 
-    //restore patched Menu prototype
-    if (this.origMenuShow) {
-      Menu.prototype.showAtMouseEvent = this.origMenuShow;
-      this.origMenuShow = null;
+    try {
+      if (this.ribbonIconEl) {
+        this.ribbonIconEl.remove();
+        this.ribbonIconEl = null;
+      }
+      if (this.origMenuShow) {
+        Menu.prototype.showAtMouseEvent = this.origMenuShow;
+        this.origMenuShow = null;
+      }
+      if (this.intervalId) {
+        window.clearInterval(this.intervalId);
+        this.intervalId = 0;
+      }
+      if (this.newfProcInt) {
+        window.clearInterval(this.newfProcInt);
+        this.newfProcInt = 0;
+      }
+    } catch (e) {
+      // cleanup must not throw
     }
 
-    //clear all timers
-    if (this.intervalId) {
-      window.clearInterval(this.intervalId);
-      this.intervalId = 0;
-    }
-    if (this.newfProcInt) {
-      window.clearInterval(this.newfProcInt);
-      this.newfProcInt = 0;
-    }
-
-    //remove workspace event listeners
-    this.app.workspace.off("editor-drop", null);
-    this.app.workspace.off("editor-paste", null);
-    this.app.workspace.off("file-menu", null);
-
-    //clear processing state
     this.noteModified = [];
     this.newfCreated = [];
     this.newfCreatedByDownloader = [];
-
     logError(" unloaded.");
   }
 

@@ -9,10 +9,11 @@ const assert = require("node:assert");
 
 // compile the pure module (no Obsidian deps) for testing
 execSync(
-  "npx tsc src/buildImageTag.ts --outDir tests/.build --module commonjs --target es2020 --skipLibCheck",
+  "npx tsc src/buildImageTag.ts src/config.ts --outDir tests/.build --module commonjs --target es2020 --skipLibCheck",
   { cwd: path.join(__dirname, ".."), stdio: "pipe" }
 );
 const { buildImageTag } = require("./.build/buildImageTag.js");
+const { FRONTMATTER_DOWNLOAD_PATTERN } = require("./.build/config.js");
 
 //shared defaults for tests
 const base = {
@@ -26,6 +27,17 @@ const base = {
   useCaptions: true,
   useMarkdownLinkFormat: false,
 };
+
+function findFrontmatterMatches(content) {
+  const matches = [];
+  for (const pattern of FRONTMATTER_DOWNLOAD_PATTERN) {
+    pattern.lastIndex = 0;
+    for (const match of content.matchAll(pattern)) {
+      matches.push(match);
+    }
+  }
+  return matches;
+}
 
 describe("frontmatter + plainFmPaths (#137)", () => {
   test("bare url in frontmatter → plain path with yaml key and quotes", () => {
@@ -197,5 +209,81 @@ describe("saveSourceUrl in frontmatter (#140)", () => {
     assert.ok(!imageTag.includes("\n"));
     assert.ok(!imageTag.includes("https://example.com"));
     assert.strictEqual(imageTag, 'cover: "_resources/note/img.jpg"');
+  });
+});
+
+describe("frontmatter YAML list URL patterns (#142)", () => {
+  test("exact issue example is matched and rewritten with dash prefix", () => {
+    const url = "https://relaxmed.uz/wp-content/uploads/2018/05/20180430_161422.jpg";
+    const content = `---\nimage:\n  - ${url}\n---\n`;
+    const matches = findFrontmatterMatches(content);
+
+    assert.strictEqual(matches.length, 1);
+    assert.strictEqual(matches[0].groups.link, url);
+    assert.strictEqual(matches[0].groups.keypart, "  - ");
+
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: matches[0].groups.keypart,
+      q1: matches[0].groups.q1,
+      q2: matches[0].groups.q2,
+      plainFmPaths: false,
+    });
+    const fixed = content.replace(matches[0][0], imageTag);
+
+    assert.strictEqual(
+      fixed,
+      '---\nimage:\n  - "![[_resources/note/img.jpg]]"\n---\n'
+    );
+    assert.ok(!fixed.includes(url));
+  });
+
+  test("quoted list URL with query string keeps its quotes", () => {
+    const content = 'image:\n  - "https://host/a.jpg?x=1"\n';
+    const matches = findFrontmatterMatches(content);
+
+    assert.strictEqual(matches.length, 1);
+    assert.strictEqual(matches[0].groups.link, "https://host/a.jpg?x=1");
+    assert.strictEqual(matches[0].groups.q1, '"');
+    assert.strictEqual(matches[0].groups.q2, '"');
+
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: matches[0].groups.keypart,
+      q1: matches[0].groups.q1,
+      q2: matches[0].groups.q2,
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, '  - "_resources/note/img.jpg"');
+  });
+
+  test("every URL in a multi-item list is matched", () => {
+    const content = [
+      "image:",
+      "  - https://host/a.jpg",
+      '  - "https://host/b.png?x=1"',
+      "- https://host/c.webp",
+      "",
+    ].join("\n");
+    const matches = findFrontmatterMatches(content);
+
+    assert.deepStrictEqual(
+      matches.map((match) => match.groups.link),
+      ["https://host/a.jpg", "https://host/b.png?x=1", "https://host/c.webp"]
+    );
+  });
+
+  test("non-media list URL is ignored", () => {
+    const content = "image:\n  - https://host/page.html\n";
+    assert.deepStrictEqual(findFrontmatterMatches(content), []);
+  });
+
+  test("single-value frontmatter URL still matches", () => {
+    const content = "image: https://host/a.jpg\n";
+    const matches = findFrontmatterMatches(content);
+
+    assert.strictEqual(matches.length, 1);
+    assert.strictEqual(matches[0].groups.keypart, "image: ");
+    assert.strictEqual(matches[0].groups.link, "https://host/a.jpg");
   });
 });
