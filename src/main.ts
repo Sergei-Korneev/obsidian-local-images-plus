@@ -207,7 +207,7 @@ export default class LocalImagesPlugin extends Plugin {
 
     // Some file has been created
 
-    this.app.vault.on("create", async (file: TFile) => {
+    this.registerEvent(this.app.vault.on("create", async (file: TFile) => {
       logError("New file created: " + file.path);
 
       if (
@@ -218,11 +218,11 @@ export default class LocalImagesPlugin extends Plugin {
       } else {
         void this.onFCreateFunc(file);
       }
-    });
+    }));
 
     // Some file has been deleted
 
-    this.app.vault.on("delete", async (file: TFile) => {
+    this.registerEvent(this.app.vault.on("delete", async (file: TFile) => {
       if (
         !file ||
         !(file instanceof TFile) ||
@@ -262,9 +262,9 @@ export default class LocalImagesPlugin extends Plugin {
           return;
         }
       }
-    });
+    }));
 
-    this.app.vault.on("rename", async (file: TFile, oldPath: string) => {
+    this.registerEvent(this.app.vault.on("rename", async (file: TFile, oldPath: string) => {
       if (
         !file ||
         !(file instanceof TFile) ||
@@ -320,11 +320,11 @@ export default class LocalImagesPlugin extends Plugin {
           .replaceAll("[" + oldRootdir, "[" + newRootDir);
         void this.app.vault.modify(file, content);
       }
-    });
+    }));
 
     // Some file has been modified
 
-    this.app.vault.on("modify", async (file: TFile) => {
+    this.registerEvent(this.app.vault.on("modify", async (file: TFile) => {
       if (!this.newfMoveReq) return;
       logError("File modified: " + file.path, false);
 
@@ -343,23 +343,23 @@ export default class LocalImagesPlugin extends Plugin {
           this.setupNewMdFilesProcInterval();
         }
       }
-    });
+    }));
 
-    this.app.workspace.on(
+    this.registerEvent(this.app.workspace.on(
       "editor-paste",
       (evt: ClipboardEvent, editor: Editor, info: MarkdownView) => {
         if (evt.defaultPrevented) return;
         void this.onPasteFunc(evt, editor, info);
       }
-    );
+    ));
 
-    this.app.workspace.on(
+    this.registerEvent(this.app.workspace.on(
       "editor-drop",
       (evt: DragEvent, editor: Editor, info: MarkdownView) => {
         if (evt.defaultPrevented) return;
         void this.onPasteFunc(evt as any, editor, info);
       }
-    );
+    ));
 
     this.setupQueueInterval();
     this.addSettingTab(new SettingTab(this.app, this));
