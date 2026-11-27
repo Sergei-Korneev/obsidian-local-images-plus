@@ -84,13 +84,16 @@ export default class LocalImagesPlugin extends Plugin {
   origMenuShow: ((evt?: MouseEvent) => void) | null = null;
 
   private ribbonIconEl: HTMLElement | null = null;
+  private isLoaded = false;
 
   onload(): void {
+    this.isLoaded = true;
     void this.initPlugin();
   }
 
   private async initPlugin(): Promise<void> {
     await this.loadSettings();
+    if (!this.isLoaded) return;
 
     this.addCommand({
       id: "download-images",
@@ -1636,6 +1639,8 @@ export default class LocalImagesPlugin extends Plugin {
 
   // ------------  Load / Save settings -----------------
   onunload(): void {
+    this.isLoaded = false;
+
     //remove ribbon icon
     if (this.ribbonIconEl) {
       this.ribbonIconEl.remove();
@@ -1657,11 +1662,6 @@ export default class LocalImagesPlugin extends Plugin {
       window.clearInterval(this.newfProcInt);
       this.newfProcInt = 0;
     }
-
-    //remove workspace event listeners
-    this.app.workspace.off("editor-drop", null);
-    this.app.workspace.off("editor-paste", null);
-    this.app.workspace.off("file-menu", null);
 
     //clear processing state
     this.noteModified = [];
