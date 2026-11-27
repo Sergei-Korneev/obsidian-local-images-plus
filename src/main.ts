@@ -85,6 +85,7 @@ export default class LocalImagesPlugin extends Plugin {
 
   private ribbonIconEl: HTMLElement | null = null;
   private isLoaded = false;
+  private commandsRegistered = false;
 
   onload(): void {
     this.isLoaded = true;
@@ -97,6 +98,9 @@ export default class LocalImagesPlugin extends Plugin {
   //commands must be registered synchronously — before any async gap —
   //so Obsidian's plugin lifecycle can clean them up on unload
   private registerCommands(): void {
+    if (this.commandsRegistered) return;
+    this.commandsRegistered = true;
+
     this.addCommand({
       id: "download-images",
       name: "Localize attachments for the current note (plugin folder)",
@@ -1647,27 +1651,32 @@ export default class LocalImagesPlugin extends Plugin {
   // ------------  Load / Save settings -----------------
   onunload(): void {
     this.isLoaded = false;
+    this.commandsRegistered = false;
 
-    //remove ribbon icon
-    if (this.ribbonIconEl) {
-      this.ribbonIconEl.remove();
-      this.ribbonIconEl = null;
-    }
+    try {
+      //remove ribbon icon
+      if (this.ribbonIconEl) {
+        this.ribbonIconEl.remove();
+        this.ribbonIconEl = null;
+      }
 
-    //restore patched Menu prototype
-    if (this.origMenuShow) {
-      Menu.prototype.showAtMouseEvent = this.origMenuShow;
-      this.origMenuShow = null;
-    }
+      //restore patched Menu prototype
+      if (this.origMenuShow) {
+        Menu.prototype.showAtMouseEvent = this.origMenuShow;
+        this.origMenuShow = null;
+      }
 
-    //clear all timers
-    if (this.intervalId) {
-      window.clearInterval(this.intervalId);
-      this.intervalId = 0;
-    }
-    if (this.newfProcInt) {
-      window.clearInterval(this.newfProcInt);
-      this.newfProcInt = 0;
+      //clear all timers
+      if (this.intervalId) {
+        window.clearInterval(this.intervalId);
+        this.intervalId = 0;
+      }
+      if (this.newfProcInt) {
+        window.clearInterval(this.newfProcInt);
+        this.newfProcInt = 0;
+      }
+    } catch (e) {
+      // cleanup must not throw — Obsidian still needs to remove commands
     }
 
     //clear processing state
