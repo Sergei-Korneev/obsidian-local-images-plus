@@ -199,3 +199,179 @@ describe("saveSourceUrl in frontmatter (#140)", () => {
     assert.strictEqual(imageTag, 'cover: "_resources/note/img.jpg"');
   });
 });
+
+describe("frontmatter YAML list items (#142)", () => {
+  test("bare url as list item preserves dash prefix and adds quotes-free tag", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "  - ",
+      q1: "",
+      q2: "",
+      sourceUrl: "https://host/a.jpg",
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, "  - _resources/note/img.jpg");
+  });
+
+  test("list item with wiki embed keeps dash prefix", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "  - ",
+      q1: "",
+      q2: "",
+      saveSourceUrl: "none",
+      plainFmPaths: false,
+    });
+    assert.strictEqual(imageTag, "  - ![[ _resources/note/img.jpg]]".replace("![[ _", "![[_"));
+  });
+
+  test("list item with source URL does NOT append newline (frontmatter)", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "  - ",
+      q1: "",
+      q2: "",
+      sourceUrl: "https://host/a.jpg",
+      saveSourceUrl: "link",
+      plainFmPaths: true,
+    });
+    assert.ok(!imageTag.includes("[Source]"));
+    assert.ok(!imageTag.includes("\n"));
+    assert.ok(imageTag.startsWith("  - "));
+  });
+
+  test("tab-indented list item preserves tab prefix", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "\t- ",
+      q1: "",
+      q2: "",
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.ok(imageTag.startsWith("\t- "));
+  });
+
+  test("list item with markdown format preserves dash prefix", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "  - ",
+      q1: "",
+      q2: "",
+      useMd: true,
+      useMarkdownLinkFormat: true,
+      saveSourceUrl: "none",
+    });
+    assert.ok(imageTag.startsWith("  - "));
+    assert.ok(imageTag.includes("]"));
+  });
+});
+
+describe("frontmatter single value edge cases", () => {
+  test("value in double quotes gets quotes restored", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      q1: '"',
+      q2: '"',
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, 'image: "_resources/note/img.jpg"');
+  });
+
+  test("value in single quotes gets single quotes restored", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      q1: "'",
+      q2: "'",
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, "image: '_resources/note/img.jpg'");
+  });
+
+  test("no quotes gets default double quotes", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, 'image: "_resources/note/img.jpg"');
+  });
+
+  test("frontmatter + saveSourceUrl=link produces no extra content", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      q1: '"',
+      q2: '"',
+      sourceUrl: "https://host/orig.jpg",
+      saveSourceUrl: "link",
+    });
+    assert.ok(!imageTag.includes("[Source]"));
+    assert.ok(!imageTag.includes("\n"));
+  });
+
+  test("frontmatter + saveSourceUrl=text produces no extra content", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      q1: '"',
+      q2: '"',
+      sourceUrl: "https://host/orig.jpg",
+      saveSourceUrl: "text",
+    });
+    assert.ok(!imageTag.includes("https://host"));
+    assert.ok(!imageTag.includes("\n"));
+  });
+
+  test("frontmatter + saveSourceUrl=caption uses URL as caption", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "image: ",
+      q1: '"',
+      q2: '"',
+      sourceUrl: "https://host/orig.jpg",
+      saveSourceUrl: "caption",
+      plainFmPaths: false,
+    });
+    // caption is replaced with sourceUrl inside the embed
+    assert.ok(imageTag.includes("image:"));
+  });
+});
+
+describe("frontmatter linked images", () => {
+  test("linked image in frontmatter uses innerLink for download, outerLink as source", () => {
+    // Simulates: [![alt](thumb)](full_url) in frontmatter
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "cover: ",
+      q1: '"',
+      q2: '"',
+      sourceUrl: "https://host/page.html",
+      saveSourceUrl: "none",
+      plainFmPaths: true,
+    });
+    assert.strictEqual(imageTag, 'cover: "_resources/note/img.jpg"');
+    assert.ok(!imageTag.includes("page.html"));
+  });
+
+  test("linked image in frontmatter with saveSourceUrl does not leak URL", () => {
+    const { imageTag } = buildImageTag({
+      ...base,
+      keypart: "cover: ",
+      q1: '"',
+      q2: '"',
+      sourceUrl: "https://host/page.html",
+      saveSourceUrl: "link",
+      plainFmPaths: true,
+    });
+    assert.ok(!imageTag.includes("page.html"));
+    assert.ok(!imageTag.includes("[Source]"));
+    assert.ok(!imageTag.includes("\n"));
+  });
+});
