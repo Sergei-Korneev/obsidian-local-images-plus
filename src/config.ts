@@ -1,4 +1,4 @@
-export const APP_TITLE = "Local Images Plus  0.19.8";
+export const APP_TITLE = "Local Images Plus  0.20.0";
 
 
 
@@ -71,12 +71,22 @@ new RegExp(
   "gm"
 )
 
+//frontmatter list item that is a bare url: "  - https://host/img.jpg"
+const FM_LIST_URL_SEARCH_PATTERN =
+new RegExp(
+  "^(?<keypart>[ \\t]*-[ \\t]+)" +
+  "(?<anchor>)(?<q1>['\"]?)" +
+  "(?<link>https?:\\/\\/[^\\s'\"]+\\.(?:png|jpe?g|gif|webp|svg|avif|bmp|tiff?|ico|pdf|epub|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip)(?:[?#][^\\s'\"]*)?)" +
+  "(?<q2>['\"]?)",
+  "gm"
+)
+
 export const CANVAS_BARE_URL_PATTERN = /"(?<link>https?:\/\/[^\s"'{}\[\]]+\.(?:png|jpe?g|gif|webp|svg|avif|bmp|tiff?|ico|pdf|epub|mp3|mp4|m4a|ogg|wav|webm|mov|docx?|xlsx?|pptx?|zip)(?:[?#][^\s"'{}\[\]]*)?)"/gm;
 export const MD_SEARCH_PATTERN = [...MD_CORE_SEARCH_PATTERN, WIKILINK_SEARCH_PATTERN, WIKILINK_LOCAL_SEARCH_PATTERN]
 
 //patterns for the frontmatter part of a note (local links stay untouched)
 export const FRONTMATTER_DOWNLOAD_PATTERN =
-[FM_EMBED_SEARCH_PATTERN, FM_BARE_URL_SEARCH_PATTERN, ...MD_CORE_SEARCH_PATTERN]
+[FM_EMBED_SEARCH_PATTERN, FM_BARE_URL_SEARCH_PATTERN, FM_LIST_URL_SEARCH_PATTERN, ...MD_CORE_SEARCH_PATTERN]
 
 
 export const FRONTMATTER_SEARCH_PATTERN =
