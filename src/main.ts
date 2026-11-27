@@ -88,6 +88,8 @@ export default class LocalImagesPlugin extends Plugin {
 
   onload(): void {
     this.isLoaded = true;
+    // initialize with defaults before loadSettings() — registerCommands reads settings
+    this.settings = { ...DEFAULT_SETTINGS };
     this.registerCommands();
     void this.initPlugin();
   }
