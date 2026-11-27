@@ -4,7 +4,7 @@ export default {
     "Mostrar notificaciones cuando se procesaron las páginas.",
   "Context menu: download single image":
     "Menú contextual: descargar imagen individual",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "Mostrar 'Descargar esta imagen' al hacer clic derecho en una imagen remota en Vista Previa. Descarga solo esa imagen y reemplaza su enlace.",
   "Disable additional commands": "Deshabilitar comandos adicionales",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -198,7 +198,7 @@ export default {
   "Enjoying this plugin?": "¿Te gusta este plugin?",
   "Searching for orphaned attachments...": "Buscando archivos adjuntos huérfanos...",
   "Searching": "Búsqueda",
-  "Download this image": "Descargar esta imagen",
+  "Download this file": "Descargar este archivo",
   "Convert HTML to Markdown": "Convertir HTML a Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Convertir contenido HTML a Markdown antes de procesar los archivos adjuntos. Primero se convierte la nota completa, luego se buscan los archivos adjuntos como de costumbre. Se muestra una notificación cuando ocurre la conversión.",
   "Note was converted from HTML to Markdown.": "La nota fue convertida de HTML a Markdown.",

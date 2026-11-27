@@ -4,7 +4,7 @@ export default {
     "ページが処理されたときに通知を表示します。",
   "Context menu: download single image":
     "コンテキストメニュー: 単一画像をダウンロード",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "ライブプレビューでリモート画像を右クリックしたときに「この画像をダウンロード」を表示します。その画像のみをダウンロードし、リンクを置き換えます。",
   "Disable additional commands": "追加コマンドを無効化",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -194,7 +194,7 @@ export default {
   "Enjoying this plugin?": "このプラグインは気に入っていますか？",
   "Searching for orphaned attachments...": "孤立した添付ファイルを検索中...",
   "Searching": "検索",
-  "Download this image": "この画像をダウンロード",
+  "Download this file": "このファイルをダウンロード",
   "Convert HTML to Markdown": "HTMLをMarkdownに変換",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "添付ファイルを処理する前にHTMLコンテンツをMarkdownに変換します。まずノート全体が変換され、その後いつものように添付ファイルが検索されます。変換時には通知が表示されます。",
   "Note was converted from HTML to Markdown.": "ノートがHTMLからMarkdownに変換されました。",

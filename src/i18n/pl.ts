@@ -4,7 +4,7 @@ export default {
     "Pokaż powiadomienia po przetworzeniu stron.",
   "Context menu: download single image":
     "Menu kontekstowe: pobierz pojedyncze zdjęcie",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "Pokaż 'Pobierz to zdjęcie' po kliknięciu prawym przyciskiem myszy na zdalnym obrazie w Podglądzie na żywo. Pobiera tylko to zdjęcie i zastępuje jego link.",
   "Disable additional commands": "Wyłącz dodatkowe komendy",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -195,7 +195,7 @@ export default {
   "Enjoying this plugin?": "Podoba Ci się ta wtyczka?",
   "Searching for orphaned attachments...": "Szukanie osieroconych załączników...",
   "Searching": "Szukanie",
-  "Download this image": "Pobierz ten obrazek",
+  "Download this file": "Pobierz ten plik",
   "Convert HTML to Markdown": "Konwertuj HTML na Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Konwertuj zawartość HTML na Markdown przed przetwarzaniem załączników. Najpierw cała notatka jest konwertowana, potem załączniki są szukane jak zwykle. Po konwersji wyświetlane jest powiadomienie.",
   "Note was converted from HTML to Markdown.": "Notatka została skonwertowana z HTML na Markdown.",

@@ -2,7 +2,7 @@ export default {
   "Show notifications": "显示通知",
   "Show notifications when pages were processed.": "页面处理完成时显示通知。",
   "Context menu: download single image": "右键菜单: 下载单张图片",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "在实时预览中右键点击远程图片时显示'下载此图片'。仅下载该图片并替换其链接。",
   "Disable additional commands": "禁用额外命令",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -188,7 +188,7 @@ export default {
   "Enjoying this plugin?": "喜欢这个插件吗？",
   "Searching for orphaned attachments...": "正在搜索孤立附件...",
   "Searching": "搜索",
-  "Download this image": "下载此图片",
+  "Download this file": "下载此文件",
   "Convert HTML to Markdown": "将HTML转换为Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "在处理附件之前将HTML内容转换为Markdown。首先转换整个笔记，然后照常搜索附件。转换时会显示通知。",
   "Note was converted from HTML to Markdown.": "笔记已从HTML转换为Markdown。",

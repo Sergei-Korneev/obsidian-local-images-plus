@@ -53,7 +53,7 @@ export default class SettingTab extends PluginSettingTab {
         heading: translate("Interface settings"),
         items: [
           toggle("showNotifications", "Show notifications", "Show notifications when pages were processed."),
-          toggle("contextMenuDownload", "Context menu: download single image", "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link."),
+          toggle("contextMenuDownload", "Context menu: download single image", "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link."),
           toggle("disAddCom", "Disable additional commands", "Hide additional commands from the command palette."),
         ],
       },
@@ -179,7 +179,7 @@ export default class SettingTab extends PluginSettingTab {
       .setName(translate("Context menu: download single image"))
       .setDesc(
         translate(
-          "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link."
+          "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link."
         )
       )
       .addToggle((toggle) =>

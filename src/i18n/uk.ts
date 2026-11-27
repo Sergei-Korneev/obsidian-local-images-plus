@@ -4,7 +4,7 @@ export default {
     "Показувати сповіщення, коли сторінки були оброблені.",
   "Context menu: download single image":
     "Контекстне меню: завантажити окреме зображення",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "Показувати 'Завантажити це зображення' при правий кнопці миші на віддаленому зображенні в Live Preview. Завантажує тільки це зображення і замінює його посилання.",
   "Disable additional commands": "Вимкнути додаткові команди",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -197,7 +197,7 @@ export default {
   "Enjoying this plugin?": "Подобається цей плагін?",
   "Searching for orphaned attachments...": "Пошук осиротілих вкладень...",
   "Searching": "Пошук",
-  "Download this image": "Завантажити це зображення",
+  "Download this file": "Завантажити цей файл",
   "Convert HTML to Markdown": "Конвертувати HTML в Markdown",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Конвертувати HTML-вміст у Markdown перед обробкою вкладень. Спочатку нотатка конвертується повністю, потім вкладення шукаються як зазвичай. Під час конвертації показується сповіщення.",
   "Note was converted from HTML to Markdown.": "Нотатку було конвертовано з HTML у Markdown.",

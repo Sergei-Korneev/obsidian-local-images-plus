@@ -4,7 +4,7 @@ export default {
     "Meldingen tonen wanneer pagina's zijn verwerkt.",
   "Context menu: download single image":
     "Contextmenu: enkele afbeelding downloaden",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "Toon 'Deze afbeelding downloaden' bij rechtsklikken op een externe afbeelding in Live Preview. Downloadt alleen die afbeelding en vervangt de link.",
   "Disable additional commands": "Extra commando's uitschakelen",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -198,7 +198,7 @@ export default {
   "Enjoying this plugin?": "Bevalt deze plugin?",
   "Searching for orphaned attachments...": "Zoeken naar weesbijlagen...",
   "Searching": "Zoeken",
-  "Download this image": "Deze afbeelding downloaden",
+  "Download this file": "Dit bestand downloaden",
   "Convert HTML to Markdown": "HTML naar Markdown converteren",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "HTML-inhoud naar Markdown converteren voordat bijlagen worden verwerkt. De hele notitie wordt eerst geconverteerd, dan worden bijlagen zoals gebruikelijk gezocht. Er wordt een melding weergegeven bij conversie.",
   "Note was converted from HTML to Markdown.": "Notitie is van HTML naar Markdown geconverteerd.",

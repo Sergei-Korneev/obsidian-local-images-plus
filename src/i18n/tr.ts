@@ -3,7 +3,7 @@ export default {
   "Show notifications when pages were processed.":
     "Sayfalar işlendiğinde bildirimleri göster.",
   "Context menu: download single image": "Bağlam menüsü: tek görsel indir",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "Canlı Önizleme'de uzak bir görsele sağ tıklandığında 'Bu görseli indir' göster. Sadece o görseli indirir ve bağlantısını değiştirir.",
   "Disable additional commands": "Ek komutları devre dışı bırak",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -197,7 +197,7 @@ export default {
   "Enjoying this plugin?": "Bu eklentiyi beğendiniz mi?",
   "Searching for orphaned attachments...": "Yetim ekler aranıyor...",
   "Searching": "Arama",
-  "Download this image": "Bu resmi indir",
+  "Download this file": "Bu dosyayi indir",
   "Convert HTML to Markdown": "HTML'yi Markdown'a dönüştür",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "Ekleri işlemeden önce HTML içeriğini Markdown'a dönüştürün. Önce tüm not dönüştürülür, sonra ekler her zamanki gibi aranır. Dönüştürme olduğunda bildirim gösterilir.",
   "Note was converted from HTML to Markdown.": "Not HTML'den Markdown'a dönüştürüldü.",

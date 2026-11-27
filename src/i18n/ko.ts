@@ -3,7 +3,7 @@ export default {
   "Show notifications when pages were processed.":
     "페이지가 처리될 때 알림을 표시합니다.",
   "Context menu: download single image": "컨텍스트 메뉴: 단일 이미지 다운로드",
-  "Show 'Download this image' when right-clicking a remote image in Live Preview. Downloads only that image and replaces its link.":
+  "Show 'Download this file' when right-clicking a remote file in Live Preview. Downloads only that file and replaces its link.":
     "라이브 미리보기에서 원격 이미지를 우클릭할 때 '이 이미지 다운로드'를 표시합니다. 해당 이미지만 다운로드하고 링크를 대체합니다.",
   "Disable additional commands": "추가 명령 비활성화",
   "Do not show additional commands in command palette. Reload the plugin in settings to take effect (turn off/on).":
@@ -190,7 +190,7 @@ export default {
   "Enjoying this plugin?": "이 플러그인이 마음에 드시나요?",
   "Searching for orphaned attachments...": "고아 첨부 파일 검색 중...",
   "Searching": "검색",
-  "Download this image": "이 이미지 다운로드",
+  "Download this file": "이 파일 다운로드",
   "Convert HTML to Markdown": "HTML을 Markdown으로 변환",
   "Convert HTML content to Markdown before processing attachments. The entire note is converted first, then attachments are searched as usual. A notification is shown when conversion occurs.": "첨부 파일을 처리하기 전에 HTML 콘텐츠를 Markdown으로 변환합니다. 먼저 노트 전체가 변환된 다음 첨부 파일이 평소처럼 검색됩니다. 변환 시 알림이 표시됩니다.",
   "Note was converted from HTML to Markdown.": "노트가 HTML에서 Markdown으로 변환되었습니다.",
